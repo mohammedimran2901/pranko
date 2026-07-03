@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  background: #0A0118;
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(199, 255, 61, 0.06) 0%, transparent 35%),
+    radial-gradient(circle at 100% 100%, rgba(255, 61, 199, 0.06) 0%, transparent 35%),
+    #0A0118;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #150A2E;
+}
+::-webkit-scrollbar-thumb {
+  background: #9D4EDD;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C7FF3D;
+}
+
+/* Selection */
+::selection {
+  background: #C7FF3D;
+  color: #0A0118;
+}
+
+/* Reusable button */
+@layer components {
+  .btn-pranko {
+    @apply inline-flex items-center justify-center gap-2 font-display font-bold rounded-2xl
+           bg-pranko-lime text-pranko-bg
+           px-6 py-3.5 text-base
+           shadow-[0_8px_0_#6BA800] hover:shadow-[0_4px_0_#6BA800] hover:translate-y-1
+           active:shadow-none active:translate-y-2
+           transition-all duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed
+           focus:outline-none focus:ring-4 focus:ring-pranko-lime/40;
+  }
+
+  .btn-pranko-pink {
+    @apply inline-flex items-center justify-center gap-2 font-display font-bold rounded-2xl
+           bg-pranko-pink text-white
+           px-6 py-3.5 text-base
+           shadow-[0_8px_0_#A3006E] hover:shadow-[0_4px_0_#A3006E] hover:translate-y-1
+           active:shadow-none active:translate-y-2
+           transition-all duration-150
+           focus:outline-none focus:ring-4 focus:ring-pranko-pink/40;
+  }
+
+  .btn-pranko-ghost {
+    @apply inline-flex items-center justify-center gap-2 font-display font-semibold rounded-2xl
+           bg-transparent text-pranko-lime border-2 border-pranko-lime
+           px-6 py-3 text-base
+           hover:bg-pranko-lime hover:text-pranko-bg
+           transition-all duration-150
+           focus:outline-none focus:ring-4 focus:ring-pranko-lime/40;
+  }
+
+  .card-pranko {
+    @apply bg-pranko-surface border-2 border-pranko-border rounded-3xl
+           transition-all duration-200
+           hover:border-pranko-lime/40;
+  }
+
+  .text-display {
+    @apply font-display font-bold tracking-tight;
+  }
+
+  .text-muted {
+    @apply text-pranko-muted;
+  }
+
+  .glow-lime {
+    box-shadow: 0 0 40px rgba(199, 255, 61, 0.4);
+  }
+  .glow-pink {
+    box-shadow: 0 0 40px rgba(255, 61, 199, 0.4);
+  }
+  .glow-purple {
+    box-shadow: 0 0 40px rgba(157, 78, 221, 0.4);
+  }
+}
+
+/* Grid background pattern */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(157, 78, 221, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(157, 78, 221, 0.07) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Confetti background dots */
+.bg-confetti {
+  background-image:
+    radial-gradient(circle at 10% 20%, #C7FF3D 1px, transparent 1px),
+    radial-gradient(circle at 80% 50%, #FF3DC7 1px, transparent 1px),
+    radial-gradient(circle at 30% 70%, #3DEFFF 1px, transparent 1px),
+    radial-gradient(circle at 90% 10%, #FFE93D 1px, transparent 1px),
+    radial-gradient(circle at 50% 90%, #FF8C3D 1px, transparent 1px);
+  background-size: 200px 200px;
+}
+
+/* Animations */
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+.animate-blob {
+  animation: blob 8s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-15px) rotate(3deg); }
+}
+.animate-float-slow {
+  animation: float-slow 4s ease-in-out infinite;
+}
+
+/* Hide focus ring for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid #C7FF3D;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Disable text selection on brand mark */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}

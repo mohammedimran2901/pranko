@@ -1,0 +1,146 @@
+{
+  "brand": {
+    "name": "Pranko",
+    "tagline": "Bromas tan buenas que hasta tú olvidas que son falsas",
+    "short": "Fotos de bromas con IA en 10 segundos"
+  },
+  "nav": {
+    "create": "Crear",
+    "pricing": "Precios",
+    "trending": "Tendencias",
+    "login": "Iniciar sesión",
+    "start": "Empezar"
+  },
+  "hero": {
+    "liveCounter": "{count} bromas creadas hoy",
+    "headline1": "Haz que tus amigos",
+    "headline2": "cuestionen la realidad",
+    "subhead": "Sube una selfie. Elige una broma. Recibe una foto ultra-realista en 10 segundos. NO se van a recuperar. NUNCA.",
+    "cta": "Mi primera broma",
+    "ctaSub": "Primera broma gratis — sin tarjeta",
+    "trustPhoto": "📸 Foto nunca guardada",
+    "trustTime": "⚡ 10 segundos",
+    "trustFree": "🆓 Primera gratis"
+  },
+  "beforeAfter": {
+    "title": "Bromas reales. Reacciones reales.",
+    "subtitle": "Parte del caos que Pranko ha causado esta semana",
+    "examples": {
+      "crash": {"title": "Destruí mi Lambo 😱", "desc": "Se lo mandé a mi ex. Me llamó llorando."},
+      "rolex": {"title": "FLEX un Rolex 💍", "desc": "Mi amigo broke ahora es problema de todos."},
+      "grammy": {"title": "Conocí a Beyoncé en los Grammys 🎤", "desc": "Mi mamá lo posteó en Facebook. 47 compartidos."},
+      "mansion": {"title": "Compré una mansión de 5M$ 🏡", "desc": "Mi papá me ofreció 50k€ de préstamo. Se lo creyó."},
+      "promotion": {"title": "Me ascendieron a CEO 👔", "desc": "Mi jefe me felicitó. Lunes incómodo."},
+      "fish": {"title": "Pesqué un pez récord 🐟", "desc": "Mis amigos pescadores están furiosos."}
+    }
+  },
+  "modes": {
+    "title": "Elige tu caos",
+    "subtitle": "Packs de bromas para cada víctima. Un tap. Daño máximo.",
+    "ex": {"name": "Modo Ex", "emoji": "💔", "tagline": "Haz que se arrepientan de todo", "desc": "Muéstrale a tu ex que estás thriving. Coche nuevo, pareja nueva, vida nueva."},
+    "boss": {"name": "Modo Jefe", "emoji": "💼", "tagline": "Renuncia con estilo", "desc": "Bajas falsas, ascensos falsos, LinkedIn falso con glow-up."},
+    "mom": {"name": "Modo Mamá", "emoji": "👩‍👧", "tagline": "Haz que se lo cuente a todos", "desc": "Logros que va a screenshot y mandar al grupo familiar."},
+    "roommate": {"name": "Modo Roomie", "emoji": "🏠", "tagline": "Puntillismo como servicio", "desc": "Sé más puntilloso que tu roomie puntilloso. Guerra ganada."},
+    "crush": {"name": "Modo Crush", "emoji": "😍", "tagline": "Buenas vibras", "desc": "FLEX sutil. Sutilmente. (Nada sutil.)"},
+    "custom": {"name": "Custom", "emoji": "✨", "tagline": "Lo que imagines", "desc": "Describe la broma y deja que nuestro goblin se encargue."}
+  },
+  "howItWorks": {
+    "title": "Cómo funciona",
+    "subtitle": "4 pasos. Cero lío. Caos puro.",
+    "steps": {
+      "1": {"title": "Elige una broma", "desc": "Elige entre 50+ plantillas o describe la tuya"},
+      "2": {"title": "Sube tu foto", "desc": "Una selfie funciona. Cuanto más nítida, más devastadora"},
+      "3": {"title": "Pranko cocina", "desc": "10 segundos. Nuestro goblin IA está tramando"},
+      "4": {"title": "Envía y disfruta", "desc": "Comparte en TikTok, iMessage, o mira su cara"}
+    }
+  },
+  "templates": {
+    "title": "Bromas populares ahora",
+    "subtitle": "Toca para empezar",
+    "trending": "🔥 Tendencia",
+    "new": "✨ Nuevo"
+  },
+  "social": {
+    "title": "El caos que hemos causado",
+    "pranksCreated": "Bromas creadas",
+    "reactions": "Screenshots de reacciones",
+    "tiktoks": "TikToks posteados",
+    "happy": "Amigos confundidos"
+  },
+  "pricing": {
+    "title": "Elige tu arma",
+    "subtitle": "Cancela cuando quieras. Sin remordimientos (bueno, los suyos).",
+    "free": {"name": "Gratis", "price": "0€", "tagline": "Prueba el caos", "cta": "Empezar gratis", "features": ["1 broma (con marca de agua)", "Todos los modos", "Calidad estándar"]},
+    "single": {"name": "Individual", "price": "2,99€", "tagline": "Solo una broma", "cta": "Mi broma", "features": ["1 broma, sin marca de agua", "Todos los modos", "Descarga HD", "Compartir directo en TikTok"]},
+    "pack": {"name": "Pack de 5", "price": "7,99€", "tagline": "Ahorra 47%", "cta": "5 bromas", "popular": "MÁS POPULAR", "features": ["5 bromas, sin marca de agua", "Todos los modos", "Descargas HD", "Compartir directo en TikTok", "Para 5 personas distintas"]},
+    "pro": {"name": "Pro Mensual", "price": "9,99€", "per": "/mes", "tagline": "Caos ilimitado", "cta": "Hazte Pro", "features": ["Bromas ilimitadas", "Todos los modos + nuevos primero", "Descargas HD + 4K", "Generación prioritaria", "Sin marca de agua", "Cancela cuando quieras"]},
+    "lifetime": {"name": "De por vida", "price": "29€", "tagline": "Paga una vez, bromea siempre", "cta": "De por vida", "save": "EARLY BIRD — antes 49€", "features": ["Todo del Pro", "Paga una vez. Para siempre.", "Todos los modos futuros", "Insignia de fundador", "Acceso privado a Discord"]}
+  },
+  "faq": {
+    "title": "¿Preguntas antes de sembrar caos?",
+    "items": {
+      "legal": {"q": "¿Es legal?", "a": "Sí — para bromas personales entre amigos que consienten. No lo uses para fraude, acoso, o engañar a alguien por dinero. Sé amable. No seas un capullo."},
+      "stored": {"q": "¿Guardáis mis fotos?", "a": "No. Tu foto se procesa en memoria y se borra en 1h. La broma generada se queda en tu cuenta para que la puedas re-descargar, pero la puedes borrar cuando quieras."},
+      "real": {"q": "¿Qué tan real se ve?", "a": "Sospechosamente real. Nuestra IA usa tecnología de preservación de rostro entrenada con tu selfie. La mayoría de la gente no nota la diferencia. Ese es el punto. No abuses de este poder."},
+      "cancel": {"q": "¿Puedo cancelar cuando quiera?", "a": "Sí — un clic en tu cuenta. Sin preguntas, sin culpabilidad. Nos vas a hacer falta, pero lo entendemos."},
+      "refund": {"q": "¿Política de reembolso?", "a": "Si tu broma salió mal (cara borrosa, artefactos raros), escríbenos en 7 días y te devolvemos el dinero. Sin preguntas."},
+      "languages": {"q": "¿Qué idiomas soportáis?", "a": "Inglés, francés y español. Nuestro goblin habla los tres."}
+    }
+  },
+  "cta": {
+    "title": "¿Listo para sembrar caos?",
+    "subtitle": "Únete a miles de pranksters descontrolados. La primera va por nuestra cuenta.",
+    "button": "Mi primera broma"
+  },
+  "create": {
+    "title": "Elige una broma",
+    "step1": "1. Elige",
+    "step2": "2. Sube",
+    "step3": "3. Genera",
+    "step4": "4. Comparte",
+    "uploadTitle": "Suelta tu selfie",
+    "uploadSub": "Cuanto más nítida, más devastadora",
+    "uploadButton": "Elegir foto",
+    "uploadTip": "JPG, PNG o HEIC. Máx 10MB.",
+    "customTitle": "O describe tu propia broma",
+    "customPlaceholder": "ej: yo con un Grammy al lado de Beyoncé en el after-party",
+    "generateButton": "Generar mi broma",
+    "regenerate": "Prueba otra versión"
+  },
+  "generating": {
+    "title": "Pranko está cocinando...",
+    "subtitle": "Nuestro goblin está tramando",
+    "steps": {
+      "1": "Subiendo tu selfie...",
+      "2": "Convenciendo a la IA de portarse bien...",
+      "3": "Añadiendo caos...",
+      "4": "Puliendo la obra maestra..."
+    }
+  },
+  "result": {
+    "title": "Tu broma está lista",
+    "subtitle": "Tus amigos no se van a recuperar",
+    "download": "Descargar",
+    "shareTiktok": "Compartir en TikTok",
+    "sendFriend": "Enviar a un amigo",
+    "regenerate": "Reintentar",
+    "newPrank": "Hacer otra",
+    "copyLink": "Copiar enlace",
+    "watermark": "Hecho con Pranko 🤡",
+    "caption": "POV: le mandaste esto a tu mejor amigo 😂 #pranko #broma #ia"
+  },
+  "footer": {
+    "tagline": "Hecho con maldad",
+    "tiktok": "TikTok",
+    "instagram": "Instagram",
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "contact": "Contacto"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Algo salió mal. ¿Reintentamos?",
+    "free": "Gratis",
+    "new": "Nuevo"
+  }
+}
