@@ -66,20 +66,40 @@ export async function GET(req: NextRequest) {
             const resultData = await resultRes.json();
             const videoUrl = resultData.video?.url || "";
 
-            if (videoUrl && job) {
-              store.updateJob(job.id, {
+            if (videoUrl) {
+              if (job) {
+                store.updateJob(job.id, {
+                  status: "completed",
+                  resultVideoUrl: videoUrl,
+                  completedAt: Date.now(),
+                });
+                return NextResponse.json({
+                  id,
+                  status: "completed",
+                  shareToken: job.shareToken,
+                  resultVideoUrl: videoUrl,
+                });
+              }
+
+              // Cross-Lambda: no in-memory job, create one now
+              const newJob = store.createJob({
+                prompt: "",
+                locale: "en",
+                falRequestId: falId,
+              });
+              store.updateJob(newJob.id, {
                 status: "completed",
                 resultVideoUrl: videoUrl,
                 completedAt: Date.now(),
               });
-            }
 
-            return NextResponse.json({
-              id,
-              status: "completed",
-              shareToken: job?.shareToken,
-              resultVideoUrl: videoUrl,
-            });
+              return NextResponse.json({
+                id: newJob.id,
+                status: "completed",
+                shareToken: newJob.shareToken,
+                resultVideoUrl: videoUrl,
+              });
+            }
           }
         }
 

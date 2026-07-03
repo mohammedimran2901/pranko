@@ -23,7 +23,9 @@ function getHeaders(): Record<string, string> {
 function requireFalKey(): void {
   if (!FAL_KEY || FAL_KEY.length < 10) {
     throw new Error(
-      "FAL_KEY environment variable is not configured."
+      "FAL_KEY environment variable is not configured or is too short. " +
+      "Go to Vercel → Settings → Environment Variables and add FAL_KEY " +
+      "with your fal.ai API key (format: KEY_ID:KEY_SECRET)."
     );
   }
 }
