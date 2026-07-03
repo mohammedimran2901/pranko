@@ -1,299 +1,43 @@
 {
-  "brand": {
-    "name": "Pranko",
-    "tagline": "Prank so good, even you forget it's fake",
-    "short": "AI prank photos in 10 seconds"
-  },
-  "nav": {
-    "create": "Create",
-    "pricing": "Pricing",
-    "trending": "Trending",
-    "login": "Log in",
-    "start": "Start pranking"
-  },
+  "brand": { "name": "Pranko", "tagline": "AI prank videos in 30 seconds", "short": "AI prank videos in 30 seconds" },
+  "nav": { "create": "Create", "pricing": "Pricing", "trending": "Trending", "login": "Log in", "start": "Start pranking" },
   "hero": {
-    "liveCounter": "2,347 pranks made today",
     "headline1": "Make your friends",
     "headline2": "question reality",
-    "subhead": "Upload a selfie. Pick a prank. Get an ultra-realistic photo in 10 seconds. They will NEVER recover.",
-    "cta": "Start my first prank",
-    "ctaSub": "Free prank — no card required",
-    "trustPhoto": "📸 Photo never stored",
-    "trustTime": "⚡ 10 seconds",
-    "trustFree": "🆓 First prank free"
-  },
-  "beforeAfter": {
-    "title": "Real pranks. Real reactions.",
-    "subtitle": "Some of the chaos Pranko has caused this week",
-    "examples": {
-      "crash": {
-        "title": "Totaled my Lambo 😱",
-        "desc": "Sent it to my ex. She called crying."
-      },
-      "rolex": {
-        "title": "Flexing a Rolex 💍",
-        "desc": "My broke friend is now everyone else's problem."
-      },
-      "grammy": {
-        "title": "Met Beyoncé at the Grammys 🎤",
-        "desc": "Mom posted it on Facebook. 47 shares."
-      },
-      "mansion": {
-        "title": "Bought a $5M mansion 🏡",
-        "desc": "Dad offered to lend me $50k. He believed it."
-      },
-      "promotion": {
-        "title": "Got promoted to CEO 👔",
-        "desc": "Boss congratulated me. Awkward Monday."
-      },
-      "fish": {
-        "title": "Caught a world-record fish 🐟",
-        "desc": "Fishing buddies are furious."
-      },
-      "merge": {
-        "title": "Put me in the mansion 🪄",
-        "desc": "Subject + scene merge — homeless to homeowner."
-      }
-    }
-  },
-  "modes": {
-    "title": "Pick your chaos",
-    "subtitle": "Curated prank packs for every victim. One tap. Maximum damage.",
-    "ex": {
-      "name": "Ex Mode",
-      "emoji": "💔",
-      "tagline": "Make them regret everything",
-      "desc": "Show your ex you're thriving. New car, new partner, new life."
-    },
-    "boss": {
-      "name": "Boss Mode",
-      "emoji": "💼",
-      "tagline": "Quit in style",
-      "desc": "Fake sick days, fake promotions, fake LinkedIn glow-ups."
-    },
-    "mom": {
-      "name": "Mom Mode",
-      "emoji": "👩‍👧",
-      "tagline": "Make her tell everyone",
-      "desc": "Achievements she'll screenshot and post in the family group chat."
-    },
-    "roommate": {
-      "name": "Roommate Mode",
-      "emoji": "🏠",
-      "tagline": "Pettiness as a service",
-      "desc": "Out-petty your petty roommate. Petty war won."
-    },
-    "crush": {
-      "name": "Crush Mode",
-      "emoji": "😍",
-      "tagline": "Vibes only",
-      "desc": "Subtly flex. Subtly. (Not subtle at all.)"
-    },
-    "merge": {
-      "name": "Merge Mode",
-      "emoji": "🪄",
-      "tagline": "Two photos. One prank.",
-      "desc": "Upload a subject + a scene. AI merges them — homeless man in a mansion, your dog on a yacht."
-    },
-    "custom": {
-      "name": "Custom",
-      "emoji": "✨",
-      "tagline": "Anything you imagine",
-      "desc": "Describe the prank and let our goblin handle the rest."
-    }
+    "subhead": "Upload a photo, describe the prank, get an AI-generated prank video in 30 seconds.",
+    "cta": "Create my prank video",
+    "ctaSub": "Free prank — no card required"
   },
   "howItWorks": {
     "title": "How it works",
-    "subtitle": "4 steps. Zero hassle. Pure chaos.",
     "steps": {
-      "1": {
-        "title": "Pick a prank",
-        "desc": "Choose from 50+ templates or describe your own"
-      },
-      "2": {
-        "title": "Upload your photo",
-        "desc": "Selfie works best. The sharper, the more chaotic"
-      },
-      "3": {
-        "title": "Pranko cooks",
-        "desc": "10 seconds. Our goblin AI is scheming"
-      },
-      "4": {
-        "title": "Send & enjoy",
-        "desc": "Share on TikTok, iMessage, or just watch their face"
-      }
+      "1": { "title": "Upload a photo", "desc": "A selfie or any photo works best" },
+      "2": { "title": "Describe the prank", "desc": "Tell the AI what to make happen in the video" },
+      "3": { "title": "Get your video", "desc": "Share the prank video with your friends" }
     }
   },
-  "templates": {
-    "title": "Popular pranks right now",
-    "subtitle": "Tap any to start",
-    "trending": "🔥 Trending",
-    "new": "✨ New"
-  },
-  "social": {
-    "title": "The chaos we've caused",
-    "pranksCreated": "Pranks made",
-    "reactions": "Screenshots of reactions",
-    "tiktoks": "TikToks posted",
-    "happy": "Friends confused"
-  },
-  "pricing": {
-    "title": "Pick your weapon",
-    "subtitle": "Cancel anytime. No regrets (well, theirs).",
-    "free": {
-      "name": "Free",
-      "price": "$0",
-      "tagline": "Try the chaos",
-      "cta": "Start free",
-      "features": [
-        "1 prank (watermarked)",
-        "All prank modes",
-        "Standard quality"
-      ]
-    },
-    "single": {
-      "name": "Single",
-      "price": "$2.99",
-      "tagline": "Just one prank",
-      "cta": "Get my prank",
-      "features": [
-        "1 prank, no watermark",
-        "All prank modes",
-        "HD download",
-        "Direct TikTok share"
-      ]
-    },
-    "pack": {
-      "name": "5-Pack",
-      "price": "$7.99",
-      "tagline": "Save 47%",
-      "cta": "Get 5 pranks",
-      "popular": "MOST POPULAR",
-      "features": [
-        "5 pranks, no watermark",
-        "All prank modes",
-        "HD downloads",
-        "Direct TikTok share",
-        "Use on 5 different people"
-      ]
-    },
-    "pro": {
-      "name": "Pro Monthly",
-      "price": "$9.99",
-      "per": "/month",
-      "tagline": "Unlimited chaos",
-      "cta": "Go Pro",
-      "features": [
-        "Unlimited pranks",
-        "All prank modes + new ones first",
-        "HD + 4K downloads",
-        "Priority generation",
-        "No watermark",
-        "Cancel anytime"
-      ]
-    },
-    "lifetime": {
-      "name": "Lifetime",
-      "price": "$29",
-      "tagline": "Pay once, prank forever",
-      "cta": "Get lifetime",
-      "save": "EARLY BIRD — was $49",
-      "features": [
-        "Everything in Pro",
-        "Pay once. Forever.",
-        "All future prank modes",
-        "Founder badge",
-        "Private Discord access"
-      ]
-    }
-  },
-  "faq": {
-    "title": "Questions before you cause chaos?",
-    "items": {
-      "legal": {
-        "q": "Is this legal?",
-        "a": "Yes — for personal, non-defamatory pranks between consenting friends. Don't use it for fraud, harassment, or to deceive someone for money. Be kind. Don't be a jerk."
-      },
-      "stored": {
-        "q": "Do you store my photos?",
-        "a": "Nope. Your photo is processed in memory, then deleted within 1 hour. The prank photo you generate stays in your account so you can re-download it, but you can delete it any time."
-      },
-      "real": {
-        "q": "How real does it look?",
-        "a": "Suspiciously real. Our AI uses face-preservation tech trained on your selfie. Most people cannot tell the difference. That's the point. Don't abuse this power."
-      },
-      "cancel": {
-        "q": "Can I cancel anytime?",
-        "a": "Yes — one click in your account. No questions, no guilt trip. We'll miss you, but we get it."
-      },
-      "refund": {
-        "q": "Refund policy?",
-        "a": "If your prank didn't cook right (blurry face, weird artifacts), email us within 7 days and we'll refund you. No questions."
-      },
-      "languages": {
-        "q": "What languages do you support?",
-        "a": "English, French, and Spanish. Our goblin speaks all three."
-      },
-      "merge": {
-        "q": "What is Merge Mode?",
-        "a": "Merge Mode lets you upload TWO photos — a subject (the person or object) and a scene (the background). Our AI merges them so the subject appears naturally placed in the scene. Example: a homeless man in a mansion, or your pet in a sports car."
-      }
-    }
-  },
-  "cta": {
-    "title": "Ready to cause chaos?",
-    "subtitle": "Join thousands of unhinged pranksters. Your first one is on us.",
-    "button": "Start my first prank"
-  },
+  "cta": { "title": "Ready to cause chaos?", "subtitle": "Your first prank video is free.", "button": "Create my prank video" },
   "create": {
-    "title": "Pick a prank",
-    "step1": "1. Choose",
-    "step2": "2. Upload",
-    "step3": "3. Generate",
-    "step4": "4. Share",
-    "uploadTitle": "Drop your selfie",
-    "uploadSub": "The sharper it is, the more devastating the prank",
-    "uploadButton": "Choose photo",
-    "uploadTip": "JPG, PNG, or HEIC. Max 10MB.",
-    "customTitle": "Or describe your own prank",
-    "customPlaceholder": "e.g. me holding a Grammy next to Beyoncé at the after-party",
-    "generateButton": "Generate my prank",
-    "regenerate": "Try a different version"
+    "title": "Create a prank video",
+    "subtitle": "Upload a photo and describe what you want to happen",
+    "uploadButton": "Choose a photo",
+    "uploadTip": "JPG, PNG. Max 10MB.",
+    "promptLabel": "What should happen in the video?",
+    "promptPlaceholder": "e.g. make me win the lottery on live TV, make me dance like nobody's watching at a wedding, make me get chased by a giant penguin",
+    "generateButton": "Generate prank video"
   },
   "generating": {
     "title": "Pranko is cooking...",
-    "subtitle": "Our goblin is scheming",
-    "steps": {
-      "1": "Uploading your selfie...",
-      "2": "Convincing the AI to behave...",
-      "3": "Adding chaos...",
-      "4": "Polishing the masterpiece..."
-    }
+    "subtitle": "This takes about 30 seconds",
+    "steps": { "1": "Uploading your photo...", "2": "AI processing your prank...", "3": "Rendering video..." },
+    "error": "Pranko tripped"
   },
   "result": {
-    "title": "Your prank is ready",
+    "title": "Your prank video is ready",
     "subtitle": "Your friends will never recover",
-    "download": "Download",
-    "shareTiktok": "Share to TikTok",
-    "sendFriend": "Send to a friend",
-    "regenerate": "Try again",
-    "newPrank": "Make another",
+    "download": "Download video",
     "copyLink": "Copy link",
-    "watermark": "Made on Pranko 🤡",
-    "caption": "POV: you sent this to your best friend 😂 #pranko #aiprank #prank"
+    "newPrank": "Make another prank"
   },
-  "footer": {
-    "tagline": "Made with mischief",
-    "tiktok": "TikTok",
-    "instagram": "Instagram",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "contact": "Contact"
-  },
-  "common": {
-    "loading": "Loading...",
-    "error": "Something went wrong. Try again?",
-    "free": "Free",
-    "new": "New"
-  }
+  "footer": { "tagline": "Made with mischief" }
 }

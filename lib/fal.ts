@@ -1,18 +1,15 @@
 /**
- * Fal.ai HTTP client for prank photo generation.
+ * Fal.ai HTTP client for prank video generation using Seedance 2.0 Mini.
  * Uses FAL_KEY from env to call Fal.ai REST API directly.
  *
- * Two models are supported:
- *  - fal-ai/flux-pulid  → single-image face-preserving generation (default)
- *  - fal-ai/uso         → multi-image subject + scene merge (gomytho-style)
+ * Model: fal-ai/seedance-2/mini/reference-to-video
+ * Input: image + text prompt → output: video with audio
  */
 
 const FAL_BASE = "https://queue.fal.run";
-const FAL_STORAGE = "https://rest.fal.ai/storage";
+const STORAGE_BASE = "https://rest.fal.ai/storage";
 const FAL_KEY = process.env.FAL_KEY || "";
-
-const FAL_MODEL_PULID = "fal-ai/flux-pulid";
-const FAL_MODEL_MERGE = "fal-ai/uso";
+const FAL_MODEL = "fal-ai/seedance-2/mini/reference-to-video";
 
 function getHeaders(): Record<string, string> {
   return {
@@ -24,13 +21,15 @@ function getHeaders(): Record<string, string> {
 function requireFalKey(): void {
   if (!FAL_KEY || FAL_KEY.length < 10) {
     throw new Error(
-      "FAL_KEY environment variable is not configured. " +
-      "Set it in your .env.local or Vercel environment variables."
+      "FAL_KEY environment variable is not configured."
     );
   }
 }
 
-export async function uploadToFal(base64DataUri: string): Promise<string> {
+/**
+ * Upload a base64 image to fal.ai CDN and return its URL.
+ */
+export async function uploadImage(base64DataUri: string): Promise<string> {
   requireFalKey();
 
   const match = base64DataUri.match(/^data:(image\/\w+);base64,(.+)$/);
@@ -39,15 +38,13 @@ export async function uploadToFal(base64DataUri: string): Promise<string> {
   const contentType = match[1];
   const base64Data = match[2];
   const buffer = Buffer.from(base64Data, "base64");
+  const ext = contentType.split("/")[1] || "png";
 
-  const fileExt = contentType.split("/")[1] || "png";
-  const initRes = await fetch(`${FAL_STORAGE}/upload/initiate`, {
+  // Initiate upload
+  const initRes = await fetch(`${STORAGE_BASE}/upload/initiate`, {
     method: "POST",
     headers: getHeaders(),
-    body: JSON.stringify({
-      content_type: contentType,
-      file_name: `selfie.${fileExt}`,
-    }),
+    body: JSON.stringify({ content_type: contentType, file_name: `selfie.${ext}` }),
   });
 
   if (!initRes.ok) {
@@ -57,6 +54,7 @@ export async function uploadToFal(base64DataUri: string): Promise<string> {
 
   const { upload_url, file_url } = await initRes.json();
 
+  // Upload binary
   const uploadRes = await fetch(upload_url, {
     method: "PUT",
     headers: { "Content-Type": contentType },
@@ -72,33 +70,26 @@ export async function uploadToFal(base64DataUri: string): Promise<string> {
 }
 
 /**
- * Single-image generation: takes a subject photo and renders it into a
- * scene described by `prompt`. Face-preserving via PuLID.
+ * Submit a Seedance 2.0 Mini generation request.
+ * Returns the request_id for polling.
  */
-export async function submitGeneration(
+export async function submitVideoGeneration(
   prompt: string,
-  uploadedImageUrl: string
+  imageUrl: string
 ): Promise<string> {
   requireFalKey();
 
-  const url = `${FAL_BASE}/${FAL_MODEL_PULID}`;
-
-  const body = {
-    prompt,
-    reference_image_url: uploadedImageUrl,
-    image_size: "portrait_4_3",
-    num_inference_steps: 30,
-    guidance_scale: 4,
-    id_weight: 0.85,
-    enable_safety_checker: true,
-    negative_prompt:
-      "cartoon, anime, 3d render, low quality, blurry, distorted face, deformed features, nsfw, nudity",
-  };
-
-  const response = await fetch(url, {
+  const response = await fetch(`${FAL_BASE}/${FAL_MODEL}`, {
     method: "POST",
     headers: getHeaders(),
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      prompt,
+      image_urls: [imageUrl],
+      generate_audio: true,
+      duration: "auto",
+      aspect_ratio: "9:16",
+      resolution: "720p",
+    }),
   });
 
   if (!response.ok) {
@@ -111,70 +102,19 @@ export async function submitGeneration(
 }
 
 /**
- * Multi-image merge generation: takes a SUBJECT (the person/object to
- * preserve) and a SCENE (the background / setting) and merges them via
- * fal-ai/uso (subject-driven generation).
- *
- * USO's `input_image_urls` accepts a list: [content_image, style_image, ...]
- *  - index 0 = content (the subject — e.g. the homeless man)
- *  - index 1 = style  (the scene  — e.g. a luxury house)
- *
- * The `prompt` describes what the merged result should look like.
+ * Poll for a completed video result.
+ * Returns { videoUrl } when done.
  */
-export async function submitMergeGeneration(
-  prompt: string,
-  subjectImageUrl: string,
-  sceneImageUrl: string
-): Promise<string> {
-  requireFalKey();
-
-  const url = `${FAL_BASE}/${FAL_MODEL_MERGE}`;
-
-  const body = {
-    prompt,
-    input_image_urls: [subjectImageUrl, sceneImageUrl],
-    image_size: "portrait_4_3",
-    num_inference_steps: 28,
-    guidance_scale: 4,
-    enable_safety_checker: true,
-    output_format: "png",
-    negative_prompt:
-      "cartoon, anime, 3d render, low quality, blurry, distorted face, deformed features, nsfw, nudity, watermark, text",
-  };
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: getHeaders(),
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Fal merge generation failed: ${response.status} ${text}`);
-  }
-
-  const data = await response.json();
-  return data.request_id;
-}
-
-/**
- * Poll a fal.ai queue request for completion and return the result image URL.
- * Works for both PuLID and USO (same queue contract).
- */
-export async function pollForResult(
+export async function pollForVideoResult(
   requestId: string,
-  model: "pulid" | "merge" = "pulid",
-  maxRetries = 120,
+  maxRetries = 180,
   intervalMs = 2000
-): Promise<string> {
-  const endpoint = model === "merge" ? FAL_MODEL_MERGE : FAL_MODEL_PULID;
-  const statusUrl = `${FAL_BASE}/${endpoint}/requests/${requestId}/status`;
-  const resultUrl = `${FAL_BASE}/${endpoint}/requests/${requestId}`;
+): Promise<{ videoUrl: string }> {
+  const statusUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${requestId}/status`;
+  const resultUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${requestId}`;
 
   for (let i = 0; i < maxRetries; i++) {
-    const statusRes = await fetch(statusUrl, {
-      headers: getHeaders(),
-    });
+    const statusRes = await fetch(statusUrl, { headers: getHeaders() });
 
     if (!statusRes.ok) {
       await new Promise((r) => setTimeout(r, intervalMs));
@@ -184,20 +124,19 @@ export async function pollForResult(
     const statusData = await statusRes.json();
 
     if (statusData.status === "COMPLETED") {
-      for (let r = 0; r < 5; r++) {
-        const resultRes = await fetch(resultUrl, {
-          headers: getHeaders(),
-        });
+      for (let r = 0; r < 10; r++) {
+        const resultRes = await fetch(resultUrl, { headers: getHeaders() });
 
         if (resultRes.ok) {
           const resultData = await resultRes.json();
-          return resultData.images?.[0]?.url || "";
+          const videoUrl = resultData.video?.url || "";
+          if (videoUrl) return { videoUrl };
         }
 
-        await new Promise((r) => setTimeout(r, 1000));
+        await new Promise((r) => setTimeout(r, 2000));
       }
 
-      throw new Error(`Fal result fetch failed after retries`);
+      throw new Error("Fal result fetch failed after retries");
     }
 
     if (statusData.status === "FAILED" || statusData.status === "ERROR") {

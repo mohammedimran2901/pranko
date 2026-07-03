@@ -1,7 +1,6 @@
 /**
  * GET /api/share/[token]
- * Returns the job data for a given share token.
- * Used by the result page to display the generated prank.
+ * Returns job data for a given share token.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
@@ -33,11 +32,7 @@ export async function GET(
     id: job.id,
     shareToken: job.shareToken,
     status: job.status,
-    resultImageUrl: job.resultImageUrl,
-    watermarked: job.watermarked,
-    tier: job.tier,
-    mode: job.mode,
-    templateId: job.templateId,
+    resultVideoUrl: job.resultVideoUrl,
     createdAt: job.createdAt,
     completedAt: job.completedAt,
   });

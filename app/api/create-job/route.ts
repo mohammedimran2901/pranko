@@ -1,94 +1,47 @@
 /**
  * POST /api/create-job
- * Creates a prank generation job.
- * Body (single-image mode):
- *   { image: base64, prompt, templateId, mode, locale, tier }
- * Body (merge mode — subject + scene):
- *   { subjectImage: base64, sceneImage: base64, prompt, templateId, mode, locale, tier, engine: "merge" }
- *   OR
- *   { image: base64, sceneImage: base64, ..., engine: "merge" }
+ * Creates a prank video generation job.
+ * Body: { image (base64), prompt, locale }
  * Returns: { jobId }
  */
 import { NextRequest, NextResponse } from "next/server";
-import { store, type Tier, type PrankEngine } from "@/lib/store";
-import {
-  uploadToFal,
-  submitGeneration,
-  submitMergeGeneration,
-  pollForResult,
-} from "@/lib/fal";
-import { applyWatermark } from "@/lib/watermark";
+import { store } from "@/lib/store";
+import { uploadImage, submitVideoGeneration, pollForVideoResult } from "@/lib/fal";
 
 export const runtime = "nodejs";
-export const maxDuration = 300; // 5 minutes for image generation
+export const maxDuration = 300; // 5 minutes for video generation
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const {
-      image,
-      subjectImage,
-      sceneImage,
-      prompt,
-      templateId,
-      mode,
-      locale,
-      tier,
-      engine,
-    } = body as {
+    const { image, prompt, locale } = body as {
       image?: string;
-      subjectImage?: string;
-      sceneImage?: string;
       prompt?: string;
-      templateId?: string | null;
-      mode?: string;
       locale?: string;
-      tier?: Tier;
-      engine?: PrankEngine;
     };
 
-    // Decide which engine to use. Merge mode requires a scene image.
-    const _hasSubject = Boolean(subjectImage || image);
-    const _hasScene = Boolean(sceneImage);
-    const isMerge: boolean = engine === "merge" || (_hasScene && _hasSubject);
-
-    const finalSubject = subjectImage || image;
-    const finalPrompt = prompt || "";
-
-    if (!finalSubject || !finalPrompt) {
+    if (!image || !prompt) {
       return NextResponse.json(
-        { error: "Missing subject image or prompt" },
-        { status: 400 }
-      );
-    }
-    if (isMerge && !sceneImage) {
-      return NextResponse.json(
-        { error: "Merge mode requires a scene image" },
+        { error: "Missing image or prompt" },
         { status: 400 }
       );
     }
 
-    // Create the job
+    if (prompt.length > 1000) {
+      return NextResponse.json(
+        { error: "Prompt too long (max 1000 characters)" },
+        { status: 400 }
+      );
+    }
+
     const job = store.createJob({
-      prompt: finalPrompt,
-      templateId: templateId || null,
-      mode: mode || (isMerge ? "merge" : "custom"),
+      prompt,
       locale: locale || "en",
-      tier: tier || "free",
-      paid: (tier || "free") !== "free",
-      engine: isMerge ? "merge" : "pulid",
     });
 
-    // Start the generation pipeline in the background
-    runGenerationPipeline(
-      job.id,
-      finalSubject,
-      isMerge ? sceneImage! : undefined,
-      finalPrompt,
-      tier || "free",
-      isMerge
-    ).catch((err) => {
-      console.error(`Generation pipeline failed for job ${job.id}:`, err);
+    // Start generation pipeline in background
+    runPipeline(job.id, image, prompt).catch((err) => {
+      console.error(`Pipeline failed for job ${job.id}:`, err);
       store.updateJob(job.id, {
         status: "failed",
         error: err.message || "Generation failed",
@@ -105,58 +58,27 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function runGenerationPipeline(
-  jobId: string,
-  base64Subject: string,
-  base64Scene: string | undefined,
-  prompt: string,
-  tier: Tier,
-  isMerge: boolean
-) {
-  // Step 1: Upload subject image to fal.ai
+async function runPipeline(jobId: string, base64Image: string, prompt: string) {
+  // Step 1: Upload image to fal.ai
   store.updateJob(jobId, { status: "uploading" });
-  const subjectUrl = await uploadToFal(base64Subject);
-  store.updateJob(jobId, { uploadedImageUrl: subjectUrl });
+  const uploadedImageUrl = await uploadImage(base64Image);
+  store.updateJob(jobId, { uploadedImageUrl });
 
-  let sceneUrl: string | undefined;
-  if (isMerge && base64Scene) {
-    sceneUrl = await uploadToFal(base64Scene);
-    store.updateJob(jobId, { sceneImageUrl: sceneUrl });
-  }
-
-  // Step 2: Submit generation
+  // Step 2: Submit video generation
   store.updateJob(jobId, { status: "generating" });
-  const requestId = isMerge
-    ? await submitMergeGeneration(prompt, subjectUrl, sceneUrl!)
-    : await submitGeneration(prompt, subjectUrl);
+  const requestId = await submitVideoGeneration(prompt, uploadedImageUrl);
 
   // Step 3: Poll for result
-  const resultImageUrl = await pollForResult(requestId, isMerge ? "merge" : "pulid");
+  const { videoUrl } = await pollForVideoResult(requestId);
 
-  if (!resultImageUrl) {
-    throw new Error("No result image returned from fal.ai");
+  if (!videoUrl) {
+    throw new Error("No result video returned from fal.ai");
   }
 
-  // Step 4: Apply watermark for free tier
-  let finalImageUrl = resultImageUrl;
-  let watermarked = false;
-
-  if (tier === "free") {
-    try {
-      const watermarkedBuffer = await applyWatermark(resultImageUrl);
-      const dataUri = `data:image/png;base64,${watermarkedBuffer.toString("base64")}`;
-      finalImageUrl = dataUri;
-      watermarked = true;
-    } catch (err) {
-      console.error("Watermark failed, using original:", err);
-    }
-  }
-
-  // Step 5: Mark as completed
+  // Step 4: Mark completed
   store.updateJob(jobId, {
     status: "completed",
-    resultImageUrl: finalImageUrl,
-    watermarked,
+    resultVideoUrl: videoUrl,
     completedAt: Date.now(),
   });
 }
