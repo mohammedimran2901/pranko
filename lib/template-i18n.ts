@@ -61,6 +61,18 @@ export const TEMPLATE_TRANSLATIONS = {
     "templates.crush.coffee.desc": "Croissant and charm",
     "templates.crush.puppy.title": "Adopted a puppy 🐕",
     "templates.crush.puppy.desc": "Instant heart-melter",
+
+    // ============ MERGE MODE (subject + scene) ============
+    "templates.merge.mansion.title": "Put me in the mansion 🏡",
+    "templates.merge.mansion.desc": "Subject + scene — homeless to homeowner",
+    "templates.merge.yacht.title": "On the yacht 🛥️",
+    "templates.merge.yacht.desc": "Subject + scene — luxury at sea",
+    "templates.merge.jet.title": "Private jet ✈️",
+    "templates.merge.jet.desc": "Subject + scene — first class life",
+    "templates.merge.car.title": "New supercar 🏎️",
+    "templates.merge.car.desc": "Subject + scene — holding the keys",
+    "templates.merge.redcarpet.title": "Red carpet 🌟",
+    "templates.merge.redcarpet.desc": "Subject + scene — paparazzi moment",
   },
   fr: {
     "templates.ex.rolex.title": "Je flex une Rolex 💍",
@@ -117,6 +129,18 @@ export const TEMPLATE_TRANSLATIONS = {
     "templates.crush.coffee.desc": "Croissant et charme",
     "templates.crush.puppy.title": "J'ai adopté un chiot 🐕",
     "templates.crush.puppy.desc": "Brise-cœur instantané",
+
+    // ============ MERGE MODE ============
+    "templates.merge.mansion.title": "Mets-moi dans le manoir 🏡",
+    "templates.merge.mansion.desc": "Sujet + scène — SDF à propriétaire",
+    "templates.merge.yacht.title": "Sur le yacht 🛥️",
+    "templates.merge.yacht.desc": "Sujet + scène — luxe en mer",
+    "templates.merge.jet.title": "Jet privé ✈️",
+    "templates.merge.jet.desc": "Sujet + scène — vie en première classe",
+    "templates.merge.car.title": "Nouvelle supercar 🏎️",
+    "templates.merge.car.desc": "Sujet + scène — les clés à la main",
+    "templates.merge.redcarpet.title": "Tapis rouge 🌟",
+    "templates.merge.redcarpet.desc": "Sujet + scène — moment paparazzi",
   },
   es: {
     "templates.ex.rolex.title": "FLEX un Rolex 💍",
@@ -173,6 +197,18 @@ export const TEMPLATE_TRANSLATIONS = {
     "templates.crush.coffee.desc": "Croissant y encanto",
     "templates.crush.puppy.title": "Adopté un cachorro 🐕",
     "templates.crush.puppy.desc": "Rompecorazones al instante",
+
+    // ============ MERGE MODE ============
+    "templates.merge.mansion.title": "Ponme en la mansión 🏡",
+    "templates.merge.mansion.desc": "Sujeto + escena — sin techo a propietario",
+    "templates.merge.yacht.title": "En el yate 🛥️",
+    "templates.merge.yacht.desc": "Sujeto + escena — lujo en el mar",
+    "templates.merge.jet.title": "Jet privado ✈️",
+    "templates.merge.jet.desc": "Sujeto + escena — vida en primera clase",
+    "templates.merge.car.title": "Supercar nuevo 🏎️",
+    "templates.merge.car.desc": "Sujeto + escena — con las llaves",
+    "templates.merge.redcarpet.title": "Alfombra roja 🌟",
+    "templates.merge.redcarpet.desc": "Sujeto + escena — momento paparazzi",
   },
 } as const;
 

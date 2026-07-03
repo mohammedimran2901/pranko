@@ -49,6 +49,10 @@
       "fish": {
         "title": "J'ai pêché un poisson record 🐟",
         "desc": "Mes potes pêcheurs sont furieux."
+      },
+      "merge": {
+        "title": "Mets-moi dans le manoir 🪄",
+        "desc": "Fusion sujet + scène — SDF à propriétaire."
       }
     }
   },
@@ -84,6 +88,12 @@
       "emoji": "😍",
       "tagline": "Bonnes vibes",
       "desc": "Flex subtilement. Subtilement. (Pas du tout subtil.)"
+    },
+    "merge": {
+      "name": "Mode Fusion",
+      "emoji": "🪄",
+      "tagline": "Deux photos. Une blague.",
+      "desc": "Upload un sujet + une scène. L'IA fusionne — SDF dans un manoir, ton chien sur un yacht."
     },
     "custom": {
       "name": "Custom",
@@ -223,6 +233,10 @@
       "languages": {
         "q": "Quelles langues ?",
         "a": "Français, anglais, espagnol. Notre gobelin parle les trois."
+      },
+      "merge": {
+        "q": "C'est quoi le Mode Fusion ?",
+        "a": "Le Mode Fusion te permet d'uploader DEUX photos — un sujet (la personne ou l'objet) et une scène (le fond). Notre IA les fusionne pour que le sujet apparaisse naturellement placé dans la scène. Exemple : un SDF dans un manoir, ou ton animal dans une voiture de sport."
       }
     }
   },

@@ -7,6 +7,7 @@ import { nanoid } from "nanoid";
 
 export type PrankStatus = "queued" | "uploading" | "generating" | "completed" | "failed";
 export type Tier = "free" | "single" | "pack" | "pro" | "lifetime";
+export type PrankEngine = "pulid" | "merge";
 
 export interface PrankJob {
   id: string;
@@ -14,7 +15,12 @@ export interface PrankJob {
   prompt: string;
   templateId: string | null;
   mode: string;
+  /** URL of the subject image (the person / object to preserve) */
   uploadedImageUrl?: string;
+  /** URL of the scene image (the background / setting to merge into) */
+  sceneImageUrl?: string;
+  /** Engine used to render this prank */
+  engine: PrankEngine;
   resultImageUrl?: string;
   watermarked?: boolean;
   error?: string;
@@ -38,6 +44,7 @@ class PrankStore {
     locale: string;
     tier: Tier;
     paid: boolean;
+    engine?: PrankEngine;
     userId?: string;
   }): PrankJob {
     const id = nanoid(12);
@@ -46,6 +53,7 @@ class PrankStore {
       id,
       status: "queued",
       ...params,
+      engine: params.engine || "pulid",
       shareToken,
       createdAt: Date.now(),
     };
@@ -101,6 +109,5 @@ declare global {
   // eslint-disable-next-line no-var
   var __prankoStore: PrankStore | undefined;
 }
-
 export const store: PrankStore =
   globalThis.__prankoStore ?? (globalThis.__prankoStore = new PrankStore());

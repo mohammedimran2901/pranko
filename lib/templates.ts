@@ -5,7 +5,7 @@
  * only the UI labels are translated via i18n keys.
  */
 
-export type Mode = "ex" | "boss" | "mom" | "roommate" | "crush" | "custom";
+export type Mode = "ex" | "boss" | "mom" | "roommate" | "crush" | "merge" | "custom";
 
 export interface PrankTemplate {
   id: string;
@@ -16,6 +16,8 @@ export interface PrankTemplate {
   prompt: string;   // English prompt sent to AI
   trending?: boolean;
   isNew?: boolean;
+  /** When true, this template uses the dual-image merge engine (subject + scene). */
+  merge?: boolean;
 }
 
 export const MODES: { id: Mode; emoji: string; nameKey: string; taglineKey: string; descKey: string; color: string }[] = [
@@ -24,6 +26,7 @@ export const MODES: { id: Mode; emoji: string; nameKey: string; taglineKey: stri
   { id: "mom",      emoji: "👩‍👧", nameKey: "modes.mom.name",      taglineKey: "modes.mom.tagline",      descKey: "modes.mom.desc",      color: "from-purple-500 to-pink-500" },
   { id: "roommate", emoji: "🏠", nameKey: "modes.roommate.name", taglineKey: "modes.roommate.tagline", descKey: "modes.roommate.desc", color: "from-orange-500 to-yellow-500" },
   { id: "crush",    emoji: "😍", nameKey: "modes.crush.name",    taglineKey: "modes.crush.tagline",    descKey: "modes.crush.desc",    color: "from-pranko-pink to-pranko-purple" },
+  { id: "merge",    emoji: "🪄", nameKey: "modes.merge.name",    taglineKey: "modes.merge.tagline",    descKey: "modes.merge.desc",    color: "from-pranko-cyan to-pranko-lime" },
   { id: "custom",   emoji: "✨", nameKey: "modes.custom.name",   taglineKey: "modes.custom.tagline",   descKey: "modes.custom.desc",   color: "from-pranko-lime to-pranko-cyan" },
 ];
 
@@ -248,6 +251,58 @@ export const TEMPLATES: PrankTemplate[] = [
     titleKey: "templates.crush.puppy.title",
     descKey: "templates.crush.puppy.desc",
     prompt: "photo of person at an animal shelter holding an adorable golden retriever puppy, soft lighting, warm smile, ultra realistic heartwarming moment",
+  },
+
+  // ============ MERGE MODE (5) — subject + scene ============
+  // All merge templates use the dual-image engine (subject preserved, scene merged).
+  {
+    id: "merge-mansion",
+    mode: "merge",
+    emoji: "🏡",
+    titleKey: "templates.merge.mansion.title",
+    descKey: "templates.merge.mansion.desc",
+    prompt: "photo of the subject standing in front of the scene setting, naturally placed in the environment, ultra realistic, sharp details, matching lighting and perspective",
+    trending: true,
+    merge: true,
+  },
+  {
+    id: "merge-yacht",
+    mode: "merge",
+    emoji: "🛥️",
+    titleKey: "templates.merge.yacht.title",
+    descKey: "templates.merge.yacht.desc",
+    prompt: "photo of the subject relaxing on the scene setting, looking confident and wealthy, natural integration, ultra realistic, sharp details",
+    trending: true,
+    merge: true,
+  },
+  {
+    id: "merge-private-jet",
+    mode: "merge",
+    emoji: "✈️",
+    titleKey: "templates.merge.jet.title",
+    descKey: "templates.merge.jet.desc",
+    prompt: "photo of the subject sitting inside the scene setting, looking out the window, luxury lifestyle, ultra realistic, sharp details",
+    isNew: true,
+    merge: true,
+  },
+  {
+    id: "merge-sports-car",
+    mode: "merge",
+    emoji: "🏎️",
+    titleKey: "templates.merge.car.title",
+    descKey: "templates.merge.car.desc",
+    prompt: "photo of the subject standing next to the scene setting, holding the keys, smiling, ultra realistic, sharp details, natural lighting",
+    isNew: true,
+    merge: true,
+  },
+  {
+    id: "merge-redcarpet",
+    mode: "merge",
+    emoji: "🌟",
+    titleKey: "templates.merge.redcarpet.title",
+    descKey: "templates.merge.redcarpet.desc",
+    prompt: "photo of the subject on the scene setting, paparazzi flashes, glamorous event look, ultra realistic, sharp details, natural integration",
+    merge: true,
   },
 ];
 

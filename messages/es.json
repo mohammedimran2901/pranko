@@ -31,7 +31,8 @@
       "grammy": {"title": "Conocí a Beyoncé en los Grammys 🎤", "desc": "Mi mamá lo posteó en Facebook. 47 compartidos."},
       "mansion": {"title": "Compré una mansión de 5M$ 🏡", "desc": "Mi papá me ofreció 50k€ de préstamo. Se lo creyó."},
       "promotion": {"title": "Me ascendieron a CEO 👔", "desc": "Mi jefe me felicitó. Lunes incómodo."},
-      "fish": {"title": "Pesqué un pez récord 🐟", "desc": "Mis amigos pescadores están furiosos."}
+      "fish": {"title": "Pesqué un pez récord 🐟", "desc": "Mis amigos pescadores están furiosos."},
+      "merge": {"title": "Ponme en la mansión 🪄", "desc": "Fusión sujeto + escena — sin techo a propietario."}
     }
   },
   "modes": {
@@ -42,6 +43,7 @@
     "mom": {"name": "Modo Mamá", "emoji": "👩‍👧", "tagline": "Haz que se lo cuente a todos", "desc": "Logros que va a screenshot y mandar al grupo familiar."},
     "roommate": {"name": "Modo Roomie", "emoji": "🏠", "tagline": "Puntillismo como servicio", "desc": "Sé más puntilloso que tu roomie puntilloso. Guerra ganada."},
     "crush": {"name": "Modo Crush", "emoji": "😍", "tagline": "Buenas vibras", "desc": "FLEX sutil. Sutilmente. (Nada sutil.)"},
+    "merge": {"name": "Modo Fusión", "emoji": "🪄", "tagline": "Dos fotos. Una broma.", "desc": "Sube un sujeto + una escena. La IA fusiona — sin techo en una mansión, tu perro en un yate."},
     "custom": {"name": "Custom", "emoji": "✨", "tagline": "Lo que imagines", "desc": "Describe la broma y deja que nuestro goblin se encargue."}
   },
   "howItWorks": {
@@ -84,7 +86,8 @@
       "real": {"q": "¿Qué tan real se ve?", "a": "Sospechosamente real. Nuestra IA usa tecnología de preservación de rostro entrenada con tu selfie. La mayoría de la gente no nota la diferencia. Ese es el punto. No abuses de este poder."},
       "cancel": {"q": "¿Puedo cancelar cuando quiera?", "a": "Sí — un clic en tu cuenta. Sin preguntas, sin culpabilidad. Nos vas a hacer falta, pero lo entendemos."},
       "refund": {"q": "¿Política de reembolso?", "a": "Si tu broma salió mal (cara borrosa, artefactos raros), escríbenos en 7 días y te devolvemos el dinero. Sin preguntas."},
-      "languages": {"q": "¿Qué idiomas soportáis?", "a": "Inglés, francés y español. Nuestro goblin habla los tres."}
+      "languages": {"q": "¿Qué idiomas soportáis?", "a": "Inglés, francés y español. Nuestro goblin habla los tres."},
+      "merge": {"q": "¿Qué es el Modo Fusión?", "a": "El Modo Fusión te permite subir DOS fotos — un sujeto (la persona u objeto) y una escena (el fondo). Nuestra IA las fusiona para que el sujeto aparezca naturalmente colocado en la escena. Ejemplo: un sin techo en una mansión, o tu mascota en un coche deportivo."}
     }
   },
   "cta": {

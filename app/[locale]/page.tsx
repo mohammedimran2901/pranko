@@ -41,6 +41,9 @@ export default function LandingPage() {
     { id: "crush-vacation", key: "fish" },
   ];
 
+  // Display order: 6 single-image modes first, then Merge as the new "wow" feature
+  const allModes = ["ex", "boss", "mom", "roommate", "crush", "merge", "custom"];
+
   return (
     <>
       {/* ========== HERO ========== */}
@@ -106,8 +109,8 @@ export default function LandingPage() {
             transition={{ delay: 0.5 }}
             className="flex flex-col items-center gap-3 mt-8"
           >
-            <Link href={`${prefix}/create`} className="btn-pranko !text-lg sm:!text-xl !px-10 sm:!px-14 !py-5 glow-lime">
-              {tHero("cta")} <Sparkles size={20} />
+            <Link href={`${prefix}/create?mode=merge`} className="btn-pranko !text-lg sm:!text-xl !px-10 sm:!px-14 !py-5 glow-lime">
+              🪄 Try Merge Mode
             </Link>
             <p className="text-pranko-muted text-sm">{tHero("ctaSub")}</p>
             <div className="flex items-center gap-4 text-xs text-pranko-muted mt-2">
@@ -182,7 +185,7 @@ export default function LandingPage() {
             <p className="text-pranko-muted text-lg">{tModes("subtitle")}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {["ex", "boss", "mom", "roommate", "crush", "custom"].map((mode, i) => (
+            {allModes.map((mode, i) => (
               <motion.div
                 key={mode}
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -192,8 +195,15 @@ export default function LandingPage() {
               >
                 <Link
                   href={`${prefix}/create?mode=${mode}`}
-                  className="card-pranko block p-6 group hover:scale-[1.02] transition-transform"
+                  className={`card-pranko block p-6 group hover:scale-[1.02] transition-transform relative ${
+                    mode === "merge" ? "border-pranko-cyan/60 bg-pranko-cyan/5 hover:border-pranko-cyan" : ""
+                  }`}
                 >
+                  {mode === "merge" && (
+                    <div className="absolute -top-3 right-4 bg-pranko-cyan text-pranko-bg text-[10px] font-display font-bold px-2 py-0.5 rounded-full tracking-wider">
+                      NEW
+                    </div>
+                  )}
                   <div className="text-5xl mb-3">{tModes(`${mode}.emoji`)}</div>
                   <h3 className="font-display font-bold text-xl text-white mb-1 group-hover:text-pranko-lime transition-colors">
                     {tModes(`${mode}.name`)}
@@ -331,7 +341,7 @@ export default function LandingPage() {
             {tFaq("title")}
           </h2>
           <div className="space-y-3">
-            {["legal", "stored", "real", "cancel", "refund", "languages"].map((key, i) => (
+            {["legal", "stored", "real", "cancel", "refund", "languages", "merge"].map((key, i) => (
               <div key={key} className="card-pranko overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}

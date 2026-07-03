@@ -49,6 +49,10 @@
       "fish": {
         "title": "Caught a world-record fish 🐟",
         "desc": "Fishing buddies are furious."
+      },
+      "merge": {
+        "title": "Put me in the mansion 🪄",
+        "desc": "Subject + scene merge — homeless to homeowner."
       }
     }
   },
@@ -84,6 +88,12 @@
       "emoji": "😍",
       "tagline": "Vibes only",
       "desc": "Subtly flex. Subtly. (Not subtle at all.)"
+    },
+    "merge": {
+      "name": "Merge Mode",
+      "emoji": "🪄",
+      "tagline": "Two photos. One prank.",
+      "desc": "Upload a subject + a scene. AI merges them — homeless man in a mansion, your dog on a yacht."
     },
     "custom": {
       "name": "Custom",
@@ -223,6 +233,10 @@
       "languages": {
         "q": "What languages do you support?",
         "a": "English, French, and Spanish. Our goblin speaks all three."
+      },
+      "merge": {
+        "q": "What is Merge Mode?",
+        "a": "Merge Mode lets you upload TWO photos — a subject (the person or object) and a scene (the background). Our AI merges them so the subject appears naturally placed in the scene. Example: a homeless man in a mansion, or your pet in a sports car."
       }
     }
   },
