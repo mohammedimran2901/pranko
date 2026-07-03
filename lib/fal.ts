@@ -4,6 +4,8 @@
  *
  * Model: fal-ai/seedance-2/mini/reference-to-video
  * Input: image + text prompt → output: video with audio
+ *
+ * Cost-optimized: 480p, 5 second duration, no audio.
  */
 
 const FAL_BASE = "https://queue.fal.run";
@@ -40,7 +42,6 @@ export async function uploadImage(base64DataUri: string): Promise<string> {
   const buffer = Buffer.from(base64Data, "base64");
   const ext = contentType.split("/")[1] || "png";
 
-  // Initiate upload
   const initRes = await fetch(`${STORAGE_BASE}/upload/initiate`, {
     method: "POST",
     headers: getHeaders(),
@@ -54,7 +55,6 @@ export async function uploadImage(base64DataUri: string): Promise<string> {
 
   const { upload_url, file_url } = await initRes.json();
 
-  // Upload binary
   const uploadRes = await fetch(upload_url, {
     method: "PUT",
     headers: { "Content-Type": contentType },
@@ -71,7 +71,7 @@ export async function uploadImage(base64DataUri: string): Promise<string> {
 
 /**
  * Submit a Seedance 2.0 Mini generation request.
- * Returns the request_id for polling.
+ * Uses cheapest settings: 480p, 5 seconds, no audio.
  */
 export async function submitVideoGeneration(
   prompt: string,
@@ -85,10 +85,8 @@ export async function submitVideoGeneration(
     body: JSON.stringify({
       prompt,
       image_urls: [imageUrl],
-      generate_audio: true,
-      duration: "auto",
-      aspect_ratio: "9:16",
-      resolution: "720p",
+      duration: "5",
+      resolution: "480p",
     }),
   });
 
@@ -103,11 +101,10 @@ export async function submitVideoGeneration(
 
 /**
  * Poll for a completed video result.
- * Returns { videoUrl } when done.
  */
 export async function pollForVideoResult(
   requestId: string,
-  maxRetries = 180,
+  maxRetries = 60,
   intervalMs = 2000
 ): Promise<{ videoUrl: string }> {
   const statusUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${requestId}/status`;
