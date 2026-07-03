@@ -1,8 +1,8 @@
 /**
  * POST /api/create-payment-intent
- * Creates a Stripe PaymentIntent for prank purchases.
- * Body: { tier: "single" | "pack" | "pro" | "lifetime" }
- * Returns: { clientSecret }
+ * Creates a Stripe Checkout Session for credit purchases.
+ * Body: { tier: "weekly" }
+ * Returns: { url } — redirect to Stripe Checkout
  */
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -11,65 +11,58 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-06-20",
 });
 
-const PRICES: Record<string, number> = {
-  single: 299,   // $2.99
-  pack: 799,     // $7.99
-  pro: 1999,     // $19.99/month
-  lifetime: 4999 // $49.99 one-time
+const PLANS: Record<string, { name: string; description: string; price: number; credits: number }> = {
+  weekly: {
+    name: "Pranko Weekly",
+    description: "6 credits per week — 1 credit = 1 prank video. Cancel anytime.",
+    price: 599, // $5.99
+    credits: 6,
+  },
 };
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { tier } = body as { tier?: string };
+    const { tier } = (await req.json()) as { tier?: string };
 
-    if (!tier || !PRICES[tier]) {
-      return NextResponse.json(
-        { error: "Invalid tier" },
-        { status: 400 }
-      );
+    if (!tier || !PLANS[tier]) {
+      return NextResponse.json({ error: "Invalid tier" }, { status: 400 });
     }
 
-    const amount = PRICES[tier];
-    const isSubscription = tier === "pro";
+    const plan = PLANS[tier];
 
-    let clientSecret: string;
+    const origin = req.headers.get("origin") || req.nextUrl.origin;
 
-    if (isSubscription) {
-      // For subscription, create a setup intent or use billing portal
-      // For MVP, we'll treat it as a payment intent with recurring billing
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount,
-        currency: "usd",
-        metadata: {
-          tier,
-          type: "subscription",
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: plan.name,
+              description: plan.description,
+            },
+            unit_amount: plan.price,
+            recurring: {
+              interval: "week",
+            },
+          },
+          quantity: 1,
         },
-        automatic_payment_methods: {
-          enabled: true,
-        },
-      });
-      clientSecret = paymentIntent.client_secret || "";
-    } else {
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount,
-        currency: "usd",
-        metadata: {
-          tier,
-          type: "one_time",
-        },
-        automatic_payment_methods: {
-          enabled: true,
-        },
-      });
-      clientSecret = paymentIntent.client_secret || "";
-    }
+      ],
+      metadata: {
+        tier,
+        credits: String(plan.credits),
+      },
+      success_url: `${origin}/en/result/success?credits=${plan.credits}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/en/pricing`,
+    });
 
-    return NextResponse.json({ clientSecret, tier, amount });
+    return NextResponse.json({ url: session.url });
   } catch (error: any) {
     console.error("create-payment-intent error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to create payment intent" },
+      { error: error.message || "Failed to create checkout session" },
       { status: 500 }
     );
   }

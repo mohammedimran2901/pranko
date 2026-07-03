@@ -43,10 +43,16 @@ function GeneratingPageInner() {
         const res = await fetch(url);
         if (!res.ok) return;
         const data = await res.json();
-        if (data.status === "completed" && data.shareToken) {
+
+        if (data.status === "completed") {
           clearInterval(poll);
           clearInterval(interval);
-          router.push(`${prefix}/result/${data.shareToken}`);
+          // Pass video URL directly in query params (bypasses in-memory store)
+          const vidParam = data.resultVideoUrl
+            ? `&video=${encodeURIComponent(data.resultVideoUrl)}`
+            : "";
+          const tokParam = data.shareToken ? `&stok=${data.shareToken}` : "";
+          router.push(`${prefix}/result/view?job=${jobId}${vidParam}${tokParam}`);
         } else if (data.status === "failed") {
           clearInterval(poll);
           clearInterval(interval);
