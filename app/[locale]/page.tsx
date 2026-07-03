@@ -62,7 +62,7 @@ export default function LandingPage() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-pranko-lime" />
               </span>
               <span className="text-xs sm:text-sm text-pranko-muted">
-                <span className="text-pranko-lime font-bold">2,347</span> {tHero("liveCounter").replace("{count}", "")}
+                {tHero("liveCounter")}
               </span>
             </div>
           </motion.div>
