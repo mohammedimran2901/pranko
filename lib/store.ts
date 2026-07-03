@@ -1,6 +1,9 @@
 /**
  * Simple in-memory store for prank video jobs.
  * For MVP — in production, swap for Supabase or Redis.
+ * Note: Vercel serverless is stateless, so this only works
+ * within a single function invocation. For cross-invocation
+ * state, the client uses the falRequestId to poll fal.ai directly.
  */
 import { nanoid } from "nanoid";
 
@@ -10,6 +13,7 @@ export interface PrankJob {
   id: string;
   status: PrankStatus;
   prompt: string;
+  falRequestId: string;
   uploadedImageUrl?: string;
   resultVideoUrl?: string;
   error?: string;
@@ -26,12 +30,14 @@ class PrankStore {
   createJob(params: {
     prompt: string;
     locale: string;
+    falRequestId: string;
+    uploadedImageUrl?: string;
   }): PrankJob {
     const id = nanoid(12);
     const shareToken = nanoid(16);
     const job: PrankJob = {
       id,
-      status: "queued",
+      status: "generating",
       ...params,
       shareToken,
       createdAt: Date.now(),

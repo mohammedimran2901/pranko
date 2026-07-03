@@ -18,6 +18,7 @@ function GeneratingPageInner() {
   const locale = useLocale();
   const t = useTranslations("generating");
   const jobId = searchParams.get("job");
+  const falId = searchParams.get("fal");
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const prefix = locale === "en" ? "" : `/${locale}`;
@@ -36,7 +37,10 @@ function GeneratingPageInner() {
 
     const poll = setInterval(async () => {
       try {
-        const res = await fetch(`/api/status?id=${jobId}`);
+        const url = falId
+          ? `/api/status?id=${jobId}&fal=${falId}`
+          : `/api/status?id=${jobId}`;
+        const res = await fetch(url);
         if (!res.ok) return;
         const data = await res.json();
         if (data.status === "completed" && data.shareToken) {
@@ -55,7 +59,7 @@ function GeneratingPageInner() {
       clearInterval(poll);
       clearInterval(interval);
     };
-  }, [jobId, router, prefix, steps.length]);
+  }, [jobId, falId, router, prefix, steps.length]);
 
   if (error) {
     return (

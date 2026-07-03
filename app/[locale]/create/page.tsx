@@ -59,7 +59,8 @@ function CreatePageInner() {
       }
 
       const data = await res.json();
-      router.push(`${prefix}/generating?job=${data.jobId}`);
+      const falParam = data.falRequestId ? `&fal=${data.falRequestId}` : "";
+      router.push(`${prefix}/generating?job=${data.jobId}${falParam}`);
     } catch (e: any) {
       alert(e.message || "Something went wrong");
       setGenerating(false);
