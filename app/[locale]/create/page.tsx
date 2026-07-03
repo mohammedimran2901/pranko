@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, Sparkles, X, Loader2, ArrowRight, Flame, Star, Plus, ImageIcon } from "lucide-react";
+import { Upload, Sparkles, X, Loader2, ArrowRight, Flame, Star } from "lucide-react";
 import { TEMPLATES, MODES, type Mode, getTemplateById, getTemplatesByMode } from "@/lib/templates";
 import { TEMPLATE_TRANSLATIONS } from "@/lib/template-i18n";
 
@@ -40,17 +40,11 @@ function CreatePageInner() {
   const [mode, setMode] = useState<Mode>(initialMode);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [customPrompt, setCustomPrompt] = useState("");
-  // Single-image (subject) — used for all modes
   const [image, setImage] = useState<string | null>(null);
-  // Scene image — only used in merge mode
-  const [sceneImage, setSceneImage] = useState<string | null>(null);
   const [tier, setTier] = useState<Tier>(initialTier);
   const [uploading, setUploading] = useState(false);
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const fileRef = useRef<HTMLInputElement>(null);
-  const sceneFileRef = useRef<HTMLInputElement>(null);
-
-  const isMerge = mode === "merge";
 
   useEffect(() => {
     setStep(image ? 2 : 1);
@@ -59,86 +53,47 @@ function CreatePageInner() {
   function pickTemplate(id: string) {
     setSelectedTemplate(id);
     setMode(getTemplateById(id)?.mode || mode);
-    setTimeout(() => {
-      // For merge mode, focus the subject upload
-      fileRef.current?.click();
-    }, 200);
   }
 
-  async function handleFile(file: File): Promise<string | null> {
-    if (!file.type.startsWith("image/")) return null;
+  async function handleFile(file: File) {
+    if (!file.type.startsWith("image/")) return;
     if (file.size > 10 * 1024 * 1024) {
       alert("Max 10MB");
-      return null;
+      return;
     }
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        resolve(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  async function onSubjectFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
     setUploading(true);
-    const data = await handleFile(file);
-    if (data) setImage(data);
-    setUploading(false);
-    e.target.value = "";
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImage(e.target?.result as string);
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
   }
 
-  async function onSceneFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const data = await handleFile(file);
-    if (data) setSceneImage(data);
-    setUploading(false);
-    e.target.value = "";
-  }
-
-  function onDrop(e: React.DragEvent, target: "subject" | "scene") {
+  function onDrop(e: React.DragEvent) {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
-    if (file) {
-      handleFile(file).then((data) => {
-        if (!data) return;
-        if (target === "subject") setImage(data);
-        else setSceneImage(data);
-      });
-    }
+    if (file) handleFile(file);
   }
 
   async function generate() {
     if (!image) return;
     if (mode === "custom" && !customPrompt.trim()) return;
-    if (isMerge && !sceneImage) {
-      alert("Please add a scene image to merge your subject into.");
-      return;
-    }
     setUploading(true);
     try {
       const template = selectedTemplate ? getTemplateById(selectedTemplate) : null;
-      const prompt =
-        mode === "custom"
-          ? customPrompt
-          : template?.prompt || customPrompt;
+      const prompt = mode === "custom" ? customPrompt : (template?.prompt || customPrompt);
 
       const res = await fetch("/api/create-job", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          subjectImage: image,
-          sceneImage: sceneImage || undefined,
+          image,
           prompt,
           templateId: selectedTemplate,
           mode,
           locale,
           tier,
-          engine: isMerge ? "merge" : "pulid",
         }),
       });
 
@@ -156,18 +111,14 @@ function CreatePageInner() {
   }
 
   const templatesForMode = mode === "custom" ? [] : getTemplatesByMode(mode);
-  // For merge mode we don't really need a template, but if one is selected use its prompt.
-  // The subject + scene are the heart of merge mode.
-  const ready =
-    image &&
-    (isMerge ? sceneImage : mode === "custom" ? customPrompt.trim() : true);
+  const ready = image && (mode === "custom" ? customPrompt.trim() : selectedTemplate);
 
   return (
     <div className="min-h-screen pb-32">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
         {/* Step indicator */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          {[1, 2].map((s) => (
+          {[1, 2, 3].map((s) => (
             <div
               key={s}
               className={`h-1.5 rounded-full transition-all ${
@@ -177,7 +128,7 @@ function CreatePageInner() {
           ))}
         </div>
 
-        {/* Step 1: Mode + Template + (Merge intro) */}
+        {/* Step 1: Mode + Template + Upload */}
         <AnimatePresence mode="wait">
           {step === 1 && (
             <motion.div
@@ -187,11 +138,9 @@ function CreatePageInner() {
               exit={{ opacity: 0, y: -20 }}
             >
               <h1 className="text-display text-3xl sm:text-4xl text-center mb-2 text-white">
-                {isMerge ? "🪄 " : "🎭 "}{t("title")}
+                🎭 {t("title")}
               </h1>
-              <p className="text-pranko-muted text-center mb-8">
-                {t("step1")} → {t("step2")} → {t("step3")} → {t("step4")}
-              </p>
+              <p className="text-pranko-muted text-center mb-8">{t("step1")} → {t("step2")} → {t("step3")} → {t("step4")}</p>
 
               {/* Mode tabs */}
               <div className="flex gap-2 overflow-x-auto pb-2 mb-6 -mx-1 px-1">
@@ -201,7 +150,6 @@ function CreatePageInner() {
                     onClick={() => {
                       setMode(m.id);
                       setSelectedTemplate(null);
-                      setCustomPrompt("");
                     }}
                     className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-display font-bold border-2 transition-all ${
                       mode === m.id
@@ -215,39 +163,8 @@ function CreatePageInner() {
                 ))}
               </div>
 
-              {/* Merge Mode Quick Note */}
-              {isMerge && (
-                <div className="card-pranko p-4 mb-6 border-pranko-cyan/40 bg-pranko-cyan/5">
-                  <div className="flex gap-3">
-                    <div className="text-2xl">🪄</div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-white mb-1">Two photos. One prank.</p>
-                      <p className="text-xs text-pranko-muted leading-relaxed">
-                        Upload a subject (the person or object) and a scene (the background). We'll merge them with AI — like a homeless man in a mansion, or your dog on a yacht.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Template gallery OR custom prompt OR (merge: skip templates) */}
-              {isMerge ? (
-                <div className="card-pranko p-5">
-                  <label className="block text-sm font-semibold text-white mb-2">
-                    {t("customTitle") || "Describe the merge (optional)"}
-                  </label>
-                  <textarea
-                    value={customPrompt}
-                    onChange={(e) => setCustomPrompt(e.target.value)}
-                    placeholder='e.g. "Make him look like he owns the place, confident smile, natural lighting"'
-                    rows={2}
-                    className="w-full bg-pranko-bg border-2 border-pranko-border rounded-xl p-3 text-white placeholder-pranko-muted focus:border-pranko-lime focus:outline-none resize-none text-sm"
-                  />
-                  <p className="text-xs text-pranko-muted mt-2">
-                    Tip: leave blank and our goblin will write a smart prompt for you.
-                  </p>
-                </div>
-              ) : mode === "custom" ? (
+              {/* Template gallery OR custom prompt */}
+              {mode === "custom" ? (
                 <div className="card-pranko p-5">
                   <label className="block text-sm font-semibold text-white mb-2">
                     {t("customTitle")}
@@ -288,19 +205,30 @@ function CreatePageInner() {
                 </div>
               )}
 
-              {/* Skip-to-upload button for merge mode (no template required) */}
-              {isMerge && (
-                <button
+              {/* Upload area - always visible in step 1 */}
+              <div className="mt-6">
+                <div
                   onClick={() => fileRef.current?.click()}
-                  className="btn-pranko w-full !text-lg !py-5 mt-6 glow-lime"
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={onDrop}
+                  className="card-pranko border-dashed border-4 border-pranko-border hover:border-pranko-lime/50 p-8 text-center cursor-pointer transition-colors"
                 >
-                  <Upload size={20} /> Add your first photo
-                </button>
-              )}
+                  <div className="text-5xl mb-2">📷</div>
+                  <p className="font-display font-bold text-lg text-white mb-1">{t("uploadButton")}</p>
+                  <p className="text-pranko-muted text-sm">{t("uploadTip")}</p>
+                </div>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+                />
+              </div>
             </motion.div>
           )}
 
-          {/* Step 2: Upload + Generate */}
+          {/* Step 2: Upload preview + Generate */}
           {step === 2 && (
             <motion.div
               key="step2"
@@ -309,135 +237,23 @@ function CreatePageInner() {
               exit={{ opacity: 0, y: -20 }}
             >
               <h1 className="text-display text-3xl sm:text-4xl text-center mb-2 text-white">
-                {isMerge ? "🪄 " : "📸 "}{t("uploadTitle")}
+                📸 {t("uploadTitle")}
               </h1>
-              <p className="text-pranko-muted text-center mb-8">
-                {isMerge
-                  ? "Photo 1 is your subject · Photo 2 is the scene"
-                  : t("uploadSub")}
-              </p>
+              <p className="text-pranko-muted text-center mb-8">{t("uploadSub")}</p>
 
-              {isMerge ? (
-                // ============ MERGE MODE: dual upload ============
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* Photo 1 — Subject (required) */}
-                  <div
-                    className={`card-pranko p-3 ${!image ? "border-dashed border-4 border-pranko-border hover:border-pranko-lime/50 cursor-pointer" : ""}`}
-                    onClick={() => !image && fileRef.current?.click()}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => onDrop(e, "subject")}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">📷</span>
-                        <div>
-                          <p className="text-xs text-pranko-muted leading-none">Photo 1</p>
-                          <p className="text-sm font-semibold text-white leading-tight">Subject</p>
-                        </div>
-                      </div>
-                      <span className="text-[10px] uppercase tracking-wider font-bold text-pranko-lime bg-pranko-lime/10 px-2 py-0.5 rounded-full">
-                        Required
-                      </span>
-                    </div>
-                    {image ? (
-                      <div className="relative aspect-square rounded-xl overflow-hidden bg-pranko-bg">
-                        <img src={image} alt="Subject" className="w-full h-full object-cover" />
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setImage(null); }}
-                          className="absolute top-2 right-2 p-1.5 bg-pranko-bg/80 backdrop-blur rounded-full text-white hover:text-pranko-lime"
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="aspect-square flex flex-col items-center justify-center text-pranko-muted gap-1">
-                        <ImageIcon size={28} />
-                        <p className="text-xs">Tap or drop</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Photo 2 — Scene (required in merge mode) */}
-                  <div
-                    className={`card-pranko p-3 ${!sceneImage ? "border-dashed border-4 border-pranko-border hover:border-pranko-cyan/50 cursor-pointer" : ""}`}
-                    onClick={() => !sceneImage && sceneFileRef.current?.click()}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => onDrop(e, "scene")}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">🎬</span>
-                        <div>
-                          <p className="text-xs text-pranko-muted leading-none">Photo 2</p>
-                          <p className="text-sm font-semibold text-white leading-tight">Scene</p>
-                        </div>
-                      </div>
-                      <span className="text-[10px] uppercase tracking-wider font-bold text-pranko-cyan bg-pranko-cyan/10 px-2 py-0.5 rounded-full">
-                        Required
-                      </span>
-                    </div>
-                    {sceneImage ? (
-                      <div className="relative aspect-square rounded-xl overflow-hidden bg-pranko-bg">
-                        <img src={sceneImage} alt="Scene" className="w-full h-full object-cover" />
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setSceneImage(null); }}
-                          className="absolute top-2 right-2 p-1.5 bg-pranko-bg/80 backdrop-blur rounded-full text-white hover:text-pranko-lime"
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="aspect-square flex flex-col items-center justify-center text-pranko-muted gap-1">
-                        <ImageIcon size={28} />
-                        <p className="text-xs">Tap or drop</p>
-                      </div>
-                    )}
+              {image && (
+                <div className="card-pranko p-4">
+                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-pranko-bg">
+                    <img src={image} alt="Your selfie" className="w-full h-full object-contain" />
+                    <button
+                      onClick={() => setImage(null)}
+                      className="absolute top-2 right-2 p-1.5 bg-pranko-bg/80 backdrop-blur rounded-full text-white hover:text-pranko-lime"
+                    >
+                      <X size={18} />
+                    </button>
                   </div>
                 </div>
-              ) : (
-                // ============ SINGLE MODE: original UI ============
-                <>
-                  {!image ? (
-                    <div
-                      onClick={() => fileRef.current?.click()}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => onDrop(e, "subject")}
-                      className="card-pranko border-dashed border-4 border-pranko-border hover:border-pranko-lime/50 p-12 text-center cursor-pointer transition-colors"
-                    >
-                      <div className="text-6xl mb-3">📷</div>
-                      <p className="font-display font-bold text-lg text-white mb-1">{t("uploadButton")}</p>
-                      <p className="text-pranko-muted text-sm">{t("uploadTip")}</p>
-                    </div>
-                  ) : (
-                    <div className="card-pranko p-4">
-                      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-pranko-bg">
-                        <img src={image} alt="Your selfie" className="w-full h-full object-contain" />
-                        <button
-                          onClick={() => setImage(null)}
-                          className="absolute top-2 right-2 p-1.5 bg-pranko-bg/80 backdrop-blur rounded-full text-white hover:text-pranko-lime"
-                        >
-                          <X size={18} />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </>
               )}
-
-              <input
-                ref={fileRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={onSubjectFile}
-              />
-              <input
-                ref={sceneFileRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={onSceneFile}
-              />
 
               {/* Tier selector */}
               {image && (
