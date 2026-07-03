@@ -1,17 +1,13 @@
 /**
  * Watermark utility — overlays a Pranko watermark on free-tier images.
- * Used in API route to add watermark to generated images.
- *
- * For server-side canvas work, we use the `canvas` package on Node.js.
- * (Already declared in package.json)
+ * Uses `sharp` for image processing (works on Vercel serverless).
  */
-import { createCanvas, loadImage, registerFont } from "canvas";
-import path from "path";
+import sharp from "sharp";
 
 const WATERMARK_TEXT = "Made on Pranko 🤡 pranko.app";
 
 /**
- * Apply watermark to an image buffer (PNG/JPEG).
+ * Apply watermark to an image from a URL.
  * Returns a new PNG buffer.
  */
 export async function applyWatermark(imageUrl: string): Promise<Buffer> {
@@ -22,54 +18,44 @@ export async function applyWatermark(imageUrl: string): Promise<Buffer> {
   const arrayBuffer = await response.arrayBuffer();
   const imageBuffer = Buffer.from(arrayBuffer);
 
-  const image = await loadImage(imageBuffer);
-  const canvas = createCanvas(image.width, image.height);
-  const ctx = canvas.getContext("2d");
+  const metadata = await sharp(imageBuffer).metadata();
+  const width = metadata.width || 1024;
+  const height = metadata.height || 1024;
+  const baseSize = Math.max(width, height);
 
-  // Draw original image
-  ctx.drawImage(image, 0, 0);
-
-  // Calculate font size based on image dimensions
-  const baseSize = Math.max(image.width, image.height);
+  // Create watermark overlay SVG
   const fontSize = Math.max(14, Math.floor(baseSize / 30));
-
-  // Draw diagonal repeated watermark across the image (subtle)
-  ctx.save();
-  ctx.globalAlpha = 0.18;
-  ctx.fillStyle = "#FFFFFF";
-  ctx.font = `bold ${fontSize}px "Arial", sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
+  const footerHeight = Math.floor(baseSize / 18);
   const stepX = fontSize * 12;
   const stepY = fontSize * 6;
 
-  // Rotate context and tile watermark
-  for (let y = -image.height; y < image.height * 2; y += stepY) {
-    for (let x = -image.width; x < image.width * 2; x += stepX) {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(-Math.PI / 8);
-      ctx.fillText(WATERMARK_TEXT, 0, 0);
-      ctx.restore();
+  // Build diagonal tiled watermark SVG
+  let textElements = "";
+  for (let y = -height; y < height * 2; y += stepY) {
+    for (let x = -width; x < width * 2; x += stepX) {
+      textElements += `<text x="${x}" y="${y}" transform="rotate(-22.5, ${x}, ${y})" fill="white" opacity="0.18" font-size="${fontSize}" font-weight="bold" font-family="Arial, sans-serif" text-anchor="middle" dominant-baseline="middle">${WATERMARK_TEXT}</text>`;
     }
   }
-  ctx.restore();
 
-  // Add a solid footer band with the brand handle (more visible)
-  const footerHeight = Math.floor(baseSize / 18);
-  ctx.fillStyle = "rgba(199, 255, 61, 0.95)"; // Pranko lime
-  ctx.fillRect(0, image.height - footerHeight, image.width, footerHeight);
+  const overlaySvg = Buffer.from(`
+    <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+      ${textElements}
+      <rect x="0" y="${height - footerHeight}" width="${width}" height="${footerHeight}" fill="rgba(199, 255, 61, 0.95)" />
+      <text x="${width / 2}" y="${height - footerHeight / 2}" fill="#0A0118" font-size="${Math.floor(footerHeight * 0.5)}" font-weight="bold" font-family="Arial, sans-serif" text-anchor="middle" dominant-baseline="middle">${WATERMARK_TEXT}</text>
+    </svg>
+  `);
 
-  ctx.fillStyle = "#0A0118";
-  ctx.font = `bold ${Math.floor(footerHeight * 0.5)}px "Arial", sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(
-    WATERMARK_TEXT,
-    image.width / 2,
-    image.height - footerHeight / 2
-  );
+  // Composite the watermark overlay onto the original image
+  const result = await sharp(imageBuffer)
+    .composite([
+      {
+        input: overlaySvg,
+        top: 0,
+        left: 0,
+      },
+    ])
+    .png()
+    .toBuffer();
 
-  return canvas.toBuffer("image/png");
+  return result;
 }
