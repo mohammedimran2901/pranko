@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef, Suspense } from "react";
+import { useState, useRef, Suspense, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { Sparkles, X, Loader2 } from "lucide-react";
+import { Sparkles, X, Loader2, CreditCard, Coins } from "lucide-react";
 
 export default function CreatePage() {
   return (
@@ -23,7 +23,17 @@ function CreatePageInner() {
   const [image, setImage] = useState<string | null>(null);
   const [prompt, setPrompt] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [credits, setCredits] = useState<number | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Pull the live credit balance from the server.
+    fetch("/api/credits")
+      .then((r) => r.json())
+      .then((d) => setCredits(d.credits ?? 0))
+      .catch(() => setCredits(0));
+  }, []);
 
   async function handleFile(file: File) {
     if (!file.type.startsWith("image/")) return;
@@ -42,6 +52,31 @@ function CreatePageInner() {
     if (file) handleFile(file);
   }
 
+  async function startCheckout() {
+    setCheckoutLoading(true);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locale }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Checkout failed");
+      }
+      const { url } = await res.json();
+      if (url) {
+        window.location.href = url;
+        return;
+      }
+      throw new Error("No checkout URL returned");
+    } catch (e: any) {
+      alert(e.message || "Checkout failed");
+    } finally {
+      setCheckoutLoading(false);
+    }
+  }
+
   async function generateVideo() {
     if (!image || !prompt.trim()) return;
     setGenerating(true);
@@ -53,12 +88,30 @@ function CreatePageInner() {
         body: JSON.stringify({ image, prompt: prompt.trim(), locale }),
       });
 
+      // ── 402: out of credits → start Polar checkout ───────────────
+      if (res.status === 402) {
+        const data = await res.json().catch(() => ({}));
+        setGenerating(false);
+        // Optimistically refresh balance.
+        setCredits(0);
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+          return;
+        }
+        // Fall back to manual checkout flow.
+        await startCheckout();
+        return;
+      }
+
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || "Failed to create job");
       }
 
       const data = await res.json();
+      if (typeof data.creditsRemaining === "number") {
+        setCredits(data.creditsRemaining);
+      }
       const falParam = data.falRequestId ? `&fal=${data.falRequestId}` : "";
       router.push(`${prefix}/generating?job=${data.jobId}${falParam}`);
     } catch (e: any) {
@@ -67,14 +120,62 @@ function CreatePageInner() {
     }
   }
 
+  const hasCredits = (credits ?? 0) > 0;
+
   return (
     <div className="min-h-screen pb-32">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-display text-3xl sm:text-4xl text-center mb-2 text-white">
-            🎬 {t("title")}
-          </h1>
+          {/* Header + credit badge */}
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-display text-3xl sm:text-4xl text-white">
+              🎬 {t("title")}
+            </h1>
+            <div
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${
+                hasCredits
+                  ? "bg-pranko-lime/20 text-pranko-lime"
+                  : "bg-pranko-pink/20 text-pranko-pink"
+              }`}
+              title="Credits remaining this week"
+            >
+              <Coins size={14} />
+              {credits === null ? "…" : credits}
+            </div>
+          </div>
           <p className="text-pranko-muted text-center mb-8">{t("subtitle")}</p>
+
+          {/* No-credits banner */}
+          {credits !== null && credits <= 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="card-pranko p-5 mb-6 border-2 border-pranko-lime/40"
+            >
+              <div className="flex items-start gap-3">
+                <div className="text-3xl">💳</div>
+                <div className="flex-1">
+                  <p className="font-display font-bold text-white text-lg mb-1">
+                    Subscribe to generate prank videos
+                  </p>
+                  <p className="text-pranko-muted text-sm mb-3">
+                    6 credits per week · 1 credit = 1 prank video · $4.99/week · cancel anytime.
+                  </p>
+                  <button
+                    onClick={startCheckout}
+                    disabled={checkoutLoading}
+                    className="btn-pranko-pink !text-sm !py-2.5 !px-5 glow-pink inline-flex"
+                  >
+                    {checkoutLoading ? (
+                      <><Loader2 className="animate-spin" size={16} /> Opening checkout…</>
+                    ) : (
+                      <><CreditCard size={16} /> Subscribe — $4.99/week</>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           {/* Upload area */}
           {!image ? (
@@ -130,17 +231,31 @@ function CreatePageInner() {
               />
               <p className="text-pranko-muted text-xs mt-1 text-right">{prompt.length}/1000</p>
 
-              <button
-                onClick={generateVideo}
-                disabled={!prompt.trim() || generating}
-                className="btn-pranko w-full !text-lg !py-5 mt-4 glow-lime"
-              >
-                {generating ? (
-                  <><Loader2 className="animate-spin" /> Generating...</>
-                ) : (
-                  <>{t("generateButton")} <Sparkles size={18} /></>
-                )}
-              </button>
+              {hasCredits ? (
+                <button
+                  onClick={generateVideo}
+                  disabled={!prompt.trim() || generating}
+                  className="btn-pranko w-full !text-lg !py-5 mt-4 glow-lime"
+                >
+                  {generating ? (
+                    <><Loader2 className="animate-spin" /> Generating...</>
+                  ) : (
+                    <>{t("generateButton")} <Sparkles size={18} /></>
+                  )}
+                </button>
+              ) : (
+                <button
+                  onClick={startCheckout}
+                  disabled={checkoutLoading}
+                  className="btn-pranko-pink w-full !text-lg !py-5 mt-4 glow-pink"
+                >
+                  {checkoutLoading ? (
+                    <><Loader2 className="animate-spin" /> Opening checkout…</>
+                  ) : (
+                    <><CreditCard size={18} /> Subscribe to generate — $4.99/week</>
+                  )}
+                </button>
+              )}
             </motion.div>
           )}
         </motion.div>

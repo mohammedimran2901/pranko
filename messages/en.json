@@ -37,7 +37,29 @@
     "subtitle": "Your friends will never recover",
     "download": "Download video",
     "copyLink": "Copy link",
-    "newPrank": "Make another prank"
+    "newPrank": "Make another prank",
+    "subscriptionActive": "You're in!",
+    "subscriptionDesc": "Your weekly plan is active. 1 credit = 1 five-second prank video.",
+    "subscriptionRenew": "Your 6 credits refresh every week. Cancel anytime.",
+    "makeFirstPrank": "Make my first prank"
+  },
+  "pricing": {
+    "title": "Pricing",
+    "subtitle": "One simple plan. 6 prank videos per week.",
+    "weekly": {
+      "name": "Weekly",
+      "tagline": "6 prank videos every week",
+      "price": "$4.99",
+      "per": "/week",
+      "cta": "Subscribe — $4.99/week",
+      "ctaActive": "You have an active subscription",
+      "feature1": "6 credits per week (1 credit = 1 prank video)",
+      "feature2": "All prank modes (ex, boss, mom, roommate, crush, merge)",
+      "feature3": "5-second AI videos in ~30 seconds",
+      "feature4": "Credits refresh every week automatically",
+      "feature5": "Cancel anytime, no questions"
+    },
+    "poweredBy": "Secure checkout by Polar · Card, Apple Pay, Google Pay"
   },
   "footer": { "tagline": "Made with mischief" }
 }

@@ -12,116 +12,47 @@
     "start": "Commencer"
   },
   "hero": {
-    "liveCounter": "2 347 blagues créées aujourd’hui",
+    "liveCounter": "2 347 blagues créées aujourd'hui",
     "headline1": "Fais douter tes potes",
     "headline2": "de la réalité",
-    "subhead": "Upload une selfie. Choisis une blague. Reçois une photo ultra-réaliste en 10 secondes. Ils ne s'en remettront JAMAIS.",
+    "subhead": "Upload une selfie. Choisis une blague. Reçois une vidéo ultra-réaliste en 30 secondes. Ils ne s'en remettront JAMAIS.",
     "cta": "Ma première blague",
     "ctaSub": "Première blague offerte — sans carte",
     "trustPhoto": "📸 Photo jamais stockée",
-    "trustTime": "⚡ 10 secondes",
+    "trustTime": "⚡ 30 secondes",
     "trustFree": "🆓 Première offerte"
   },
   "beforeAfter": {
     "title": "Vraies blagues. Vraies réactions.",
     "subtitle": "Une partie du chaos causé par Pranko cette semaine",
     "examples": {
-      "crash": {
-        "title": "J'ai crashé ma Lambo 😱",
-        "desc": "Envoyé à mon ex. Elle a appelé en pleurant."
-      },
-      "rolex": {
-        "title": "Je flex une Rolex 💍",
-        "desc": "Mon pote fauché est devenu le problème de tout le monde."
-      },
-      "grammy": {
-        "title": "J'ai rencontré Beyoncé aux Grammys 🎤",
-        "desc": "Maman l'a posté sur Facebook. 47 partages."
-      },
-      "mansion": {
-        "title": "J'ai acheté un manoir à 5M$ 🏡",
-        "desc": "Papa a proposé de me prêter 50k€. Il y a cru."
-      },
-      "promotion": {
-        "title": "Promu PDG 👔",
-        "desc": "Mon boss m'a félicité. Lundi gênant."
-      },
-      "fish": {
-        "title": "J'ai pêché un poisson record 🐟",
-        "desc": "Mes potes pêcheurs sont furieux."
-      },
-      "merge": {
-        "title": "Mets-moi dans le manoir 🪄",
-        "desc": "Fusion sujet + scène — SDF à propriétaire."
-      }
+      "crash": { "title": "J'ai crashé ma Lambo 😱", "desc": "Envoyé à mon ex. Elle a appelé en pleurant." },
+      "rolex": { "title": "Je flex une Rolex 💍", "desc": "Mon pote fauché est devenu le problème de tout le monde." },
+      "grammy": { "title": "J'ai rencontré Beyoncé aux Grammys 🎤", "desc": "Maman l'a posté sur Facebook. 47 partages." },
+      "mansion": { "title": "J'ai acheté un manoir à 5M$ 🏡", "desc": "Papa a proposé de me prêter 50k€. Il y a cru." },
+      "promotion": { "title": "Promu PDG 👔", "desc": "Mon boss m'a félicité. Lundi gênant." },
+      "fish": { "title": "J'ai pêché un poisson record 🐟", "desc": "Mes potes pêcheurs sont furieux." },
+      "merge": { "title": "Mets-moi dans le manoir 🪄", "desc": "Fusion sujet + scène — SDF à propriétaire." }
     }
   },
   "modes": {
     "title": "Choisis ton chaos",
     "subtitle": "Packs de blagues pour chaque victime. Un tap. Dégâts max.",
-    "ex": {
-      "name": "Mode Ex",
-      "emoji": "💔",
-      "tagline": "Fais-les regretter",
-      "desc": "Montre à ton ex que t'es au max. Nouvelle voiture, nouveau partenaire, nouvelle vie."
-    },
-    "boss": {
-      "name": "Mode Boss",
-      "emoji": "💼",
-      "tagline": "Démissionne en style",
-      "desc": "Faux arrêts maladie, fausses promotions, faux LinkedIn."
-    },
-    "mom": {
-      "name": "Mode Maman",
-      "emoji": "👩‍👧",
-      "tagline": "Fais-la tout raconter",
-      "desc": "Des exploits qu'elle va screenshot dans le groupe famille."
-    },
-    "roommate": {
-      "name": "Mode Coloc",
-      "emoji": "🏠",
-      "tagline": "La mesquinerie en service",
-      "desc": "Sois plus mesquin que ton coloc mesquin. Guerre gagnée."
-    },
-    "crush": {
-      "name": "Mode Crush",
-      "emoji": "😍",
-      "tagline": "Bonnes vibes",
-      "desc": "Flex subtilement. Subtilement. (Pas du tout subtil.)"
-    },
-    "merge": {
-      "name": "Mode Fusion",
-      "emoji": "🪄",
-      "tagline": "Deux photos. Une blague.",
-      "desc": "Upload un sujet + une scène. L'IA fusionne — SDF dans un manoir, ton chien sur un yacht."
-    },
-    "custom": {
-      "name": "Custom",
-      "emoji": "✨",
-      "tagline": "Tout ce que t'imagines",
-      "desc": "Décris la blague et laisse notre gobelin gérer."
-    }
+    "ex": { "name": "Mode Ex", "emoji": "💔", "tagline": "Fais-les regretter", "desc": "Montre à ton ex que t'es au max. Nouvelle voiture, nouveau partenaire, nouvelle vie." },
+    "boss": { "name": "Mode Boss", "emoji": "💼", "tagline": "Démissionne en style", "desc": "Faux arrêts maladie, fausses promotions, faux LinkedIn." },
+    "mom": { "name": "Mode Maman", "emoji": "👩‍👧", "tagline": "Fais-la tout raconter", "desc": "Des exploits qu'elle va screenshot dans le groupe famille." },
+    "roommate": { "name": "Mode Coloc", "emoji": "🏠", "tagline": "La mesquinerie en service", "desc": "Sois plus mesquin que ton coloc mesquin. Guerre gagnée." },
+    "crush": { "name": "Mode Crush", "emoji": "😍", "tagline": "Bonnes vibes", "desc": "Flex subtilement. Subtilement. (Pas du tout subtil.)" },
+    "merge": { "name": "Mode Fusion", "emoji": "🪄", "tagline": "Deux photos. Une blague.", "desc": "Upload un sujet + une scène. L'IA fusionne — SDF dans un manoir, ton chien sur un yacht." },
+    "custom": { "name": "Custom", "emoji": "✨", "tagline": "Tout ce que t'imagines", "desc": "Décris la blague et laisse notre gobelin gérer." }
   },
   "howItWorks": {
     "title": "Comment ça marche",
-    "subtitle": "4 étapes. Zéro prise de tête. Chaos pur.",
+    "subtitle": "3 étapes. Zéro prise de tête. Chaos pur.",
     "steps": {
-      "1": {
-        "title": "Choisis une blague",
-        "desc": "Choisis parmi 50+ templates ou décris la tienne"
-      },
-      "2": {
-        "title": "Upload ta photo",
-        "desc": "Une selfie fonctionne. Plus c'est net, plus c'est dévastateur"
-      },
-      "3": {
-        "title": "Pranko cuisine",
-        "desc": "10 secondes. Notre gobelin IA prépare son coup"
-      },
-      "4": {
-        "title": "Envoie & profite",
-        "desc": "Partage sur TikTok, iMessage, ou mate juste leur tête"
-      }
+      "1": { "title": "Upload ta photo", "desc": "Une selfie fonctionne. Plus c'est net, plus c'est dévastateur" },
+      "2": { "title": "Décris la blague", "desc": "Dis à l'IA ce qu'elle doit faire" },
+      "3": { "title": "Reçois ta vidéo", "desc": "Partage la vidéo blague avec tes potes" }
     }
   },
   "templates": {
@@ -138,106 +69,32 @@
     "happy": "Potes confus"
   },
   "pricing": {
-    "title": "Choisis ton arme",
-    "subtitle": "Annule quand tu veux. Pas de regrets (enfin, les leurs).",
-    "free": {
-      "name": "Gratuit",
-      "price": "0€",
-      "tagline": "Teste le chaos",
-      "cta": "C'est parti",
-      "features": [
-        "1 blague (avec watermark)",
-        "Tous les modes",
-        "Qualité standard"
-      ]
+    "title": "Tarifs",
+    "subtitle": "Un seul plan. 6 blagues par semaine.",
+    "weekly": {
+      "name": "Hebdo",
+      "tagline": "6 vidéos blague par semaine",
+      "price": "4,99$",
+      "per": "/semaine",
+      "cta": "S'abonner — 4,99$/semaine",
+      "ctaActive": "Tu as un abonnement actif",
+      "feature1": "6 crédits par semaine (1 crédit = 1 blague)",
+      "feature2": "Tous les modes (ex, boss, maman, coloc, crush, fusion)",
+      "feature3": "Vidéos IA de 5 secondes en ~30 secondes",
+      "feature4": "Crédits rechargés automatiquement chaque semaine",
+      "feature5": "Annule quand tu veux, sans questions"
     },
-    "single": {
-      "name": "Une seule",
-      "price": "2,99€",
-      "tagline": "Juste une blague",
-      "cta": "Ma blague",
-      "features": [
-        "1 blague, sans watermark",
-        "Tous les modes",
-        "Téléchargement HD",
-        "Partage direct TikTok"
-      ]
-    },
-    "pack": {
-      "name": "Pack de 5",
-      "price": "7,99€",
-      "tagline": "Économise 47%",
-      "cta": "5 blagues",
-      "popular": "LE PLUS POPULAIRE",
-      "features": [
-        "5 blagues, sans watermark",
-        "Tous les modes",
-        "Téléchargements HD",
-        "Partage direct TikTok",
-        "Pour 5 personnes différentes"
-      ]
-    },
-    "pro": {
-      "name": "Pro Mensuel",
-      "price": "9,99€",
-      "per": "/mois",
-      "tagline": "Chaos illimité",
-      "cta": "Passer Pro",
-      "features": [
-        "Blagues illimitées",
-        "Tous les modes + nouveautés en avant-première",
-        "Téléchargement HD + 4K",
-        "Génération prioritaire",
-        "Sans watermark",
-        "Annule quand tu veux"
-      ]
-    },
-    "lifetime": {
-      "name": "À vie",
-      "price": "29€",
-      "tagline": "Paie une fois, blague pour toujours",
-      "cta": "Prendre l'option à vie",
-      "save": "EARLY BIRD — était à 49€",
-      "features": [
-        "Tout du Pro",
-        "Paie une fois. Pour toujours.",
-        "Tous les futurs modes",
-        "Badge fondateur",
-        "Accès Discord privé"
-      ]
-    }
+    "poweredBy": "Paiement sécurisé par Polar · Carte, Apple Pay, Google Pay"
   },
   "faq": {
     "title": "Des questions avant de semer le chaos ?",
     "items": {
-      "legal": {
-        "q": "C'est légal ?",
-        "a": "Oui — pour des blagues personnelles entre potes consentants. Utilise pas ça pour de la fraude, du harcèlement, ou pour arnaquer quelqu'un. Sois cool. Sois pas un connard."
-      },
-      "stored": {
-        "q": "Vous stockez mes photos ?",
-        "a": "Non. Ta photo est traitée en mémoire puis supprimée en 1h. La blague générée reste dans ton compte pour que tu puisses la re-télécharger, mais tu peux la supprimer quand tu veux."
-      },
-      "real": {
-        "q": "C'est réaliste à quel point ?",
-        "a": "Trop réaliste. Notre IA utilise une techno de préservation de visage entraînée sur ta selfie. La plupart des gens captent pas la différence. C'est le but. Abuse pas de ce pouvoir."
-      },
-      "cancel": {
-        "q": "Je peux annuler quand ?",
-        "a": "Quand tu veux — un clic dans ton compte. Pas de questions, pas de culpabilisation. Tu vas nous manquer, mais on comprend."
-      },
-      "refund": {
-        "q": "Remboursement ?",
-        "a": "Si ta blague a raté (visage flou, artefacts bizarres), envoie-nous un email sous 7 jours et on te rembourse. Sans questions."
-      },
-      "languages": {
-        "q": "Quelles langues ?",
-        "a": "Français, anglais, espagnol. Notre gobelin parle les trois."
-      },
-      "merge": {
-        "q": "C'est quoi le Mode Fusion ?",
-        "a": "Le Mode Fusion te permet d'uploader DEUX photos — un sujet (la personne ou l'objet) et une scène (le fond). Notre IA les fusionne pour que le sujet apparaisse naturellement placé dans la scène. Exemple : un SDF dans un manoir, ou ton animal dans une voiture de sport."
-      }
+      "legal": { "q": "C'est légal ?", "a": "Oui — pour des blagues personnelles entre potes consentants. Utilise pas ça pour de la fraude, du harcèlement, ou pour arnaquer quelqu'un. Sois cool." },
+      "stored": { "q": "Vous stockez mes photos ?", "a": "Non. Ta photo est traitée en mémoire puis supprimée. La blague générée reste accessible mais tu peux la supprimer quand tu veux." },
+      "real": { "q": "C'est réaliste à quel point ?", "a": "Trop réaliste. La plupart des gens captent pas la différence. C'est le but. Abuse pas de ce pouvoir." },
+      "cancel": { "q": "Je peux annuler quand ?", "a": "Quand tu veux — un clic depuis ton email de facturation Polar. Pas de questions, pas de culpabilisation." },
+      "refund": { "q": "Remboursement ?", "a": "Si ta blague a raté (visage flou, artefacts bizarres), écris-nous sous 7 jours et on te rembourse. Sans questions." },
+      "languages": { "q": "Quelles langues ?", "a": "Français, anglais, espagnol. Notre gobelin parle les trois." }
     }
   },
   "cta": {
@@ -246,44 +103,33 @@
     "button": "Ma première blague"
   },
   "create": {
-    "title": "Choisis une blague",
-    "step1": "1. Choisis",
-    "step2": "2. Upload",
-    "step3": "3. Génère",
-    "step4": "4. Partage",
-    "uploadTitle": "Envoie ta selfie",
-    "uploadSub": "Plus c'est net, plus c'est dévastateur",
+    "title": "Créer une vidéo blague",
+    "subtitle": "Upload une photo et décris ce que tu veux",
     "uploadButton": "Choisir une photo",
-    "uploadTip": "JPG, PNG ou HEIC. Max 10 Mo.",
-    "customTitle": "Ou décris ta propre blague",
-    "customPlaceholder": "ex: moi avec un Grammy à côté de Beyoncé à l'after-party",
-    "generateButton": "Génère ma blague",
-    "regenerate": "Essaie une autre version"
+    "uploadTip": "JPG, PNG. Max 10 Mo.",
+    "promptLabel": "Que doit-il se passer dans la vidéo ?",
+    "promptPlaceholder": "ex: je gagne au loto en direct TV, je danse comme si personne regardait à un mariage, je me fais poursuivre par un pingouin géant",
+    "generateButton": "Générer la vidéo blague"
   },
   "generating": {
     "title": "Pranko cuisine...",
-    "subtitle": "Notre gobelin prépare son coup",
-    "steps": {
-      "1": "Upload de ta selfie...",
-      "2": "Convaincre l'IA de se tenir tranquille...",
-      "3": "Ajout du chaos...",
-      "4": "On peaufine le chef-d'œuvre..."
-    }
+    "subtitle": "Environ 30 secondes",
+    "steps": { "1": "Upload de ta photo...", "2": "L'IA prépare ta blague...", "3": "Rendu de la vidéo..." },
+    "error": "Pranko a trébuché"
   },
   "result": {
-    "title": "Ta blague est prête",
+    "title": "Ta vidéo blague est prête",
     "subtitle": "Tes potes ne s'en remettront pas",
     "download": "Télécharger",
-    "shareTiktok": "Partager sur TikTok",
-    "sendFriend": "Envoyer à un pote",
-    "regenerate": "Réessayer",
-    "newPrank": "Faire une autre",
     "copyLink": "Copier le lien",
-    "watermark": "Made with Pranko 🤡",
-    "caption": "POV : t'as envoyé ça à ton meilleur pote 😂 #pranko #blague #ia"
+    "newPrank": "Faire une autre blague",
+    "subscriptionActive": "C'est dans la poche !",
+    "subscriptionDesc": "Ton plan hebdo est actif. 1 crédit = 1 vidéo blague de 5 secondes.",
+    "subscriptionRenew": "Tes 6 crédits se rechargent chaque semaine. Annule quand tu veux.",
+    "makeFirstPrank": "Faire ma première blague"
   },
   "footer": {
-    "tagline": "Made with mischief",
+    "tagline": "Fait avec malice",
     "tiktok": "TikTok",
     "instagram": "Instagram",
     "privacy": "Confidentialité",
