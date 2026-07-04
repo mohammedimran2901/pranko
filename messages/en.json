@@ -2,11 +2,18 @@
   "brand": { "name": "Pranko", "tagline": "AI prank videos in 30 seconds", "short": "AI prank videos in 30 seconds" },
   "nav": { "create": "Create", "pricing": "Pricing", "trending": "Trending", "login": "Log in", "start": "Start pranking" },
   "hero": {
-    "headline1": "Make your friends",
-    "headline2": "question reality",
-    "subhead": "Upload a photo, describe the prank, get an AI-generated prank video in 30 seconds.",
-    "cta": "Create my prank video",
-    "ctaSub": "Free prank — no card required"
+    "liveCounter": "2,347 pranks made this week",
+    "headline1": "Turn any photo into a",
+    "headline2": "5-second prank video.",
+    "headline3": "6 credits for $4.99/week.",
+    "subhead": "Upload a selfie, pick a scenario, and our AI does the rest. In 30 seconds you'll have a video realistic enough to make your friends double-take.",
+    "cta": "Subscribe — $4.99/week",
+    "ctaLoading": "Opening checkout…",
+    "ctaSecondary": "See it in action",
+    "mockupCaption": "Real demo: real Unsplash photo + fal.ai · 30 seconds",
+    "trustPay": "Card, Apple Pay, Google Pay",
+    "trustTime": "30 seconds per video",
+    "trustCancel": "Cancel anytime"
   },
   "howItWorks": {
     "title": "How it works",
@@ -14,6 +21,37 @@
       "1": { "title": "Upload a photo", "desc": "A selfie or any photo works best" },
       "2": { "title": "Describe the prank", "desc": "Tell the AI what to make happen in the video" },
       "3": { "title": "Get your video", "desc": "Share the prank video with your friends" }
+    }
+  },
+  "caseStudies": {
+    "title": "5 real pranks made with Pranko",
+    "subtitle": "Each card is a real Unsplash photo pushed through fal.ai. Hover to play the AI result.",
+    "cta": "Make my own prank",
+    "ctaSub": "6 credits for $4.99/week. Cancel anytime.",
+    "cs1": {
+      "title": "Beat-up Rolex",
+      "desc": "Unsplash: a beautiful expensive watch. fal.ai: same watch, destroyed.",
+      "story": "Send it to your boss right before the client meeting. 'My car's been broken into, what should I do?'"
+    },
+    "cs2": {
+      "title": "CEO to homeless",
+      "desc": "Unsplash: a well-dressed businessman. fal.ai: same man, down on his luck.",
+      "story": "Show up to your ex's wedding as the 'guest speaker'. Watch the room lose it."
+    },
+    "cs3": {
+      "title": "Grandma breakdancing",
+      "desc": "Unsplash: a fragile 80-year-old grandma. fal.ai: her dancing to MJ.",
+      "story": "Send it on the family WhatsApp group at 7am. Mom will screenshot it before breakfast."
+    },
+    "cs4": {
+      "title": "Speedometer to 180",
+      "desc": "Unsplash: a car dashboard. fal.ai: POV of driving like a maniac.",
+      "story": "Text your roommate: 'bro I think I'm being chased' with the video. They will absolutely lend you their car."
+    },
+    "cs5": {
+      "title": "Tidy → house-party aftermath",
+      "desc": "Unsplash: a clean living room. fal.ai: same room, post-party chaos.",
+      "story": "Send to your crush the night before they were going to visit. 'So… about tomorrow.'"
     }
   },
   "cta": { "title": "Ready to cause chaos?", "subtitle": "Your first prank video is free.", "button": "Create my prank video" },
