@@ -109,13 +109,13 @@ export async function pollForVideoResult(
   const resultUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${requestId}`;
 
   for (let i = 0; i < maxRetries; i++) {
-    const statusRes = await fetch(statusUrl, { headers: getHeaders() });
+    const statusRes = await fetch(statusUrl, { method: "POST", headers: getHeaders() });
     if (!statusRes.ok) { await new Promise(r => setTimeout(r, intervalMs)); continue; }
     const statusData = await safeJson(statusRes, "status poll");
 
     if (statusData.status === "COMPLETED") {
       for (let r = 0; r < 10; r++) {
-        const resultRes = await fetch(resultUrl, { headers: getHeaders() });
+        const resultRes = await fetch(resultUrl, { method: "POST", headers: getHeaders() });
         if (resultRes.ok) {
           const resultData = await safeJson(resultRes, "result fetch");
           const videoUrl = resultData.video?.url || resultData.output?.video?.url || resultData.output?.url || resultData.result?.video?.url || resultData.result?.url || "";

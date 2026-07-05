@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // STATUS CHECK
-    const statusRes = await fetch(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}/status`, { headers: getHeaders() });
+    const statusRes = await fetch(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}/status`, { method: "POST", headers: getHeaders() });
     if (!statusRes.ok) return NextResponse.json({ id, status: "generating" });
 
     let statusData: any = {};
@@ -84,7 +84,7 @@ export async function GET(req: NextRequest) {
 
     if (status === "COMPLETED") {
       // FETCH RESULT
-      const resultRes = await fetch(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}`, { headers: getHeaders() });
+      const resultRes = await fetch(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}`, { method: "POST", headers: getHeaders() });
       if (!resultRes.ok) return NextResponse.json({ id, status: "generating" });
 
       const resultText = await resultRes.text();
