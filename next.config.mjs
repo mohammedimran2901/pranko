@@ -13,6 +13,9 @@ const nextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ['canvas'],
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
   },
 };
 
