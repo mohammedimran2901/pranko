@@ -74,22 +74,46 @@ export async function GET(req: NextRequest) {
 
   try {
     // STATUS CHECK
-    const statusRes = await fetch(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}/status`, { method: "POST", headers: getHeaders() });
-    if (!statusRes.ok) return NextResponse.json({ id, status: "generating" });
+    const statusUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${falId}/status`;
+    console.log("[status] Polling:", statusUrl);
+    const statusRes = await fetch(statusUrl, { method: "POST", headers: getHeaders() });
+    console.log("[status] fal.ai status response:", statusRes.status, statusRes.statusText);
+    if (!statusRes.ok) {
+      const errBody = await statusRes.text().catch(() => "");
+      console.error("[status] fal.ai status FAILED:", statusRes.status, errBody.substring(0, 300));
+      return NextResponse.json({ id, status: "generating", debug: `fal_status_${statusRes.status}` });
+    }
 
+    const statusText = await statusRes.text();
+    console.log("[status] fal.ai status body:", statusText.substring(0, 500));
     let statusData: any = {};
-    try { statusData = JSON.parse(await statusRes.text()); } catch { return NextResponse.json({ id, status: "generating" }); }
+    try { statusData = JSON.parse(statusText); } catch {
+      console.error("[status] Could not parse status JSON");
+      return NextResponse.json({ id, status: "generating", debug: "status_parse_fail" });
+    }
 
     const status = statusData.status;
+    console.log("[status] fal.ai job status:", status);
 
     if (status === "COMPLETED") {
       // FETCH RESULT
-      const resultRes = await fetch(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}`, { method: "POST", headers: getHeaders() });
-      if (!resultRes.ok) return NextResponse.json({ id, status: "generating" });
+      const resultUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${falId}`;
+      console.log("[status] Fetching result:", resultUrl);
+      const resultRes = await fetch(resultUrl, { method: "POST", headers: getHeaders() });
+      console.log("[status] fal.ai result response:", resultRes.status, resultRes.statusText);
+      if (!resultRes.ok) {
+        const errBody = await resultRes.text().catch(() => "");
+        console.error("[status] fal.ai result FAILED:", resultRes.status, errBody.substring(0, 300));
+        return NextResponse.json({ id, status: "generating", debug: `fal_result_${resultRes.status}` });
+      }
 
       const resultText = await resultRes.text();
+      console.log("[status] fal.ai result body:", resultText.substring(0, 500));
       let resultData: any = {};
-      try { resultData = JSON.parse(resultText); } catch { return NextResponse.json({ id, status: "generating" }); }
+      try { resultData = JSON.parse(resultText); } catch {
+        console.error("[status] Could not parse result JSON");
+        return NextResponse.json({ id, status: "generating", debug: "result_parse_fail" });
+      }
 
       console.log("[status] COMPLETED result keys:", Object.keys(resultData));
 
@@ -133,7 +157,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ id, status: "generating", falStatus: status });
   } catch (e: any) {
-    console.error("[status] error:", e.message);
-    return NextResponse.json({ id, status: "generating" });
+    console.error("[status] EXCEPTION:", e.message, e.stack);
+    return NextResponse.json({ id, status: "generating", debug: `exception: ${e.message}` });
   }
 }

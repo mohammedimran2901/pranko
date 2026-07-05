@@ -90,10 +90,14 @@ export async function POST(req: NextRequest) {
 
     try {
       // ── 3. Upload image to fal.ai ───────────────────────────────
+      console.log("[create-job] Uploading image to fal.ai...");
       const uploadedImageUrl = await uploadImage(image);
+      console.log("[create-job] Image uploaded:", uploadedImageUrl.substring(0, 80));
 
       // ── 4. Submit video generation ─────────────────────────────
+      console.log("[create-job] Submitting video generation with prompt:", prompt.substring(0, 80));
       const requestId = await submitVideoGeneration(prompt, uploadedImageUrl);
+      console.log("[create-job] fal.ai request_id:", requestId);
 
       // ── 5. Create our job record (persisted to Supabase) ────────
       const job = await store.createJob({
