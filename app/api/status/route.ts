@@ -1,8 +1,7 @@
 /**
  * GET /api/status?id=<jobId>&fal=<falRequestId>
- * Polls fal.ai directly for video generation status.
- * Returns the video URL to the client as soon as it's found —
- * Supabase persistence failures are logged but never block delivery.
+ * Polls fal.ai for video generation status and returns the video URL
+ * when complete. Fal.ai live server requires POST on all endpoints.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
@@ -15,34 +14,18 @@ function getHeaders(): Record<string, string> {
   return { Authorization: `Key ${FAL_KEY}`, "Content-Type": "application/json" };
 }
 
-/** Try to persist a job update; log and continue if it fails. */
-async function safeUpdateJob(id: string, updates: any) {
-  try { await store.updateJob(id, updates); } catch (e: any) { console.error("[status] DB update failed (non-fatal):", e.message); }
-}
-
-/**
- * Recursively search for a video URL.
- * Last resort: any string key named "url", or any HTTPS string that looks media-ish.
- */
 function findVideoUrl(obj: any, depth = 0): string | null {
-  if (!obj || depth > 15 || typeof obj !== "object") return null;
+  if (!obj || depth > 20 || typeof obj !== "object") return null;
   if (Array.isArray(obj)) {
     for (const item of obj) { const f = findVideoUrl(item, depth + 1); if (f) return f; }
     return null;
   }
   for (const [key, value] of Object.entries(obj)) {
-    if (typeof value === "string" && value.length > 10) {
-      if (!value.startsWith("http")) continue;
-      // 1. video extensions
+    if (typeof value === "string" && value.length > 10 && value.startsWith("http")) {
       if (/\.(mp4|webm|mov|avi|mkv)(\?|$)/i.test(value)) return value;
-      // 2. key named 'url' (catches { video: { url: "..." } })
       if (key.toLowerCase() === "url") return value;
-      // 3. fal / CDN domains
-      if (/fal\.|falcdn|v\d+\.fal\.|storage\.googleapis|delivery\.fal|cloudfront/i.test(value)) return value;
-      // 4. media path patterns
-      if (/\/(output|result|media|video|generated|files)\//i.test(value)) return value;
-      // 5. LAST RESORT: any URL with ? or & params that could be a signed media URL
-      if (value.includes("?") && value.length > 100) return value;
+      if (/fal\.(ai|run|media)|falcdn|v\d+\.fal\.|storage\.googleapis/i.test(value)) return value;
+      if (/\/(output|result|video|media|generated)\//i.test(value)) return value;
     }
     if (typeof value === "object" && value !== null) {
       const f = findVideoUrl(value, depth + 1);
@@ -55,14 +38,12 @@ function findVideoUrl(obj: any, depth = 0): string | null {
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
   const falRequestId = req.nextUrl.searchParams.get("fal");
-
   if (!id) return NextResponse.json({ error: "Missing job id" }, { status: 400 });
 
-  // Try to load job from Supabase (may fail gracefully)
   let job: any = undefined;
-  try { job = await store.getJob(id); } catch (e: any) { console.warn("[status] DB read failed:", e.message); }
+  try { job = await store.getJob(id); } catch {}
 
-  if (job?.status === "completed") {
+  if (job?.status === "completed" && job?.resultVideoUrl) {
     return NextResponse.json({ id: job.id, status: "completed", shareToken: job.shareToken, resultVideoUrl: job.resultVideoUrl });
   }
   if (job?.status === "failed") {
@@ -73,91 +54,50 @@ export async function GET(req: NextRequest) {
   if (!falId) return NextResponse.json({ id, status: "generating" });
 
   try {
-    // STATUS CHECK
+    // ── STATUS CHECK (fal.ai live server requires POST) ──────────
     const statusUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${falId}/status`;
-    console.log("[status] Polling:", statusUrl);
     const statusRes = await fetch(statusUrl, { method: "POST", headers: getHeaders() });
-    console.log("[status] fal.ai status response:", statusRes.status, statusRes.statusText);
-    if (!statusRes.ok) {
-      const errBody = await statusRes.text().catch(() => "");
-      console.error("[status] fal.ai status FAILED:", statusRes.status, errBody.substring(0, 300));
-      return NextResponse.json({ id, status: "generating", debug: `fal_status_${statusRes.status}` });
-    }
+    if (!statusRes.ok) return NextResponse.json({ id, status: "generating" });
 
-    const statusText = await statusRes.text();
-    console.log("[status] fal.ai status body:", statusText.substring(0, 500));
-    let statusData: any = {};
-    try { statusData = JSON.parse(statusText); } catch {
-      console.error("[status] Could not parse status JSON");
-      return NextResponse.json({ id, status: "generating", debug: "status_parse_fail" });
-    }
+    let statusData: any;
+    try { statusData = await statusRes.json(); } catch { return NextResponse.json({ id, status: "generating" }); }
 
-    const status = statusData.status;
-    console.log("[status] fal.ai job status:", status);
+    console.log("[status]", statusData.status);
 
-    if (status === "COMPLETED") {
-      // FETCH RESULT
+    if (statusData.status === "COMPLETED") {
+      // ── FETCH RESULT (fal.ai live server requires POST) ───────
       const resultUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${falId}`;
-      console.log("[status] Fetching result:", resultUrl);
       const resultRes = await fetch(resultUrl, { method: "POST", headers: getHeaders() });
-      console.log("[status] fal.ai result response:", resultRes.status, resultRes.statusText);
-      if (!resultRes.ok) {
-        const errBody = await resultRes.text().catch(() => "");
-        console.error("[status] fal.ai result FAILED:", resultRes.status, errBody.substring(0, 300));
-        return NextResponse.json({ id, status: "generating", debug: `fal_result_${resultRes.status}` });
-      }
+      if (!resultRes.ok) return NextResponse.json({ id, status: "generating" });
 
-      const resultText = await resultRes.text();
-      console.log("[status] fal.ai result body:", resultText.substring(0, 500));
-      let resultData: any = {};
-      try { resultData = JSON.parse(resultText); } catch {
-        console.error("[status] Could not parse result JSON");
-        return NextResponse.json({ id, status: "generating", debug: "result_parse_fail" });
-      }
+      let resultData: any;
+      try { resultData = await resultRes.json(); } catch { return NextResponse.json({ id, status: "generating" }); }
 
-      console.log("[status] COMPLETED result keys:", Object.keys(resultData));
-
-      const videoUrl = findVideoUrl(resultData);
+      // recursive search first, then direct property access as fallback
+      const videoUrl = findVideoUrl(resultData) ||
+        resultData?.video?.url ||
+        resultData?.output?.video?.url ||
+        resultData?.output?.url ||
+        null;
 
       if (videoUrl) {
-        console.log("[status] Found video URL:", videoUrl.substring(0, 120));
-
-        // Persist to Supabase — best-effort, never block delivery
-        if (job) {
-          safeUpdateJob(job.id, { status: "completed", resultVideoUrl: videoUrl, completedAt: Date.now() });
-        } else {
-          // Try to create + update job; if it fails, just deliver the URL
-          try {
-            const newJob = await store.createJob({ prompt: "", locale: "en", falRequestId: falId });
-            safeUpdateJob(newJob.id, { status: "completed", resultVideoUrl: videoUrl, completedAt: Date.now() });
-          } catch (e: any) {
-            console.warn("[status] Could not persist job:", e.message);
-          }
-        }
-
-        // ALWAYS return the video URL to the client
-        return NextResponse.json({
-          id,
-          status: "completed",
-          shareToken: job?.shareToken || "pending",
-          resultVideoUrl: videoUrl,
-        });
+        console.log("[status] Found:", videoUrl.substring(0, 80));
+        if (job) { try { await store.updateJob(job.id, { status: "completed", resultVideoUrl: videoUrl, completedAt: Date.now() }); } catch {} }
+        return NextResponse.json({ id, status: "completed", shareToken: job?.shareToken || "pending", resultVideoUrl: videoUrl });
       }
 
-      // DUMP for debugging
-      console.error("[status] COMPLETED but no video URL. Keys:", Object.keys(resultData));
-      console.error("[status] Response (first 2000 chars):", resultText.substring(0, 2000));
-      return NextResponse.json({ id, status: "generating", pollAttempt: "video_url_missing" });
+      console.error("[status] COMPLETED but no URL. Keys:", Object.keys(resultData));
+      return NextResponse.json({ id, status: "generating", debug: "video_url_missing" });
     }
 
-    if (status === "FAILED" || status === "ERROR") {
-      safeUpdateJob(id, { status: "failed", error: "Fal generation failed" });
+    if (statusData.status === "FAILED" || statusData.status === "ERROR") {
+      try { if (job) await store.updateJob(job.id, { status: "failed", error: "Fal generation failed" }); } catch {}
       return NextResponse.json({ id, status: "failed", error: "Generation failed" });
     }
 
-    return NextResponse.json({ id, status: "generating", falStatus: status });
+    return NextResponse.json({ id, status: "generating", falStatus: statusData.status });
   } catch (e: any) {
-    console.error("[status] EXCEPTION:", e.message, e.stack);
-    return NextResponse.json({ id, status: "generating", debug: `exception: ${e.message}` });
+    console.error("[status] Exception:", e.message);
+    return NextResponse.json({ id, status: "generating" });
   }
 }
