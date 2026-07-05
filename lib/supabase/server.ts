@@ -1,7 +1,7 @@
 /**
  * Supabase server client for Pranko.
  *
- * Used by credits store (and optionally job store) for persistent state.
+ * Used by credits store and API routes for persistent state.
  * Requires: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  */
 import { createClient } from "@supabase/supabase-js";
@@ -17,13 +17,12 @@ function getSupabaseClient() {
     );
   }
 
-  // Use service_role key for server-side reads/writes to user_credits table.
   return createClient(url, key, {
     auth: { persistSession: false },
   });
 }
 
-// Singleton warm across hot-reloads in development.
+// Singleton for hot-reload safety in development.
 declare global {
   // eslint-disable-next-line no-var
   var __prankoSupabase: ReturnType<typeof getSupabaseClient> | undefined;

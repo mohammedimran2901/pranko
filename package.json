@@ -12,6 +12,7 @@
     "@polar-sh/sdk": "^0.48.1",
     "@stripe/react-stripe-js": "^2.8.0",
     "@stripe/stripe-js": "^4.1.0",
+    "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.45.0",
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.0",
