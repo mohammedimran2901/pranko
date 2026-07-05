@@ -35,6 +35,9 @@ export function Navbar({ locale }: { locale: string }) {
           <Link href={`${prefix}/pricing`} className="text-sm font-medium text-pranko-muted hover:text-pranko-lime transition-colors">
             {t("pricing")}
           </Link>
+          <Link href={`${prefix}/account`} className="text-sm font-medium text-pranko-muted hover:text-pranko-lime transition-colors">
+            Account
+          </Link>
         </nav>
 
         {/* Right side */}
@@ -65,6 +68,9 @@ export function Navbar({ locale }: { locale: string }) {
             </Link>
             <Link href={`${prefix}/pricing`} onClick={() => setOpen(false)} className="py-2 text-pranko-muted hover:text-pranko-lime">
               {t("pricing")}
+            </Link>
+            <Link href={`${prefix}/account`} onClick={() => setOpen(false)} className="py-2 text-pranko-muted hover:text-pranko-lime">
+              Account
             </Link>
             <Link href={`${prefix}/create`} onClick={() => setOpen(false)} className="btn-pranko !text-sm mt-2">
               {t("start")} 🎭
