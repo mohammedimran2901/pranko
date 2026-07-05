@@ -371,21 +371,30 @@ function CreatePageInner() {
                   )}
                 </button>
               ) : (
-                <button
-                  onClick={() => startCheckout("weekly")}
-                  disabled={checkoutLoading !== null}
-                  className="btn-pranko-pink w-full !text-lg !py-5 mt-4 glow-pink"
-                >
-                  {checkoutLoading ? (
-                    <>
-                      <Loader2 className="animate-spin" /> Opening checkout…
-                    </>
-                  ) : (
-                    <>
-                      <CreditCard size={18} /> Get credits to generate
-                    </>
-                  )}
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                  <button
+                    onClick={() => startCheckout("single")}
+                    disabled={checkoutLoading !== null}
+                    className="btn-pranko flex-1 !text-base !py-4 glow-lime"
+                  >
+                    {checkoutLoading === "single" ? (
+                      <><Loader2 className="animate-spin" size={16} /> Opening…</>
+                    ) : (
+                      <><CreditCard size={16} /> 1 video — $1.99</>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => startCheckout("weekly")}
+                    disabled={checkoutLoading !== null}
+                    className="btn-pranko-pink flex-1 !text-base !py-4 glow-pink"
+                  >
+                    {checkoutLoading === "weekly" ? (
+                      <><Loader2 className="animate-spin" size={16} /> Opening…</>
+                    ) : (
+                      <><CreditCard size={16} /> 6 videos/week — $4.99</>
+                    )}
+                  </button>
+                </div>
               )}
             </motion.div>
           )}
