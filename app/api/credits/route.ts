@@ -21,7 +21,7 @@ export async function GET(_req: NextRequest) {
       subscriptionActive: false,
     });
   }
-  const rec = credits.get(userId);
+  const rec = await credits.get(userId);
   return NextResponse.json({
     userId,
     credits: rec?.credits ?? 0,
@@ -30,5 +30,6 @@ export async function GET(_req: NextRequest) {
     subscriptionId: rec?.subscriptionId,
     canceled: rec?.canceled ?? false,
     currentPeriodEnd: rec?.currentPeriodEnd,
+    email: rec?.email ?? null,
   });
 }

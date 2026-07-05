@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
         }
         const subId = data.id || data.subscription_id;
         if (subId) subscriptionMap.remember(subId, userId);
-        credits.refill(userId, {
+        await credits.refill(userId, {
           subscriptionId: subId,
           email: emailFromSubscription(data),
           periodEnd: periodEndFromSubscription(data),
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
         // Only refill if status remains active.
         const status = data.status;
         if (!status || status === "active" || status === "trialing") {
-          credits.refill(userId, {
+          await credits.refill(userId, {
             subscriptionId: subId,
             email: emailFromSubscription(data),
             periodEnd: periodEndFromSubscription(data),
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
           userIdFromSubscription(data) ||
           subscriptionMap.getUserId(data.id || data.subscription_id);
         if (!userId) break;
-        credits.cancel(userId);
+        await credits.cancel(userId);
         break;
       }
 
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
           userIdFromSubscription(data) ||
           subscriptionMap.getUserId(data.id || data.subscription_id);
         if (!userId) break;
-        credits.set(userId, { credits: 0, canceled: true });
+        await credits.set(userId, { credits: 0, canceled: true });
         break;
       }
 
@@ -137,9 +137,9 @@ export async function POST(req: NextRequest) {
         // Will be re-confirmed by subscription.created, but in case
         // the user closes the success page before that fires, we
         // ensure they have at least one credit.
-        const rec = credits.get(userId);
+        const rec = await credits.get(userId);
         if (!rec || rec.credits < 6) {
-          credits.refill(userId, {
+          await credits.refill(userId, {
             email: emailFromSubscription(data),
           });
         }

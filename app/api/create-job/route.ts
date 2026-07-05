@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     // ── 1. Identify the user & check credits ─────────────────────
     const userId = getOrCreateUserId();
-    const rec = credits.get(userId);
+    const rec = await credits.get(userId);
     if (!rec || rec.credits <= 0) {
       // Build a checkout URL so the client can redirect immediately.
       const origin =
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 2. Burn one credit BEFORE we touch fal.ai (refund on failure below) ─
-    const remaining = credits.consume(userId);
+    const remaining = await credits.consume(userId);
     if (remaining === null) {
       // Race — re-fetch the checkout URL.
       return NextResponse.json(
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     } catch (err: any) {
       // Refund the credit we just consumed — generation failed.
       console.error("create-job fal error, refunding credit:", err);
-      credits.set(userId, { credits: remaining + 1 });
+      await credits.set(userId, { credits: remaining + 1 });
       return NextResponse.json(
         { error: err.message || "Failed to start generation" },
         { status: 500 }
