@@ -3,53 +3,6 @@
 import { useEffect, useState, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { Loader2, Gamepad2 } from "lucide-react";
-
-const FAL_KEY = "a923b799-93e9-4821-bffd-f2d060148c60:c6383e0a9117462997c63fa43ef92c4a";
-const FAL_BASE = "https://queue.fal.run";
-const FAL_MODEL = "fal-ai/seedance-2/mini/reference-to-video";
-
-/**
- * Recursively search an object for any video URL.
- * Same logic as the server-side version in /api/status/route.ts.
- */
-function findVideoUrl(obj: any, depth = 0): string | null {
-  if (!obj || depth > 15 || typeof obj !== "object") return null;
-  if (Array.isArray(obj)) {
-    for (const item of obj) {
-      const found = findVideoUrl(item, depth + 1);
-      if (found) return found;
-    }
-    return null;
-  }
-
-  for (const [key, value] of Object.entries(obj)) {
-    if (typeof value === "string" && value.length > 10) {
-      const isUrl = value.startsWith("https://") || value.startsWith("http://");
-      if (!isUrl) continue;
-      // video file extensions
-      if (/\.(mp4|webm|mov|avi|mkv)(\?|$)/i.test(value)) return value;
-      // key named 'url' — most common fal.ai response shape: { video: { url: "..." } }
-      if (key.toLowerCase() === "url") return value;
-      // known fal.ai delivery domains
-      if (/fal\.(ai|run)|falcdn\.com|storage\.googleapis\.com|delivery\.fal/i.test(value)) return value;
-      // /v1/files/ or /files/ patterns
-      if (/\/v\d\/files\/|\/files\//i.test(value)) return value;
-    }
-    if (typeof value === "object" && value !== null) {
-      const found = findVideoUrl(value, depth + 1);
-      if (found) return found;
-    }
-  }
-  return null;
-}
-
-/** Fetch text safely. */
-async function fetchText(url: string): Promise<string> {
-  const res = await fetch(url, { headers: { Authorization: `Key ${FAL_KEY}` } });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.text();
-}
 
 export default function GeneratingPage() {
   return (
@@ -87,9 +40,9 @@ function GeneratingPageInner() {
     return () => clearInterval(iv);
   }, []);
 
-  // Poll fal.ai DIRECTLY from the browser
+  // Poll our own /api/status (same-origin, no CORS issues on mobile)
   useEffect(() => {
-    if (!falId || resolvedRef.current) return;
+    if (!jobId || resolvedRef.current) return;
 
     let cancelled = false;
     let attempts = 0;
@@ -104,56 +57,23 @@ function GeneratingPageInner() {
       }
 
       try {
-        // 1. Check status
-        const statusText = await fetchText(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}/status`);
-        let statusData: any;
-        try { statusData = JSON.parse(statusText); } catch { schedule(); return; }
+        const res = await fetch(`/api/status?id=${encodeURIComponent(jobId!)}&fal=${encodeURIComponent(falId || "")}`);
+        if (!res.ok) { schedule(); return; }
 
-        const status = statusData.status;
+        const data = await res.json();
 
-        if (status === "COMPLETED") {
-          // 2. Fetch result
-          const resultText = await fetchText(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}`);
-          let resultData: any;
-          try { resultData = JSON.parse(resultText); } catch { schedule(); return; }
-
-          console.log("[generating] fal result keys:", Object.keys(resultData));
-
-          // Search for video URL using the FIXED findVideoUrl
-          const videoUrl = findVideoUrl(resultData);
-
-          if (videoUrl) {
-            resolvedRef.current = true;
-
-            // Persist the result to Supabase via our new API
-            if (jobId) {
-              try {
-                await fetch("/api/job-complete", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ jobId, videoUrl }),
-                });
-              } catch (e) {
-                console.warn("[generating] Failed to persist job result:", e);
-              }
-            }
-
-            router.push(`${prefix}/result/view?video=${encodeURIComponent(videoUrl)}`);
-            return;
-          }
-
-          // If we got COMPLETED but no video URL, dump the full response
-          console.error("[generating] COMPLETED but no video URL. Full response:", JSON.stringify(resultData).substring(0, 2000));
-          setError("Video generated but URL could not be found. Check browser console (F12 → Console) and send us the output.");
+        if (data.status === "completed" && data.resultVideoUrl) {
+          resolvedRef.current = true;
+          router.push(`${prefix}/result/view?video=${encodeURIComponent(data.resultVideoUrl)}`);
           return;
         }
 
-        if (status === "FAILED" || status === "ERROR") {
-          setError("Generation failed on fal.ai. Please try again.");
+        if (data.status === "failed") {
+          setError(data.error || "Generation failed. Please try again.");
           return;
         }
 
-        // Still in progress
+        // still generating
       } catch (e: any) {
         console.warn("[generating] poll error:", e.message);
       }
@@ -171,7 +91,7 @@ function GeneratingPageInner() {
       cancelled = true;
       clearTimeout(initialDelay);
     };
-  }, [falId, jobId, router, prefix]);
+  }, [jobId, falId, router, prefix]);
 
   if (error) {
     return (
@@ -214,7 +134,6 @@ function GeneratingPageInner() {
         </div>
 
         <p className="text-pranko-muted text-xs mt-3">Elapsed: {timeStr} · Don't refresh</p>
-        <p className="text-pranko-muted text-[10px] mt-1 opacity-50">Polling fal.ai directly from browser</p>
       </div>
     </div>
   );
