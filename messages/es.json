@@ -1,120 +1,114 @@
 {
-  "brand": {
-    "name": "Pranko",
-    "tagline": "Videos de broma con IA en 30 segundos",
-    "short": "Videos de broma con IA en 30 segundos"
-  },
-  "nav": {
-    "create": "Crear",
-    "pricing": "Precios",
-    "trending": "Tendencias",
-    "login": "Iniciar sesión",
-    "start": "Empezar a bromear"
-  },
+  "brand": { "name": "Pranko", "tagline": "Videos de broma con IA en 30 segundos", "short": "Videos de broma con IA en 30 segundos" },
+  "nav": { "create": "Crear", "pricing": "Precios", "trending": "Tendencias", "login": "Iniciar sesión", "start": "Empezar a bromear" },
   "hero": {
-    "liveCounter": "2.347 bromas creadas esta semana",
+    "version": "v1.0 — En vivo",
+    "liveCounter": "2 347 bromas creadas esta semana",
     "headline1": "Convierte cualquier foto en un",
     "headline2": "video de broma de 5 segundos.",
-    "headline3": "6 créditos por $4,99/semana.",
-    "subhead": "Sube una selfie, elige un escenario y nuestra IA hace el resto. En 30 segundos tendrás un video tan realista que tus amigos dudarán de la realidad.",
-    "cta": "Suscribirse — $4,99/semana",
+    "headline3": "Desde $1.99 por video.",
+    "subhead": "Sube un selfie, elige un escenario, y nuestra IA hace el resto. En ~90 segundos tendrás un video tan realista que tus amigos dudarán.",
+    "cta": "Crear mi broma ↓",
     "ctaLoading": "Abriendo pago…",
-    "ctaSecondary": "Verlo en acción",
-    "mockupCaption": "Demo real: foto de Unsplash + fal.ai · 30 segundos",
+    "ctaSecondary": "Ver demo",
+    "mockupCaption": "Demo real: foto Unsplash + fal.ai · ~90 segundos",
     "trustPay": "Tarjeta, Apple Pay, Google Pay",
-    "trustTime": "30 segundos por video",
+    "trustTime": "~90 s por video",
     "trustCancel": "Cancela cuando quieras"
   },
   "howItWorks": {
     "title": "Cómo funciona",
     "steps": {
-      "1": { "title": "Sube una foto", "desc": "Una selfie o cualquier foto funciona mejor" },
-      "2": { "title": "Describe la broma", "desc": "Dile a la IA lo que quieres que pase en el video" },
-      "3": { "title": "Recibe tu video", "desc": "Comparte el video de broma con tus amigos" }
+      "1": { "title": "Sube una foto", "desc": "Un selfie o cualquier foto funciona mejor" },
+      "2": { "title": "Describe la broma", "desc": "Dile a la IA qué quieres que pase en el video" },
+      "3": { "title": "Obtén tu video", "desc": "Comparte el video de broma con tus amigos" }
     }
   },
   "caseStudies": {
-    "title": "5 bromas reales hechas con Pranko",
-    "subtitle": "Cada tarjeta es una foto real de Unsplash procesada por fal.ai. Pasa el ratón para ver el resultado de la IA.",
+    "title": "5 bromas reales creadas con Pranko",
+    "subtitle": "Cada tarjeta es una foto real de Unsplash procesada por fal.ai. Haz clic para reproducir.",
     "cta": "Crear mi propia broma",
-    "ctaSub": "6 créditos por $4,99/semana. Cancela cuando quieras.",
-    "cs1": {
-      "title": "Rolex destrozado",
-      "desc": "Unsplash: un hermoso reloj de lujo. fal.ai: el mismo reloj, destruido.",
-      "story": "Envíalo a tu jefe justo antes de la reunión con el cliente. «Me han robado el coche, ¿qué hago?»"
-    },
-    "cs2": {
-      "title": "CEO a indigente",
-      "desc": "Unsplash: un hombre de negocios bien vestido. fal.ai: el mismo hombre, en la calle.",
-      "story": "Preséntate en la boda de tu ex como el «invitado especial». Mira cómo la sala enloquece."
-    },
-    "cs3": {
-      "title": "Abuela bailando breakdance",
-      "desc": "Unsplash: una abuelita frágil de 80 años. fal.ai: ella bailando al ritmo de MJ.",
-      "story": "Envíalo al grupo de WhatsApp familiar a las 7am. Mamá hará captura de pantalla antes del desayuno."
-    },
-    "cs4": {
-      "title": "Velocímetro a 180",
-      "desc": "Unsplash: un tablero de coche. fal.ai: vista en primera persona conduciendo como un loco.",
-      "story": "Mensaje a tu compañero de piso: «tío creo que me persiguen» con el video. Te prestará su coche sin dudarlo."
-    },
-    "cs5": {
-      "title": "Salón limpio → después de la fiesta",
-      "desc": "Unsplash: una sala de estar impecable. fal.ai: la misma habitación, caos post-fiesta.",
-      "story": "Envíalo a tu crush la noche antes de su visita. «Entonces… sobre mañana.»"
-    }
+    "ctaSub": "6 créditos por $4.99/semana. Cancela cuando quieras.",
+    "cs1": { "title": "¡Me arrestaron! 🚔", "desc": "Unsplash: persona de negocios en un pasillo. fal.ai: siendo arrestado en la calle.", "story": "Envíalo a tu jefe 10 minutos antes de la gran reunión. 'Lo siento, no podré ir hoy'." },
+    "cs2": { "title": "CEO a indigente", "desc": "Unsplash: empresario bien vestido. fal.ai: el mismo hombre, en la calle.", "story": "Aparece en la boda de tu ex como 'invitado especial'. Mira cómo la sala enloquece." },
+    "cs3": { "title": "Abuela breakdance", "desc": "Unsplash: una abuelita frágil de 80 años. fal.ai: bailando al ritmo del funk.", "story": "Envíalo al grupo de WhatsApp familiar a las 7am. Mamá hará captura antes del desayuno." },
+    "cs4": { "title": "Después de la fiesta", "desc": "Unsplash: sala limpia y ordenada. fal.ai: misma sala, después de la fiesta.", "story": "Envíalo a tu compañero de piso: 'Tenemos que hablar cuando llegues'." },
+    "cs5": { "title": "Cantando bajo la lluvia 🌧️", "desc": "Unsplash: persona sonriendo al aire libre. fal.ai: bailando bajo la lluvia como en un musical.", "story": "Envíalo a tu crush la noche antes de la cita. 'No puedo esperar a verte mañana'." }
   },
-  "pricing": {
-    "title": "Precios",
-    "subtitle": "Un solo plan. 6 videos de broma por semana.",
-    "weekly": {
-      "name": "Semanal",
-      "tagline": "6 videos de broma por semana",
-      "price": "$4,99",
-      "per": "/semana",
-      "cta": "Suscribirse — $4,99/semana",
-      "ctaActive": "Tienes una suscripción activa",
-      "feature1": "6 créditos por semana (1 crédito = 1 video de broma)",
-      "feature2": "Todos los modos de broma (ex, jefe, mamá, roomie, crush, fusión)",
-      "feature3": "Videos IA de 5 segundos en ~30 segundos",
-      "feature4": "Créditos recargados automáticamente cada semana",
-      "feature5": "Cancela cuando quieras, sin preguntas"
-    },
-    "poweredBy": "Pago seguro por Polar · Tarjeta, Apple Pay, Google Pay"
+  "testimonials": {
+    "title": "Amado por bromistas de todo el mundo",
+    "subtitle": "No nos creas a nosotros — escucha a la gente que usa Pranko",
+    "items": [
+      { "name": "Marcus", "quote": "Le envié un video de 'yo' siendo perseguido por un ganso a mi hermano. Perdió la cabeza por 10 minutos.", "stars": 5 },
+      { "name": "Chloe", "quote": "Hice un video para el cumpleaños de mi mejor amiga. Lloró de felicidad. Los mejores $1.99 que he gastado.", "stars": 5 },
+      { "name": "Dev", "quote": "Se lo envié a mi cofundador. El chat grupal explotó. Todavía espero la Serie A.", "stars": 5 },
+      { "name": "Sophia", "quote": "Les mostré a mis hijos un video de 'yo' montando un delfín. Se quedaron con la boca abierta. Magia pura.", "stars": 5 },
+      { "name": "Jamal", "quote": "Mi mamá todavía pregunta por el video de 'yo' con un tatuaje completo. Nunca le diré la verdad.", "stars": 5 },
+      { "name": "Aisha", "quote": "Por $4.99 a la semana entrego 6 bromas de calidad al WhatsApp familiar. El retorno de inversión es increíble.", "stars": 5 },
+      { "name": "Ryan", "quote": "Le dije a mi compañero que alguien publicó un video de él 'luchando con un cocodrilo' en TikTok. Buscó durante 45 minutos.", "stars": 5 },
+      { "name": "Lina", "quote": "No sé cómo la IA hace que estos videos se vean tan reales. Genuinamente inquietante, en el mejor sentido.", "stars": 5 }
+    ]
   },
-  "cta": {
-    "title": "¿Listo para sembrar el caos?",
-    "subtitle": "Tu primer video de broma es gratis.",
-    "button": "Crear mi video de broma"
+  "faq": {
+    "title": "¿Preguntas?",
+    "subtitle": "Todo lo que necesitas saber sobre Pranko",
+    "q1": "¿Es legal usarlo?",
+    "a1": "Sí — Pranko está diseñado para bromas divertidas entre amigos que consienten. Solo sube fotos tuyas. Añadimos una marca de agua de IA visible en cada video. No lo uses para fraude, suplantación o algo ilegal — nuestros Términos lo prohíben.",
+    "q2": "¿Se almacenan mis fotos?",
+    "a2": "Las fotos se suben a fal.ai solo para generar el video. No guardamos tus imágenes — se eliminan después de crear tu video. Los videos generados se guardan 48 horas para que puedas compartir el enlace, luego se eliminan automáticamente.",
+    "q3": "¿Qué dispositivos y formatos funcionan?",
+    "a3": "Sube cualquier JPEG, PNG o WebP desde tu teléfono o computadora (máx. 20 MB). Los videos son verticales 9:16 optimizados para TikTok, Instagram Reels y YouTube Shorts. Todo funciona en tu navegador — no necesitas una app.",
+    "q4": "¿Puedo cancelar en cualquier momento?",
+    "a4": "Por supuesto. Cancela con un clic desde tu página de Cuenta. Sin contratos a largo plazo, sin cargos por cancelación. Los créditos no usados se reinician en cada período de facturación."
   },
+  "activity": { "justNow": "Justo ahora", "subscribed": "se suscribió a Semanal", "created": "creó un video de broma" },
+  "cta": { "title": "¿Listo para causar caos?", "subtitle": "Tu primer video de broma es gratis.", "button": "Crear mi video de broma" },
   "create": {
     "title": "Crear un video de broma",
     "subtitle": "Sube una foto y describe lo que quieres que pase",
     "uploadButton": "Elegir una foto",
-    "uploadTip": "JPG, PNG. Máx 10MB.",
-    "promptLabel": "¿Qué debe pasar en el video?",
-    "promptPlaceholder": "ej: gano la lotería en TV en vivo, bailo como si nadie mirara en una boda, me persigue un pingüino gigante",
+    "uploadTip": "JPG, PNG. Máx. 10MB.",
+    "promptLabel": "¿Qué debería pasar en el video?",
+    "promptPlaceholder": "ej: hazme ganar la lotería en TV en vivo, hazme bailar como si nadie mirara en una boda, haz que me persiga un pingüino gigante",
     "generateButton": "Generar video de broma"
   },
   "generating": {
     "title": "Pranko está cocinando...",
-    "subtitle": "Tarda unos 30 segundos",
+    "subtitle": "Esto puede tomar hasta 90 segundos",
     "steps": { "1": "Subiendo tu foto...", "2": "IA procesando tu broma...", "3": "Renderizando video..." },
-    "error": "Pranko se tropezó"
+    "error": "Pranko tropezó"
   },
   "result": {
     "title": "Tu video de broma está listo",
-    "subtitle": "Tus amigos no se van a recuperar",
+    "subtitle": "Tus amigos nunca se recuperarán",
     "download": "Descargar video",
     "copyLink": "Copiar enlace",
     "newPrank": "Hacer otra broma",
-    "subscriptionActive": "¡Listo!",
-    "subscriptionDesc": "Tu plan semanal está activo. 1 crédito = 1 video de broma de 5 segundos.",
-    "subscriptionRenew": "Tus 6 créditos se recargan cada semana. Cancela cuando quieras.",
+    "subscriptionActive": "¡Estás dentro!",
+    "subscriptionDesc": "Tu plan semanal está activo. 1 crédito = 1 video de broma de cinco segundos.",
+    "subscriptionRenew": "Tus 6 créditos se renuevan cada semana. Cancela cuando quieras.",
     "makeFirstPrank": "Hacer mi primera broma"
   },
+  "pricing": {
+    "title": "Precios",
+    "subtitle": "Un plan simple. 6 videos de broma por semana.",
+    "weekly": {
+      "name": "Semanal",
+      "tagline": "6 videos de broma cada semana",
+      "price": "$4.99",
+      "per": "/semana",
+      "cta": "Suscribirse — $4.99/semana",
+      "ctaActive": "Tienes una suscripción activa",
+      "feature1": "6 créditos por semana (1 crédito = 1 video de broma)",
+      "feature2": "Todos los modos de broma",
+      "feature3": "Videos IA de 5 segundos en ~30 segundos",
+      "feature4": "Los créditos se renuevan automáticamente cada semana",
+      "feature5": "Cancela cuando quieras, sin preguntas"
+    },
+    "poweredBy": "Pago seguro por Polar · Tarjeta, Apple Pay, Google Pay"
+  },
   "footer": {
-    "tagline": "Hecho con malicia",
+    "tagline": "Hecho con travesura",
     "tiktok": "TikTok",
     "instagram": "Instagram",
     "privacy": "Privacidad",
