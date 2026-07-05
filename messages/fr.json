@@ -1,117 +1,111 @@
 {
-  "brand": {
-    "name": "Pranko",
-    "tagline": "Des vidéos blague IA en 30 secondes",
-    "short": "Vidéos blague IA en 30 secondes"
-  },
-  "nav": {
-    "create": "Créer",
-    "pricing": "Tarifs",
-    "trending": "Tendances",
-    "login": "Connexion",
-    "start": "Commencer à blaguer"
-  },
+  "brand": { "name": "Pranko", "tagline": "Des vidéos blague IA en 30 secondes", "short": "Vidéos blague IA en 30 secondes" },
+  "nav": { "create": "Créer", "pricing": "Tarifs", "trending": "Tendances", "login": "Connexion", "start": "Commencer à blaguer" },
   "hero": {
-    "liveCounter": "2 347 blagues créées cette semaine",
-    "headline1": "Transforme n'importe quelle photo en",
+    "version": "v1.0 — En ligne",
+    "liveCounter": "2 347 blagues créées cette semaine",
+    "headline1": "Transformez n'importe quelle photo en",
     "headline2": "vidéo blague de 5 secondes.",
-    "headline3": "6 crédits pour 4,99€/semaine.",
-    "subhead": "Upload une selfie, choisis un scénario, et notre IA fait le reste. En 30 secondes tu as une vidéo assez réaliste pour faire douter tes potes.",
-    "cta": "S'abonner — 4,99€/semaine",
+    "headline3": "À partir de 1,99 $ par vidéo.",
+    "subhead": "Téléchargez un selfie, choisissez un scénario, et notre IA fait le reste. En ~90 secondes, vous aurez une vidéo assez réaliste pour faire douter vos amis.",
+    "cta": "Créer ma blague ↓",
     "ctaLoading": "Ouverture du paiement…",
-    "ctaSecondary": "Voir en action",
-    "mockupCaption": "Vraie démo : photo Unsplash + fal.ai · 30 secondes",
-    "trustPay": "Carte, Apple Pay, Google Pay",
-    "trustTime": "30 secondes par vidéo",
-    "trustCancel": "Annule à tout moment"
+    "ctaSecondary": "Voir la démo",
+    "mockupCaption": "Démo réelle : photo Unsplash + fal.ai · ~90 secondes",
+    "trustPay": "CB, Apple Pay, Google Pay",
+    "trustTime": "~90 s par vidéo",
+    "trustCancel": "Annulez à tout moment"
   },
   "howItWorks": {
     "title": "Comment ça marche",
     "steps": {
-      "1": { "title": "Upload une photo", "desc": "Une selfie ou n'importe quelle photo fonctionne" },
-      "2": { "title": "Décris la blague", "desc": "Dis à l'IA ce que tu veux qu'il se passe dans la vidéo" },
-      "3": { "title": "Reçois ta vidéo", "desc": "Partage la vidéo blague avec tes amis" }
+      "1": { "title": "Téléchargez une photo", "desc": "Un selfie ou n'importe quelle photo fonctionne" },
+      "2": { "title": "Décrivez la blague", "desc": "Dites à l'IA ce qui doit se passer dans la vidéo" },
+      "3": { "title": "Obtenez votre vidéo", "desc": "Partagez la vidéo de blague avec vos amis" }
     }
   },
   "caseStudies": {
-    "title": "5 vraies blagues faites avec Pranko",
-    "subtitle": "Chaque carte est une vraie photo Unsplash passée dans fal.ai. Survol pour voir le résultat IA.",
+    "title": "5 vraies blagues créées avec Pranko",
+    "subtitle": "Chaque carte est une vraie photo Unsplash passée par fal.ai. Cliquez pour voir le résultat.",
     "cta": "Créer ma propre blague",
-    "ctaSub": "6 crédits pour 4,99€/semaine. Annule à tout moment.",
-    "cs1": {
-      "title": "Rolex détruite",
-      "desc": "Unsplash : une belle montre de luxe. fal.ai : la même montre, détruite.",
-      "story": "Envoie-la à ton boss juste avant la réunion client. « Ma voiture a été vandalisée, je fais quoi ? »"
-    },
-    "cs2": {
-      "title": "PDG à SDF",
-      "desc": "Unsplash : un homme d'affaires bien habillé. fal.ai : le même homme, à la rue.",
-      "story": "Débarque au mariage de ton ex en tant qu'« invité spécial ». Regarde la salle perdre la tête."
-    },
-    "cs3": {
-      "title": "Mamie breakdance",
-      "desc": "Unsplash : une mamie de 80 ans fragile. fal.ai : elle danse sur du MJ.",
-      "story": "Envoie sur le groupe WhatsApp familial à 7h du mat. Maman fera une capture d'écran avant le petit-déj."
-    },
-    "cs4": {
-      "title": "Compteur à 180",
-      "desc": "Unsplash : un tableau de bord de voiture. fal.ai : vue subjective de conduite déjantée.",
-      "story": "SMS à ton coloc : « frérot je crois qu'on me poursuit » avec la vidéo. Il te prêtera sa caisse sans hésiter."
-    },
-    "cs5": {
-      "title": "Salon propre → après-soirée",
-      "desc": "Unsplash : un salon impeccable. fal.ai : la même pièce, chaos post-soirée.",
-      "story": "Envoie à ton crush la veille de sa visite. « Du coup… pour demain. »"
-    }
+    "ctaSub": "6 crédits pour 4,99 $/semaine. Annulez à tout moment.",
+    "cs1": { "title": "Je me suis fait arrêter ! 🚔", "desc": "Unsplash : personne en costume dans un couloir. fal.ai : se faire arrêter dans la rue.", "story": "Envoyez à votre patron 10 minutes avant la grande réunion. « Désolé, je ne pourrai pas venir aujourd'hui. »" },
+    "cs2": { "title": "PDG à SDF", "desc": "Unsplash : homme d'affaires bien habillé. fal.ai : le même homme, tombé bien bas.", "story": "Débarquez au mariage de votre ex en tant qu'« invité d'honneur ». Regardez la salle perdre la tête." },
+    "cs3": { "title": "Mamie qui breakdance", "desc": "Unsplash : une mamie fragile de 80 ans. fal.ai : elle danse sur un rythme funky.", "story": "Envoyez sur le groupe WhatsApp familial à 7h du matin. Maman fera une capture d'écran avant le petit-déjeuner." },
+    "cs4": { "title": "Après la fête", "desc": "Unsplash : un salon propre et rangé. fal.ai : le même salon, après la fête.", "story": "Envoyez à votre coloc : « Il faut qu'on parle quand tu rentres. »" },
+    "cs5": { "title": "Chanter sous la pluie 🌧️", "desc": "Unsplash : une personne souriante en extérieur. fal.ai : danser sous la pluie comme dans une comédie musicale.", "story": "Envoyez à votre crush la veille du rendez-vous. « J'ai hâte de te voir demain. »" }
+  },
+  "testimonials": {
+    "title": "Adoré par les blagueurs du monde entier",
+    "subtitle": "Ne nous croyez pas sur parole — écoutez les utilisateurs de Pranko",
+    "items": [
+      { "name": "Marcus", "quote": "J'ai envoyé une vidéo de 'moi' poursuivi par une oie à mon frère. Il a perdu la tête pendant 10 bonnes minutes.", "stars": 5 },
+      { "name": "Chloé", "quote": "J'ai fait une vidéo pour l'anniversaire de ma meilleure amie. Elle a pleuré de joie. Meilleur 1,99€ jamais dépensé.", "stars": 5 },
+      { "name": "Dev", "quote": "J'ai fait une blague à mon cofondateur. Le groupe WhatsApp a explosé. J'attends toujours notre levée de fonds.", "stars": 5 },
+      { "name": "Sophia", "quote": "J'ai montré à mes enfants une vidéo de 'moi' sur un dauphin. Leurs mâchoires sont tombées. Magique.", "stars": 5 },
+      { "name": "Jamal", "quote": "Ma mère me demande encore pour la vidéo de 'moi' avec un tatouage complet. Je ne lui dirai jamais la vérité.", "stars": 5 },
+      { "name": "Aisha", "quote": "Pour 4,99€ par semaine, je livre 6 blagues de qualité sur le WhatsApp familial. Le retour sur investissement est énorme.", "stars": 5 },
+      { "name": "Ryan", "quote": "J'ai dit à mon coloc que quelqu'un avait posté sur TikTok une vidéo de lui 'luttant contre un alligator'. Il a cherché pendant 45 minutes.", "stars": 5 },
+      { "name": "Lina", "quote": "Je ne sais pas comment l'IA rend ces vidéos si réalistes. Vraiment dérangeant, dans le bon sens du terme.", "stars": 5 }
+    ]
+  },
+  "faq": {
+    "title": "Des questions ?",
+    "subtitle": "Tout ce que vous devez savoir sur Pranko",
+    "q1": "Est-ce légal ?",
+    "a1": "Oui — Pranko est conçu pour des blagues amusantes entre amis consentants. Téléchargez uniquement des photos de vous-même. Nous ajoutons un filigrane IA visible sur chaque vidéo. N'utilisez pas Pranko pour de la fraude, de l'usurpation d'identité ou quoi que ce soit d'illégal — nos Conditions d'utilisation l'interdisent.",
+    "q2": "Mes photos sont-elles stockées ?",
+    "a2": "Les photos sont envoyées à fal.ai uniquement pour la génération. Nous ne conservons pas vos images — elles sont supprimées après la création de votre vidéo. Les vidéos générées sont conservées 48 heures pour vous permettre de partager le lien, puis automatiquement supprimées.",
+    "q3": "Quels appareils et formats sont compatibles ?",
+    "a3": "Téléchargez n'importe quel JPEG, PNG ou WebP depuis votre téléphone ou ordinateur (max 20 Mo). Les vidéos sont en format vertical 9:16 optimisé pour TikTok, Instagram Reels et YouTube Shorts. Tout fonctionne dans votre navigateur — aucune application nécessaire.",
+    "q4": "Puis-je annuler à tout moment ?",
+    "a4": "Absolument. Annulez en un clic depuis votre page Compte. Pas d'engagement à long terme, pas de frais d'annulation. Les crédits non utilisés sont réinitialisés à chaque période de facturation."
+  },
+  "activity": { "justNow": "À l'instant", "subscribed": "s'est abonné à Hebdo", "created": "a créé une vidéo blague" },
+  "cta": { "title": "Prêt à semer le chaos ?", "subtitle": "Votre première vidéo blague est gratuite.", "button": "Créer ma vidéo blague" },
+  "create": {
+    "title": "Créer une vidéo blague",
+    "subtitle": "Téléchargez une photo et décrivez ce que vous voulez qu'il se passe",
+    "uploadButton": "Choisir une photo",
+    "uploadTip": "JPG, PNG. Max 10 Mo.",
+    "promptLabel": "Que doit-il se passer dans la vidéo ?",
+    "promptPlaceholder": "ex : fais-moi gagner au loto à la télé, fais-moi danser comme si personne ne regardait à un mariage, fais-moi courir après un pingouin géant",
+    "generateButton": "Générer la vidéo blague"
+  },
+  "generating": {
+    "title": "Pranko prépare votre blague...",
+    "subtitle": "Cela peut prendre jusqu'à 90 secondes",
+    "steps": { "1": "Téléchargement de votre photo...", "2": "L'IA prépare votre blague...", "3": "Rendu de la vidéo..." },
+    "error": "Pranko a trébuché"
+  },
+  "result": {
+    "title": "Votre vidéo blague est prête",
+    "subtitle": "Vos amis ne s'en remettront pas",
+    "download": "Télécharger la vidéo",
+    "copyLink": "Copier le lien",
+    "newPrank": "Faire une autre blague",
+    "subscriptionActive": "Vous êtes inscrit !",
+    "subscriptionDesc": "Votre plan hebdomadaire est actif. 1 crédit = 1 vidéo blague de cinq secondes.",
+    "subscriptionRenew": "Vos 6 crédits se renouvellent chaque semaine. Annulez à tout moment.",
+    "makeFirstPrank": "Faire ma première blague"
   },
   "pricing": {
     "title": "Tarifs",
     "subtitle": "Un seul plan. 6 vidéos blague par semaine.",
     "weekly": {
       "name": "Hebdomadaire",
-      "tagline": "6 vidéos blague par semaine",
-      "price": "4,99€",
+      "tagline": "6 vidéos blague chaque semaine",
+      "price": "4,99 $",
       "per": "/semaine",
-      "cta": "S'abonner — 4,99€/semaine",
-      "ctaActive": "Tu as un abonnement actif",
+      "cta": "S'abonner — 4,99 $/semaine",
+      "ctaActive": "Vous avez un abonnement actif",
       "feature1": "6 crédits par semaine (1 crédit = 1 vidéo blague)",
-      "feature2": "Tous les modes de blague (ex, boss, maman, coloc, crush, fusion)",
+      "feature2": "Tous les modes de blague",
       "feature3": "Vidéos IA de 5 secondes en ~30 secondes",
-      "feature4": "Crédits rechargés automatiquement chaque semaine",
-      "feature5": "Annule quand tu veux, sans questions"
+      "feature4": "Les crédits se renouvellent automatiquement chaque semaine",
+      "feature5": "Annulez à tout moment, sans question"
     },
-    "poweredBy": "Paiement sécurisé par Polar · Carte, Apple Pay, Google Pay"
-  },
-  "cta": {
-    "title": "Prêt à semer le chaos ?",
-    "subtitle": "Ta première vidéo blague est gratuite.",
-    "button": "Créer ma vidéo blague"
-  },
-  "create": {
-    "title": "Créer une vidéo blague",
-    "subtitle": "Upload une photo et décris ce que tu veux qu'il se passe",
-    "uploadButton": "Choisir une photo",
-    "uploadTip": "JPG, PNG. Max 10 Mo.",
-    "promptLabel": "Que doit-il se passer dans la vidéo ?",
-    "promptPlaceholder": "ex : je gagne au loto en direct TV, je danse comme si personne regardait à un mariage, je me fais poursuivre par un pingouin géant",
-    "generateButton": "Générer la vidéo blague"
-  },
-  "generating": {
-    "title": "Pranko cuisine...",
-    "subtitle": "Environ 30 secondes",
-    "steps": { "1": "Upload de ta photo...", "2": "L'IA prépare ta blague...", "3": "Rendu de la vidéo..." },
-    "error": "Pranko a trébuché"
-  },
-  "result": {
-    "title": "Ta vidéo blague est prête",
-    "subtitle": "Tes potes ne s'en remettront jamais",
-    "download": "Télécharger la vidéo",
-    "copyLink": "Copier le lien",
-    "newPrank": "Faire une autre blague",
-    "subscriptionActive": "C'est dans la poche !",
-    "subscriptionDesc": "Ton plan hebdo est actif. 1 crédit = 1 vidéo blague de 5 secondes.",
-    "subscriptionRenew": "Tes 6 crédits se rechargent chaque semaine. Annule quand tu veux.",
-    "makeFirstPrank": "Faire ma première blague"
+    "poweredBy": "Paiement sécurisé par Polar · CB, Apple Pay, Google Pay"
   },
   "footer": {
     "tagline": "Fait avec malice",
