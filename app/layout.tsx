@@ -6,14 +6,15 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-body", display: "swa
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-display", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Pranko — AI prank photos in 10 seconds",
-  description: "Make your friends question reality. Upload a selfie, pick a prank, get an ultra-realistic photo in 10 seconds.",
+  title: "Pranko — AI prank videos in 30 seconds",
+  description: "Make your friends question reality. Upload a selfie, pick a prank, get an ultra-realistic AI video in 30 seconds.",
+  icons: { icon: "/favicon.svg" },
   openGraph: {
     title: "Pranko — Make your friends question reality",
-    description: "AI prank photos in 10 seconds. They will never recover.",
+    description: "AI prank videos in 30 seconds. They will never recover.",
     type: "website",
   },
-  twitter: { card: "summary_large_image", title: "Pranko", description: "AI prank photos in 10 seconds" },
+  twitter: { card: "summary_large_image", title: "Pranko", description: "AI prank videos in 30 seconds" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
