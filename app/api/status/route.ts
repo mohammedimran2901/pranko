@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // STATUS CHECK
-    const statusRes = await fetch(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}/status`, { headers: getHeaders() });
+    const statusRes = await fetch(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}/status`, { method: "POST", headers: getHeaders() });
     if (!statusRes.ok) return NextResponse.json({ id, status: "generating" });
 
     let statusData: any = {};

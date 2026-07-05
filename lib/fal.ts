@@ -110,7 +110,7 @@ export async function pollForVideoResult(
   const resultUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${requestId}`;
 
   for (let i = 0; i < maxRetries; i++) {
-    const statusRes = await fetch(statusUrl, { headers: getHeaders() });
+    const statusRes = await fetch(statusUrl, { method: "POST", headers: getHeaders() });
     if (!statusRes.ok) { await new Promise(r => setTimeout(r, intervalMs)); continue; }
     const statusData = await safeJson(statusRes, "status poll");
 
