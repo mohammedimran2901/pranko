@@ -1,27 +1,30 @@
+import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+import { locales, defaultLocale } from "@/i18n";
 
 /**
- * Pranko middleware: refreshes Supabase auth session on every request.
- * This keeps the magic-link session alive without the user needing to
- * re-authenticate every time they visit.
+ * Pranko middleware: locale routing (next-intl) + Supabase auth session refresh.
  */
+
+// The next-intl middleware handles locale prefix / redirect.
+const intlMiddleware = createMiddleware({
+  locales,
+  defaultLocale,
+  localePrefix: "as-needed", // /en/... for non-default, /... for default
+});
+
 export async function middleware(req: NextRequest) {
-  let res = NextResponse.next({ request: req });
+  // 1. Run the next-intl locale routing middleware.
+  const res = intlMiddleware(req);
 
-  // Skip if Supabase is not configured.
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
-    return res;
-  }
+  // 2. Refresh Supabase auth session (if configured).
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  try {
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      {
+  if (supabaseUrl && supabaseKey) {
+    try {
+      const { createServerClient } = await import("@supabase/ssr");
+      const supabase = createServerClient(supabaseUrl, supabaseKey, {
         cookies: {
           getAll() {
             return req.cookies.getAll().map((c) => ({
@@ -33,7 +36,6 @@ export async function middleware(req: NextRequest) {
             for (const { name, value, options } of cookiesToSet) {
               res.cookies.set(name, value, {
                 ...options,
-                // Ensure cookies work across the full site.
                 path: "/",
                 sameSite: "lax",
                 secure: process.env.NODE_ENV === "production",
@@ -41,13 +43,11 @@ export async function middleware(req: NextRequest) {
             }
           },
         },
-      }
-    );
-
-    // Refresh the session if it exists. This is a no-op for anonymous users.
-    await supabase.auth.getSession();
-  } catch {
-    // Auth not critical for page rendering — don't block the request.
+      });
+      await supabase.auth.getSession();
+    } catch {
+      // Auth not critical — don't block.
+    }
   }
 
   return res;
@@ -55,7 +55,7 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    // Apply to all routes except static files and Next.js internals.
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|css|js|woff2?)$).*)",
+    // Match all paths except static files, api routes, and Next.js internals.
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|css|js|woff2?)$).*)",
   ],
 };
