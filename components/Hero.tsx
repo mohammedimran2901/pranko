@@ -1,18 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { CreditCard, Sparkles, ArrowRight, Loader2 } from "lucide-react";
+import { CASE_STUDIES } from "@/lib/case-studies";
+
+/** 4 hero demos (cs1 – cs4) that auto-cycle every 4 s */
+const HERO_DEMOS = CASE_STUDIES.slice(0, 4);
+const CYCLE_MS = 4000;
 
 /**
- * Conversion-focused hero. No more floating ogre. Just:
- *   - Concrete offer ($4.99/week · 6 credits)
- *   - Phone mockup showing the before/after of cs1
- *   - Live counter for social proof
- *   - Primary CTA → Polar checkout, secondary CTA → scroll to case studies
+ * Conversion-focused hero. Left: copy + CTA. Right: auto-cycling
+ * 2‑up phone mockup showing original Unsplash photo vs AI video
+ * side by side for cs1 → cs4.
  */
 export function Hero() {
   const t = useTranslations("hero");
@@ -126,7 +129,7 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* ── RIGHT: 2-up phone mockup (cs1 demo) ────────────── */}
+          {/* ── RIGHT: auto-cycling 2‑up phone mockup ────────────── */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -142,49 +145,78 @@ export function Hero() {
 }
 
 /**
- * Two phone "frames" side by side. Left = the real Unsplash selfie
- * (from cs1.beforeImage). Right = the AI video (cs1.afterVideo) on
- * top of the cs1 gradient poster. Animated arrow between them.
- *
- * If the MP4 isn't there yet, the gradient + emoji stand in (still
- * shows the concept clearly).
+ * Two phone "frames" side by side —  Before (Unsplash) | After (AI video).
+ * Auto-cycles through cs1..cs4 every 4 s with a crossfade.
  */
 function HeroPhoneMockup() {
   const t = useTranslations("hero");
+  const tCase = useTranslations("caseStudies");
+  const [index, setIndex] = useState(0);
+  const demo = HERO_DEMOS[index];
+
+  const advance = useCallback(() => {
+    setIndex((i) => (i + 1) % HERO_DEMOS.length);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(advance, CYCLE_MS);
+    return () => clearInterval(timer);
+  }, [advance]);
+
   return (
     <div className="relative max-w-md mx-auto">
       {/* Two phones */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {/* BEFORE phone */}
-        <PhoneFrame label="Before" tone="muted">
-          <img
-            src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80&auto=format&fit=crop"
-            alt="Original watch photo"
-            className="absolute inset-0 w-full h-full object-cover"
-            referrerPolicy="no-referrer"
-          />
-        </PhoneFrame>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`before-${demo.id}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <PhoneFrame label="Before" tone="muted">
+              <img
+                src={demo.beforeImage}
+                alt={demo.beforeAlt}
+                className="absolute inset-0 w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </PhoneFrame>
+          </motion.div>
+        </AnimatePresence>
 
         {/* AFTER phone */}
-        <PhoneFrame label="After · AI" tone="lime">
-          <div className="absolute inset-0 bg-gradient-to-br from-red-500 via-rose-600 to-amber-700" />
-          <video
-            src="/showcase/cs1.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover"
-            onError={(e) => {
-              (e.currentTarget as HTMLVideoElement).style.display = "none";
-            }}
-          />
-          {/* Emoji fallback for the case when the video file doesn't exist yet */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span className="text-7xl opacity-90 drop-shadow-lg select-none">⌚💥</span>
-          </div>
-        </PhoneFrame>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`after-${demo.id}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <PhoneFrame label="After · AI" tone="lime">
+              <div className={`absolute inset-0 bg-gradient-to-br ${demo.afterFallbackGradient}`} />
+              <video
+                src={demo.afterVideo}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                className="absolute inset-0 w-full h-full object-cover"
+                onError={(e) => {
+                  (e.currentTarget as HTMLVideoElement).style.display = "none";
+                }}
+              />
+              {/* Emoji fallback (shown behind video, hidden when video plays) */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span className="text-7xl opacity-90 drop-shadow-lg select-none">{demo.emoji}</span>
+              </div>
+            </PhoneFrame>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Animated arrow between */}
@@ -199,8 +231,34 @@ function HeroPhoneMockup() {
         </motion.div>
       </div>
 
-      {/* Floating label under */}
-      <div className="mt-6 text-center">
+      {/* Category / title under the phones */}
+      <div className="mt-5 text-center">
+        <p className="text-white font-display font-bold text-sm sm:text-base mb-1">
+          {tCase(`${demo.id}.title`)}
+        </p>
+        <p className="text-pranko-muted text-xs leading-snug max-w-xs mx-auto">
+          {tCase(`${demo.id}.story`)}
+        </p>
+      </div>
+
+      {/* Dot indicators */}
+      <div className="flex items-center justify-center gap-2 mt-4">
+        {HERO_DEMOS.map((d, i) => (
+          <button
+            key={d.id}
+            onClick={() => setIndex(i)}
+            className={`w-2.5 h-2.5 rounded-full transition-colors duration-300 ${
+              i === index
+                ? "bg-pranko-lime glow-lime"
+                : "bg-pranko-border hover:bg-pranko-muted/60"
+            }`}
+            aria-label={`Show ${tCase(`${d.id}.title`)} demo`}
+          />
+        ))}
+      </div>
+
+      {/* Floating tech-stack caption */}
+      <div className="mt-4 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-pranko-bg/80 backdrop-blur border border-pranko-border text-xs font-semibold text-pranko-muted">
           <Sparkles size={12} className="text-pranko-lime" />
           {t("mockupCaption")}

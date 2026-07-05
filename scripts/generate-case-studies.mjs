@@ -22,7 +22,10 @@
  *   node scripts/generate-case-studies.mjs --only 1  # just cs1
  */
 
-import "dotenv/config";
+import { config as loadEnv } from "dotenv";
+// Load .env first, then .env.local overrides it.
+loadEnv();
+loadEnv({ path: ".env.local", override: true });
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

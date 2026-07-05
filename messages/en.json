@@ -99,5 +99,12 @@
     },
     "poweredBy": "Secure checkout by Polar · Card, Apple Pay, Google Pay"
   },
-  "footer": { "tagline": "Made with mischief" }
+  "footer": {
+    "tagline": "Made with mischief",
+    "tiktok": "TikTok",
+    "instagram": "Instagram",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "contact": "Contact"
+  }
 }
