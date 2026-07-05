@@ -51,7 +51,7 @@ export function CaseStudies() {
           className="text-center mb-12"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pranko-lime/20 text-pranko-lime text-xs font-display font-bold mb-4">
-            <Sparkles size={14} /> REAL OUTPUT · UNSPLASH + FAL.AI
+            <Sparkles size={14} /> REAL VIDEOS · AI GENERATED
           </div>
           <h2 className="text-display text-4xl sm:text-5xl text-white mb-3">
             {t("title")}

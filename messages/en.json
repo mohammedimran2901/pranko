@@ -11,7 +11,7 @@
     "cta": "Create my prank ↓",
     "ctaLoading": "Opening checkout…",
     "ctaSecondary": "See it in action",
-    "mockupCaption": "Real demo: Unsplash photo + fal.ai · ~90 seconds",
+    "mockupCaption": "Before & after · AI in ~90 seconds",
     "trustPay": "Card, Apple Pay, Google Pay",
     "trustTime": "~90 secs per video",
     "trustCancel": "Cancel anytime"
@@ -26,32 +26,32 @@
   },
   "caseStudies": {
     "title": "5 real pranks made with Pranko",
-    "subtitle": "Each card is a real Unsplash photo pushed through fal.ai. Click to play the AI result.",
+    "subtitle": "Upload a photo, describe the prank, and watch the AI work its magic.",
     "cta": "Make my own prank",
     "ctaSub": "6 credits for $4.99/week. Cancel anytime.",
     "cs1": {
       "title": "Got arrested! 🚔",
-      "desc": "Unsplash: business person in a hallway. fal.ai: getting arrested in the street.",
+      "desc": "A professional portrait transformed into an arrest scene.",
       "story": "Send to your boss 10 minutes before the big meeting. 'Sorry, can't make it in today.'"
     },
     "cs2": {
       "title": "CEO to homeless",
-      "desc": "Unsplash: a well-dressed businessman. fal.ai: same man, down on his luck.",
+      "desc": "A sharp suit turned into a down-on-his-luck moment.",
       "story": "Show up to your ex's wedding as the 'guest speaker'. Watch the room lose it."
     },
     "cs3": {
       "title": "Grandma breakdancing",
-      "desc": "Unsplash: a fragile 80-year-old grandma. fal.ai: her dancing to a funky beat.",
+      "desc": "A sweet grandma photo turned into a funky dance video.",
       "story": "Send it on the family WhatsApp group at 7am. Mom will screenshot it before breakfast."
     },
     "cs4": {
       "title": "House party aftermath",
-      "desc": "Unsplash: a clean, tidy living room. fal.ai: same room, post-party chaos.",
+      "desc": "A tidy living room turned into post-party chaos.",
       "story": "Send to your roommate: 'We need to talk when you get home.'"
     },
     "cs5": {
       "title": "Singing in the rain 🌧️",
-      "desc": "Unsplash: a smiling person outdoors. fal.ai: dancing in the rain like a musical.",
+      "desc": "A simple portrait turned into a musical rain dance.",
       "story": "Send to your crush the night before your date. 'Can't wait for tomorrow.'"
     }
   },

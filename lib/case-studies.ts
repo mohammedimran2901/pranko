@@ -18,7 +18,6 @@ export interface CaseStudy {
   afterVideo: string;
   afterFallbackGradient: string;
   falPrompt: string;
-  sourceLabel: string;
   sfxPrompt?: string;
 }
 
@@ -37,7 +36,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     falPrompt:
       "This person being arrested by two police officers, hands cuffed behind their back, being led away toward a patrol car with flashing blue and red lights, looking down in shame, chaotic street scene.",
     sfxPrompt: "police siren wailing, urgent radio chatter, handcuffs clicking, crowd murmuring",
-    sourceLabel: "Unsplash · business person",
   },
   {
     // cs2 — EX: "CEO to homeless" (classic)
@@ -53,7 +51,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     falPrompt:
       "Same person in the same setting, but now as a drunken homeless man — disheveled hair, torn stained clothes, holding a bottle in a paper bag, swaying, mumbling, looking exhausted and broke.",
     sfxPrompt: "wind blowing, distant traffic, bottle clinking, muffled mumbling, street atmosphere",
-    sourceLabel: "Unsplash · business portrait",
   },
   {
     // cs3 — MOM: "Grandma breakdancing" (iconic crowd-pleaser)
@@ -69,7 +66,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     falPrompt:
       "Her dancing to an upbeat funky track — breakdancing, doing the moonwalk, spinning on her back, full energy, sweaty but unstoppable, her grandma clothes flying with the moves, crowd cheering in the background.",
     sfxPrompt: "upbeat funky breakdance music, crowd cheering and clapping, energetic 80s beat",
-    sourceLabel: "Unsplash · grandma portrait",
   },
   {
     // cs4 — ROOMMATE: "Living room destroyed" (classic)
@@ -85,7 +81,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     falPrompt:
       "The same living room, but after a wild house party — bottles and red cups everywhere, confetti and balloons, tipped furniture, someone passed out on the couch, total chaos, TV screen cracked.",
     sfxPrompt: "thumping party music, bottles clinking, people laughing and shouting, distant police siren",
-    sourceLabel: "Unsplash · tidy living room",
   },
   {
     // cs5 — CRUSH: "Singing in the rain" (happy/funny)
@@ -101,6 +96,5 @@ export const CASE_STUDIES: CaseStudy[] = [
     falPrompt:
       "This person dancing and singing ecstatically in heavy pouring rain on a city street, spinning around a lamppost with one arm outstretched, classic musical-film style, huge joyful smile, water splashing everywhere, dramatic lighting.",
     sfxPrompt: "romantic orchestral music swelling, heavy rain pouring, splashing in puddles, joyful humming",
-    sourceLabel: "Unsplash · smiling portrait",
   },
 ];
