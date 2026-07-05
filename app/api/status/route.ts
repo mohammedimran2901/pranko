@@ -64,7 +64,13 @@ export async function GET(req: NextRequest) {
 
           if (resultRes.ok) {
             const resultData = await resultRes.json();
-            const videoUrl = resultData.video?.url || "";
+            const videoUrl =
+              resultData.video?.url ||
+              resultData.output?.video?.url ||
+              resultData.output?.url ||
+              resultData.result?.video?.url ||
+              resultData.result?.url ||
+              "";
 
             if (videoUrl) {
               if (job) {

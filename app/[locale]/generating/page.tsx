@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { PrankoChop } from "@/components/PrankoChop";
 
 export default function GeneratingPage() {
   return (
@@ -106,6 +107,8 @@ function GeneratingPageInner() {
         </div>
 
         <p className="text-pranko-muted text-xs mt-6">Can take up to 90 seconds · Don't refresh this page</p>
+
+        <PrankoChop />
       </div>
     </div>
   );

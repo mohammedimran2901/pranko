@@ -89,6 +89,7 @@ export async function submitVideoGeneration(
       image_urls: [imageUrl],
       duration: "5",
       resolution: "480p",
+      aspect_ratio: "9:16",
     }),
   });
 
@@ -128,7 +129,15 @@ export async function pollForVideoResult(
 
         if (resultRes.ok) {
           const resultData = await resultRes.json();
-          const videoUrl = resultData.video?.url || "";
+          // Seedance 2.0 Mini returns video at resultData.video.url OR
+          // resultData.output.video.url depending on API version.
+          const videoUrl =
+            resultData.video?.url ||
+            resultData.output?.video?.url ||
+            resultData.output?.url ||
+            resultData.result?.video?.url ||
+            resultData.result?.url ||
+            "";
           if (videoUrl) return { videoUrl };
         }
 

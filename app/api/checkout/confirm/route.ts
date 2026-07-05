@@ -2,11 +2,8 @@
  * POST /api/checkout/confirm
  *
  * Proactively confirms a Polar checkout and grants credits immediately.
- * This solves the race condition where the success page loads before the
- * webhook fires — the user would see "0 credits ready" after paying.
- *
- * Body: { checkoutId: string }
- * Returns: { credits, subscriptionActive, ... }
+ * - Single ($1.99): grants 1 credit
+ * - Weekly ($4.99): grants 6 credits
  */
 import { NextRequest, NextResponse } from "next/server";
 import { getPolarClient } from "@/lib/polar";
@@ -24,53 +21,63 @@ export async function POST(req: NextRequest) {
 
     const userId = getOrCreateUserId();
 
-    // 1. Look up the Polar checkout session.
     const polar = getPolarClient();
-    // Use `as any` because the Polar SDK typings for this method are complex
     const session = await (polar.checkouts as any).get({ id: checkoutId });
 
-    // 2. Extract userId from checkout metadata (we put it there in createWeeklyCheckout).
     const checkoutUserId =
       (session.metadata?.userId as string | undefined) ||
       session.externalCustomerId ||
       null;
 
-    // 3. Only grant credits if the checkout was paid/confirmed.
-    //    Polar Checkout status: "confirmed" means payment succeeded.
     if (session.status === "confirmed" || session.status === "succeeded") {
-      // Prefer the userId that was attached to the checkout, since the
-      // current cookie user may differ (cleared cookies, different browser, etc.)
       const targetUserId = checkoutUserId || userId;
 
-      // Store the subscription id if Polar has created one.
       const subscriptionId = session.subscriptionId as string | undefined;
       if (subscriptionId) {
         subscriptionMap.remember(subscriptionId, targetUserId);
       }
 
-      // Grant credits (re-fill to 6 if not already done by webhook).
+      // Detect plan type from checkout metadata
+      const plan: string =
+        (session.metadata?.plan as string) ||
+        (session.metadata?.product as string) ||
+        "weekly"; // default to weekly for backward compat
+      const isSingle = plan === "single";
+      const creditAmount = isSingle ? 1 : 6;
+
       const rec = await credits.get(targetUserId);
-      if (!rec || rec.credits < 6) {
-        await credits.refill(targetUserId, {
-          subscriptionId,
+      const currentCredits = rec?.credits ?? 0;
+
+      if (isSingle) {
+        // One-time: add 1 credit to whatever they already have
+        await credits.set(targetUserId, {
+          credits: currentCredits + 1,
           email: (session.customerEmail as string) || rec?.email,
+          subscriptionId: subscriptionId || rec?.subscriptionId,
         });
+      } else {
+        // Weekly: refill to 6 (don't stack unused credits)
+        if (currentCredits < creditAmount) {
+          await credits.set(targetUserId, {
+            credits: creditAmount,
+            subscriptionId,
+            email: (session.customerEmail as string) || rec?.email,
+            lastRefilledAt: Date.now(),
+            canceled: false,
+          });
+        }
       }
 
       const updated = await credits.get(targetUserId);
       return NextResponse.json({
         confirmed: true,
         userId: targetUserId,
-        credits: updated?.credits ?? 6,
-        subscriptionActive: Boolean(
-          updated?.subscriptionId && !updated?.canceled
-        ),
+        credits: updated?.credits ?? creditAmount,
+        subscriptionActive: Boolean(updated?.subscriptionId && !updated?.canceled),
         subscriptionId: updated?.subscriptionId,
       });
     }
 
-    // 4. Checkout not yet confirmed — payment may still be processing.
-    //    Return the current status so the UI can retry.
     return NextResponse.json({
       confirmed: false,
       status: session.status,

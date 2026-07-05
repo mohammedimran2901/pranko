@@ -111,7 +111,7 @@ function ResultViewPageInner() {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
           <button onClick={downloadVideo} className="btn-pranko !text-base !py-4">
             <Download size={18} /> {t("download")}
           </button>
@@ -121,6 +121,18 @@ function ResultViewPageInner() {
           >
             <RotateCw size={16} /> {t("newPrank")}
           </Link>
+        </div>
+
+        {/* TikTok / Sharing tips */}
+        <div className="card-pranko p-4 border border-pranko-border/50">
+          <h3 className="text-white font-display font-bold text-sm mb-2">📱 Ready for TikTok</h3>
+          <ul className="text-pranko-muted text-xs space-y-1.5">
+            <li>• This video is optimized for TikTok (9:16 vertical)</li>
+            <li>• <strong>On mobile:</strong> tap and hold the video → Save to Photos</li>
+            <li>• <strong>On desktop:</strong> right-click the video → Save video as…</li>
+            <li>• Or click <strong>Download</strong> above to save as pranko.mp4</li>
+            <li>• Then open TikTok, tap +, upload your saved video</li>
+          </ul>
         </div>
       </div>
     </div>
