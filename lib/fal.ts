@@ -13,8 +13,13 @@ const STORAGE_BASE = "https://rest.fal.ai/storage";
 const FAL_KEY = process.env.FAL_KEY || "";
 const FAL_MODEL = "fal-ai/seedance-2/mini/reference-to-video";
 
-function getHeaders(): Record<string, string> {
-  return { Authorization: `Key ${FAL_KEY}`, "Content-Type": "application/json" };
+function getHeaders(method: string = "GET"): Record<string, string> {
+  const headers: Record<string, string> = { Authorization: `Key ${FAL_KEY}` };
+  // Only send Content-Type with POST — fal.ai returns 405 on GET with Content-Type
+  if (method === "POST") {
+    headers["Content-Type"] = "application/json";
+  }
+  return headers;
 }
 
 function requireFalKey(): void {
@@ -45,7 +50,7 @@ export async function uploadImage(base64DataUri: string): Promise<string> {
   const ext = contentType.split("/")[1] || "png";
 
   const initRes = await fetch(`${STORAGE_BASE}/upload/initiate`, {
-    method: "POST", headers: getHeaders(),
+    method: "POST", headers: getHeaders("POST"),
     body: JSON.stringify({ content_type: contentType, file_name: `selfie.${ext}` }),
   });
   if (!initRes.ok) {
@@ -91,7 +96,7 @@ function isPromptSafeForAudio(prompt: string): boolean {
 export async function submitVideoGeneration(prompt: string, imageUrl: string): Promise<{ requestId: string; statusUrl: string; resultUrl: string }> {
   requireFalKey();
   const response = await fetch(`${FAL_BASE}/${FAL_MODEL}`, {
-    method: "POST", headers: getHeaders(),
+    method: "POST", headers: getHeaders("POST"),
     body: JSON.stringify({ prompt, image_urls: [imageUrl], duration: "5", resolution: "480p", aspect_ratio: "9:16" }),
   });
   const data = await safeJson(response, "generation submit");
@@ -112,13 +117,13 @@ export async function pollForVideoResult(
   const resultUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${requestId}`;
 
   for (let i = 0; i < maxRetries; i++) {
-    const statusRes = await fetch(statusUrl, { method: "POST", headers: getHeaders() });
+    const statusRes = await fetch(statusUrl, { method: "POST", headers: getHeaders("POST") });
     if (!statusRes.ok) { await new Promise(r => setTimeout(r, intervalMs)); continue; }
     const statusData = await safeJson(statusRes, "status poll");
 
     if (statusData.status === "COMPLETED") {
       for (let r = 0; r < 10; r++) {
-        const resultRes = await fetch(resultUrl, { method: "POST", headers: getHeaders() });
+        const resultRes = await fetch(resultUrl, { method: "GET", headers: getHeaders("GET") });
         if (resultRes.ok) {
           const resultData = await safeJson(resultRes, "result fetch");
           const videoUrl = resultData.video?.url || resultData.output?.video?.url || resultData.output?.url || resultData.result?.video?.url || resultData.result?.url || "";

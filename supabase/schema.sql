@@ -23,6 +23,8 @@ create table if not exists public.prank_jobs (
   status            text not null default 'generating', -- queued|uploading|generating|completed|failed
   prompt            text not null,
   fal_request_id    text not null,
+  fal_status_url    text,                             -- fal.ai status URL (model-specific)
+  fal_result_url    text,                             -- fal.ai result URL (model-specific)
   uploaded_image_url text,
   result_video_url  text,
   error             text,
