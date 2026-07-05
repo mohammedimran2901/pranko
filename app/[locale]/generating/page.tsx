@@ -105,7 +105,7 @@ function GeneratingPageInner() {
           ))}
         </div>
 
-        <p className="text-pranko-muted text-xs mt-6">~30 seconds · Don't refresh</p>
+        <p className="text-pranko-muted text-xs mt-6">Can take up to 90 seconds · Don't refresh this page</p>
       </div>
     </div>
   );
