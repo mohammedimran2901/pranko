@@ -3,7 +3,7 @@
  * Uses FAL_KEY from env to call Fal.ai REST API directly.
  *
  * Model: fal-ai/seedance-2/mini/reference-to-video
- * Input: image + text prompt → output: video with audio
+ * Input: image + text prompt → output: video (no audio)
  *
  * Output: 480p, 9:16 aspect ratio, 5 second duration.
  */
@@ -68,7 +68,7 @@ export async function submitVideoGeneration(prompt: string, imageUrl: string): P
   requireFalKey();
   const response = await fetch(`${FAL_BASE}/${FAL_MODEL}`, {
     method: "POST", headers: getHeaders(),
-    body: JSON.stringify({ prompt, image_urls: [imageUrl], duration: "5", resolution: "480p", aspect_ratio: "9:16" }),
+    body: JSON.stringify({ prompt, image_urls: [imageUrl], duration: "5", resolution: "480p", aspect_ratio: "9:16", generate_audio: false }),
   });
   const data = await safeJson(response, "generation submit");
   if (!response.ok) {
