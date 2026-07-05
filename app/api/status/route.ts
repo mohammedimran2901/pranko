@@ -38,12 +38,14 @@ function findVideoUrl(obj: any, depth = 0): string | null {
       if (!isUrl) continue;
       // video file extensions
       if (/\.(mp4|webm|mov|avi|mkv)(\?|$)/i.test(value)) return value;
-      // key name suggests a URL (catches { url: "https://..." })
-      if (key.toLowerCase() === "url") return value;
-      // known fal domains
-      if (/fal\.(ai|run)|falcdn\.com|storage\.googleapis\.com|delivery\.fal/i.test(value)) return value;
-      // /v1/files/ or /files/ patterns
+      // key named 'url', 'video_url', 'file_url', 'output_url' etc.
+      if (/^(url|video_url|file_url|output_url|result_url|download_url|src|href|playback_url|media_url)$/i.test(key)) return value;
+      // known fal / CDN domains (including v3.fal.media, fal.ai, etc.)
+      if (/fal\.|falcdn|v\d+\.fal\.|storage\.googleapis|delivery\.fal|\.cloudfront\.net/i.test(value)) return value;
+      // /v1/files/ or /files/ or /outputs/ patterns
       if (/\/v\d\/files\/|\/files\//i.test(value)) return value;
+      // Catch-all: any URL that looks like it might be media (has /output/, /result/, /media/)
+      if (/\/(output|result|media|video|generated)\//i.test(value)) return value;
     }
     if (typeof value === "object" && value !== null) {
       const found = findVideoUrl(value, depth + 1);
@@ -93,6 +95,7 @@ export async function GET(req: NextRequest) {
       const videoUrl = findVideoUrl(resultData);
 
       if (videoUrl) {
+        console.log("[status] Found video URL:", videoUrl);
         if (job) {
           await store.updateJob(job.id, { status: "completed", resultVideoUrl: videoUrl, completedAt: Date.now() });
           return NextResponse.json({ id, status: "completed", shareToken: job.shareToken, resultVideoUrl: videoUrl });
@@ -103,7 +106,20 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ id: newJob.id, status: "completed", shareToken: newJob.shareToken, resultVideoUrl: videoUrl });
       }
 
-      console.error("[status] COMPLETED but no video URL found. Response:", resultText.substring(0, 1000));
+      // Dump the full response structure for debugging
+      console.error("[status] COMPLETED but no video URL found.");
+      console.error("[status] Full response (first 2000 chars):", resultText.substring(0, 2000));
+      // Also log JSON structure recursively
+      const dumpKeys = (o: any, d = 0): string => {
+        if (!o || typeof o !== "object" || d > 4) return "";
+        if (Array.isArray(o)) return `[${o.length} items]`;
+        return "{ " + Object.entries(o).map(([k, v]) => {
+          const val = typeof v === "string" ? `"${v.substring(0, 80)}"` :
+            typeof v === "object" && v !== null ? dumpKeys(v, d + 1) : String(v);
+          return `${k}: ${val}`;
+        }).join(", ") + " }";
+      };
+      console.error("[status] Response structure:", dumpKeys(resultData));
       return NextResponse.json({ id, status: "generating", pollAttempt: "video_url_missing", debug: Object.keys(resultData).join(",") });
     }
 

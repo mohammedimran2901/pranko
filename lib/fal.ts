@@ -64,11 +64,37 @@ export async function uploadImage(base64DataUri: string): Promise<string> {
   return file_url;
 }
 
+/**
+ * Quick check for obviously sensitive words in a prompt.
+ * Returns true if the prompt looks safe for audio generation (no slurs, violence, NSFW).
+ * This is not an exhaustive filter — just a safety net before enabling audio.
+ */
+function isPromptSafeForAudio(prompt: string): boolean {
+  const lower = prompt.toLowerCase();
+  // Blocklist: slurs, explicit sexual/violent terms
+  const blocked = [
+    // slurs / hate speech
+    "nigger", "nigga", "faggot", "retard", "kike", "chink", "spic", "wetback",
+    "tranny", "shemale",
+    // extreme violence
+    "kill", "murder", "bomb", "terrorist", "shoot", "massacre", "genocide",
+    "rape", "torture", "beheading", "decapitate",
+    // explicit sexual
+    "porn", "xxx", "sex", "cum ", "cock", "pussy", "dick", "penis", "vagina",
+    "blowjob", "handjob", "masturbat", "orgy", "incest", "pedo",
+    // self-harm
+    "suicide", "self-harm", "cut myself",
+  ];
+  return !blocked.some(word => lower.includes(word));
+}
+
 export async function submitVideoGeneration(prompt: string, imageUrl: string): Promise<string> {
   requireFalKey();
+  // Enable audio if the prompt passes the safety check
+  const generateAudio = isPromptSafeForAudio(prompt);
   const response = await fetch(`${FAL_BASE}/${FAL_MODEL}`, {
     method: "POST", headers: getHeaders(),
-    body: JSON.stringify({ prompt, image_urls: [imageUrl], duration: "5", resolution: "480p", aspect_ratio: "9:16", generate_audio: false }),
+    body: JSON.stringify({ prompt, image_urls: [imageUrl], duration: "5", resolution: "480p", aspect_ratio: "9:16", generate_audio: generateAudio }),
   });
   const data = await safeJson(response, "generation submit");
   if (!response.ok) {
