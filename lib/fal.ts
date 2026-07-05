@@ -91,10 +91,9 @@ function isPromptSafeForAudio(prompt: string): boolean {
 export async function submitVideoGeneration(prompt: string, imageUrl: string): Promise<string> {
   requireFalKey();
   // Enable audio if the prompt passes the safety check
-  const generateAudio = isPromptSafeForAudio(prompt);
   const response = await fetch(`${FAL_BASE}/${FAL_MODEL}`, {
     method: "POST", headers: getHeaders(),
-    body: JSON.stringify({ prompt, image_urls: [imageUrl], duration: "5", resolution: "480p", aspect_ratio: "9:16", generate_audio: generateAudio }),
+    body: JSON.stringify({ prompt, image_urls: [imageUrl], duration: "5", resolution: "480p", aspect_ratio: "9:16" }),
   });
   const data = await safeJson(response, "generation submit");
   if (!response.ok) {
@@ -110,13 +109,13 @@ export async function pollForVideoResult(
   const resultUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${requestId}`;
 
   for (let i = 0; i < maxRetries; i++) {
-    const statusRes = await fetch(statusUrl, { method: "POST", headers: getHeaders() });
+    const statusRes = await fetch(statusUrl, { headers: getHeaders() });
     if (!statusRes.ok) { await new Promise(r => setTimeout(r, intervalMs)); continue; }
     const statusData = await safeJson(statusRes, "status poll");
 
     if (statusData.status === "COMPLETED") {
       for (let r = 0; r < 10; r++) {
-        const resultRes = await fetch(resultUrl, { method: "POST", headers: getHeaders() });
+        const resultRes = await fetch(resultUrl, { headers: getHeaders() });
         if (resultRes.ok) {
           const resultData = await safeJson(resultRes, "result fetch");
           const videoUrl = resultData.video?.url || resultData.output?.video?.url || resultData.output?.url || resultData.result?.video?.url || resultData.result?.url || "";
