@@ -116,7 +116,7 @@ export async function pollForVideoResult(
 
     if (statusData.status === "COMPLETED") {
       for (let r = 0; r < 10; r++) {
-        const resultRes = await fetch(resultUrl, { headers: getHeaders() });
+        const resultRes = await fetch(resultUrl, { method: "POST", headers: getHeaders() });
         if (resultRes.ok) {
           const resultData = await safeJson(resultRes, "result fetch");
           const videoUrl = resultData.video?.url || resultData.output?.video?.url || resultData.output?.url || resultData.result?.video?.url || resultData.result?.url || "";
