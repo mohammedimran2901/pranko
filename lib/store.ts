@@ -19,6 +19,8 @@ export interface PrankJob {
   status: PrankStatus;
   prompt: string;
   falRequestId: string;
+  falStatusUrl?: string;   // fal.ai's status_url for polling (shorter path)
+  falResultUrl?: string;   // fal.ai's response_url for fetching result
   uploadedImageUrl?: string;
   resultVideoUrl?: string;
   error?: string;
@@ -76,6 +78,8 @@ class PrankStore {
     locale: string;
     falRequestId: string;
     uploadedImageUrl?: string;
+    statusUrl?: string;
+    resultUrl?: string;
   }): Promise<PrankJob> {
     const id = nanoid(12);
     const shareToken = nanoid(16);
@@ -106,6 +110,8 @@ class PrankStore {
       status: "generating",
       prompt: params.prompt,
       falRequestId: params.falRequestId,
+      falStatusUrl: params.statusUrl,
+      falResultUrl: params.resultUrl,
       uploadedImageUrl: params.uploadedImageUrl,
       locale: params.locale,
       createdAt: Date.now(),

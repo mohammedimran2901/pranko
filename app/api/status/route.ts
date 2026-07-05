@@ -1,13 +1,11 @@
 /**
  * GET /api/status?id=<jobId>&fal=<falRequestId>
  * Polls fal.ai for video generation status and returns the video URL
- * when complete. Fal.ai live server requires POST on all endpoints.
+ * when complete. Uses the URLs from fal.ai's submission response.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
 
-const FAL_BASE = "https://queue.fal.run";
-const FAL_MODEL = "fal-ai/seedance-2/mini/reference-to-video";
 const FAL_KEY = process.env.FAL_KEY || "";
 
 function getHeaders(): Record<string, string> {
@@ -16,28 +14,20 @@ function getHeaders(): Record<string, string> {
 
 function findVideoUrl(obj: any, depth = 0): string | null {
   if (!obj || depth > 20 || typeof obj !== "object") return null;
-  if (Array.isArray(obj)) {
-    for (const item of obj) { const f = findVideoUrl(item, depth + 1); if (f) return f; }
-    return null;
-  }
+  if (Array.isArray(obj)) { for (const item of obj) { const f = findVideoUrl(item, depth + 1); if (f) return f; } return null; }
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === "string" && value.length > 10 && value.startsWith("http")) {
       if (/\.(mp4|webm|mov|avi|mkv)(\?|$)/i.test(value)) return value;
       if (key.toLowerCase() === "url") return value;
       if (/fal\.(ai|run|media)|falcdn|v\d+\.fal\.|storage\.googleapis/i.test(value)) return value;
-      if (/\/(output|result|video|media|generated)\//i.test(value)) return value;
     }
-    if (typeof value === "object" && value !== null) {
-      const f = findVideoUrl(value, depth + 1);
-      if (f) return f;
-    }
+    if (typeof value === "object" && value !== null) { const f = findVideoUrl(value, depth + 1); if (f) return f; }
   }
   return null;
 }
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
-  const falRequestId = req.nextUrl.searchParams.get("fal");
   if (!id) return NextResponse.json({ error: "Missing job id" }, { status: 400 });
 
   let job: any = undefined;
@@ -50,12 +40,15 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ id: job.id, status: "failed", error: job.error });
   }
 
-  const falId = falRequestId || job?.falRequestId;
-  if (!falId) return NextResponse.json({ id, status: "generating" });
+  // Use the URLs from fal.ai's submission response (shorter path) or fall back to constructing from model
+  const statusUrl = job?.falStatusUrl || `https://queue.fal.run/fal-ai/seedance-2/mini/reference-to-video/requests/${job?.falRequestId}/status`;
+  const resultUrl = job?.falResultUrl || `https://queue.fal.run/fal-ai/seedance-2/mini/reference-to-video/requests/${job?.falRequestId}`;
+
+  if (!job?.falRequestId && !statusUrl.includes("requests/")) {
+    return NextResponse.json({ id, status: "generating" });
+  }
 
   try {
-    // ── STATUS CHECK (fal.ai live server requires POST) ──────────
-    const statusUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${falId}/status`;
     const statusRes = await fetch(statusUrl, { method: "POST", headers: getHeaders() });
     if (!statusRes.ok) return NextResponse.json({ id, status: "generating" });
 
@@ -65,20 +58,13 @@ export async function GET(req: NextRequest) {
     console.log("[status]", statusData.status);
 
     if (statusData.status === "COMPLETED") {
-      // ── FETCH RESULT (fal.ai live server requires POST) ───────
-      const resultUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${falId}`;
       const resultRes = await fetch(resultUrl, { method: "POST", headers: getHeaders() });
       if (!resultRes.ok) return NextResponse.json({ id, status: "generating" });
 
       let resultData: any;
       try { resultData = await resultRes.json(); } catch { return NextResponse.json({ id, status: "generating" }); }
 
-      // recursive search first, then direct property access as fallback
-      const videoUrl = findVideoUrl(resultData) ||
-        resultData?.video?.url ||
-        resultData?.output?.video?.url ||
-        resultData?.output?.url ||
-        null;
+      const videoUrl = findVideoUrl(resultData) || resultData?.video?.url || resultData?.output?.video?.url || resultData?.output?.url || null;
 
       if (videoUrl) {
         console.log("[status] Found:", videoUrl.substring(0, 80));

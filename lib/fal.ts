@@ -88,9 +88,8 @@ function isPromptSafeForAudio(prompt: string): boolean {
   return !blocked.some(word => lower.includes(word));
 }
 
-export async function submitVideoGeneration(prompt: string, imageUrl: string): Promise<string> {
+export async function submitVideoGeneration(prompt: string, imageUrl: string): Promise<{ requestId: string; statusUrl: string; resultUrl: string }> {
   requireFalKey();
-  // Enable audio if the prompt passes the safety check
   const response = await fetch(`${FAL_BASE}/${FAL_MODEL}`, {
     method: "POST", headers: getHeaders(),
     body: JSON.stringify({ prompt, image_urls: [imageUrl], duration: "5", resolution: "480p", aspect_ratio: "9:16" }),
@@ -99,7 +98,11 @@ export async function submitVideoGeneration(prompt: string, imageUrl: string): P
   if (!response.ok) {
     throw new Error(`Fal generation failed (${response.status}): ${JSON.stringify(data).substring(0, 300)}`);
   }
-  return data.request_id;
+  return {
+    requestId: data.request_id,
+    statusUrl: data.status_url,   // use fal.ai's status URL (shorter path)
+    resultUrl: data.response_url, // use fal.ai's result URL (shorter path)
+  };
 }
 
 export async function pollForVideoResult(
