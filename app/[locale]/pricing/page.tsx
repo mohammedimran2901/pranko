@@ -4,12 +4,27 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { Check, Loader2, CreditCard, Coins, Sparkles } from "lucide-react";
+import {
+  Check,
+  Loader2,
+  CreditCard,
+  Coins,
+  Sparkles,
+  Shield,
+  Cookie,
+  AlertTriangle,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function PricingPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="text-pranko-lime text-4xl animate-pulse">🧌</div></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-pranko-lime text-4xl animate-pulse">🧌</div>
+        </div>
+      }
+    >
       <PricingPageInner />
     </Suspense>
   );
@@ -21,7 +36,7 @@ function PricingPageInner() {
   const locale = useLocale();
   const prefix = locale === "en" ? "" : `/${locale}`;
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null); // "single" | "weekly" | null
   const [error, setError] = useState<string | null>(null);
   const [credits, setCredits] = useState<number | null>(null);
   const [subscriptionActive, setSubscriptionActive] = useState(false);
@@ -39,14 +54,14 @@ function PricingPageInner() {
       .catch(() => setCredits(0));
   }, []);
 
-  async function startCheckout() {
-    setLoading(true);
+  async function startCheckout(type: "single" | "weekly") {
+    setLoading(type);
     setError(null);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locale }),
+        body: JSON.stringify({ locale, type }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -61,13 +76,13 @@ function PricingPageInner() {
     } catch (e: any) {
       setError(e.message || "Checkout failed");
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   }
 
   return (
     <div className="min-h-screen px-4 sm:px-6 py-12 sm:py-20">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -75,10 +90,10 @@ function PricingPageInner() {
         >
           <div className="text-5xl mb-3">💳</div>
           <h1 className="text-display text-4xl sm:text-5xl text-white mb-3">
-            Pranko Weekly
+            Get Your Prank Video
           </h1>
-          <p className="text-pranko-muted text-lg">
-            6 prank videos every week. Cancel anytime.
+          <p className="text-pranko-muted text-lg max-w-md mx-auto">
+            No sign-up required. Pick a plan and start pranking.
           </p>
         </motion.div>
 
@@ -94,90 +109,170 @@ function PricingPageInner() {
           <div className="card-pranko p-4 mb-6 border-2 border-pranko-lime/40 text-center">
             <p className="text-white">
               <Sparkles size={16} className="inline -mt-1 mr-1 text-pranko-lime" />
-              You need a subscription to generate prank videos. Pick a plan below ↓
+              You need credits to generate. Pick a plan below ↓
             </p>
           </div>
         )}
 
+        {/* ── Two plans side by side ──────────────────────────── */}
+        <div className="grid md:grid-cols-2 gap-6 mb-6">
+          {/* Single video */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.05 }}
+            className="card-pranko p-8 border border-pranko-border relative"
+          >
+            <div className="absolute top-3 right-3 bg-pranko-muted/20 text-pranko-muted font-display font-bold text-xs px-3 py-1 rounded-full">
+              ONE-TIME
+            </div>
+            <div className="text-center mb-6">
+              <h2 className="text-display text-2xl text-white mb-2">
+                Single Video
+              </h2>
+              <div className="flex items-baseline justify-center gap-1">
+                <span className="font-display font-bold text-5xl text-pranko-lime">
+                  $1.99
+                </span>
+                <span className="text-pranko-muted text-lg">/video</span>
+              </div>
+              <p className="text-pranko-muted text-xs mt-1">
+                One credit = one prank video
+              </p>
+            </div>
+            <ul className="space-y-3 mb-8">
+              {[
+                "1 prank video credit",
+                "Full 5-second AI-generated video",
+                "All prank modes included",
+                "Share your video anywhere",
+              ].map((f) => (
+                <li
+                  key={f}
+                  className="flex items-start gap-3 text-pranko-muted"
+                >
+                  <Check size={18} className="text-pranko-lime shrink-0 mt-0.5" />
+                  <span className="text-sm">{f}</span>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => startCheckout("single")}
+              disabled={loading === "single"}
+              className="btn-pranko w-full !py-4 glow-lime disabled:opacity-50"
+            >
+              {loading === "single" ? (
+                <><Loader2 className="animate-spin" /> Opening checkout…</>
+              ) : (
+                <><CreditCard size={18} /> Buy 1 video — $1.99</>
+              )}
+            </button>
+          </motion.div>
+
+          {/* Weekly subscription */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="card-pranko p-8 border-2 border-pranko-lime/40 relative"
+          >
+            <div className="absolute top-3 right-3 bg-pranko-lime text-pranko-bg font-display font-bold text-xs px-3 py-1 rounded-full">
+              BEST VALUE
+            </div>
+            <div className="text-center mb-6">
+              <h2 className="text-display text-2xl text-white mb-2">Weekly</h2>
+              <div className="flex items-baseline justify-center gap-1">
+                <span className="font-display font-bold text-5xl text-pranko-lime">
+                  $4.99
+                </span>
+                <span className="text-pranko-muted text-lg">/week</span>
+              </div>
+              <p className="text-pranko-muted text-xs mt-1">
+                6 credits per week — that's just $0.83/video
+              </p>
+            </div>
+            <ul className="space-y-3 mb-8">
+              {[
+                "6 prank video credits per week",
+                "1 credit = 1 five-second AI video",
+                "All prank modes included",
+                "Credits refresh automatically weekly",
+                "Cancel anytime — no questions",
+              ].map((f) => (
+                <li
+                  key={f}
+                  className="flex items-start gap-3 text-pranko-muted"
+                >
+                  <Check size={18} className="text-pranko-lime shrink-0 mt-0.5" />
+                  <span className="text-sm">{f}</span>
+                </li>
+              ))}
+            </ul>
+            {subscriptionActive ? (
+              <div className="text-center">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pranko-lime/20 text-pranko-lime text-sm font-semibold mb-4">
+                  <Coins size={16} /> Active · {credits} credits left
+                </div>
+                <Link
+                  href={`${prefix}/create`}
+                  className="btn-pranko-pink w-full !py-4 glow-pink"
+                >
+                  <Sparkles size={18} /> Make a prank now
+                </Link>
+              </div>
+            ) : (
+              <button
+                onClick={() => startCheckout("weekly")}
+                disabled={loading === "weekly"}
+                className="btn-pranko-pink w-full !py-4 glow-pink disabled:opacity-50"
+              >
+                {loading === "weekly" ? (
+                  <><Loader2 className="animate-spin" /> Opening checkout…</>
+                ) : (
+                  <><CreditCard size={18} /> Subscribe — $4.99/week</>
+                )}
+              </button>
+            )}
+          </motion.div>
+        </div>
+
+        {/* ── Cookie warning ──────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.1 }}
-          className="card-pranko p-8 border-2 border-pranko-lime/40 mb-6 relative overflow-hidden"
+          transition={{ delay: 0.15 }}
+          className="card-pranko p-5 border border-pranko-pink/30 mb-6"
         >
-          <div className="absolute top-3 right-3 bg-pranko-lime text-pranko-bg font-display font-bold text-xs px-3 py-1 rounded-full">
-            THE PLAN
-          </div>
-
-          <div className="text-center mb-6">
-            <h2 className="text-display text-2xl text-white mb-2">Weekly</h2>
-            <div className="flex items-baseline justify-center gap-1">
-              <span className="font-display font-bold text-6xl text-pranko-lime">$4.99</span>
-              <span className="text-pranko-muted text-lg">/week</span>
-            </div>
-          </div>
-
-          <ul className="space-y-3 mb-8">
-            {[
-              "6 prank video credits per week",
-              "1 credit = 1 five-second AI prank video",
-              "All prank modes (ex, boss, mom, roommate, crush, merge)",
-              "Credits refresh automatically every week",
-              "Cancel anytime — no questions asked",
-            ].map((feature) => (
-              <li key={feature} className="flex items-start gap-3 text-pranko-muted">
-                <Check size={18} className="text-pranko-lime shrink-0 mt-0.5" />
-                <span className="text-sm sm:text-base">{feature}</span>
-              </li>
-            ))}
-          </ul>
-
-          {subscriptionActive ? (
-            <div className="text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pranko-lime/20 text-pranko-lime text-sm font-semibold mb-4">
-                <Coins size={16} /> Subscription active · {credits} credits left
-              </div>
-              <Link
-                href={`${prefix}/create`}
-                className="btn-pranko w-full !text-lg !py-5 glow-lime"
-              >
-                <Sparkles size={18} /> Make a prank now
-              </Link>
-            </div>
-          ) : (
-            <>
-              <button
-                onClick={startCheckout}
-                disabled={loading}
-                className="btn-pranko-pink w-full !text-xl !py-5 glow-pink"
-              >
-                {loading ? (
-                  <><Loader2 className="animate-spin" /> Opening checkout…</>
-                ) : (
-                  <><CreditCard size={20} /> Subscribe — $4.99/week</>
-                )}
-              </button>
-              <p className="text-pranko-muted text-xs text-center mt-3">
-                Secure checkout by Polar. Card, Apple Pay, Google Pay.
+          <div className="flex items-start gap-3">
+            <Cookie size={20} className="text-pranko-pink shrink-0 mt-0.5" />
+            <div>
+              <h3 className="text-white font-semibold text-sm mb-1">
+                Important: Keep your credits
+              </h3>
+              <p className="text-pranko-muted text-xs leading-relaxed">
+                Your credits are linked to this browser. To keep them:
+                <br />
+                • Use the <strong>same device and browser</strong> for this site
+                <br />
+                • Don't clear your cookies or use private/incognito mode
+                <br />
+                •{" "}
+                <Link href={`${prefix}/login`} className="text-pranko-lime underline">
+                  Sign in
+                </Link>{" "}
+                to save your credits across devices (takes 10 seconds, no
+                password)
               </p>
-            </>
-          )}
-
-          {error && (
-            <p className="text-pranko-pink text-sm text-center mt-3">{error}</p>
-          )}
+            </div>
+          </div>
         </motion.div>
 
+        {error && (
+          <p className="text-pranko-pink text-sm text-center mb-4">{error}</p>
+        )}
+
         <p className="text-pranko-muted text-xs text-center max-w-md mx-auto">
-          By subscribing you agree to our{" "}
-          <Link href={`${prefix}/legal/terms`} className="underline hover:text-white">
-            terms
-          </Link>{" "}
-          and{" "}
-          <Link href={`${prefix}/legal/privacy`} className="underline hover:text-white">
-            privacy policy
-          </Link>
-          . Don't use Pranko to defraud, harass, or harm anyone — be kind, be funny, don't be a clown (well, do be a clown, but a nice one).
+          Secure checkout by Polar. Card, Apple Pay, Google Pay.
         </p>
       </div>
     </div>

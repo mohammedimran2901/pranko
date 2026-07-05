@@ -1,30 +1,23 @@
 /**
  * POST /api/polar/webhook
  *
- * Polar webhook receiver. We react to subscription lifecycle events to
- * grant / refresh / revoke the user's 6 weekly prank credits.
+ * Polar webhook receiver. Grants credits for both:
+ *   - Single $1.99 purchase (1 credit via checkout.updated)
+ *   - Weekly $4.99 subscription (6 credits via subscription.*)
  *
- * Subscribed events (configured in Polar dashboard):
- *   - subscription.created       → first signup, grant 6 credits
- *   - subscription.active        → first paid invoice confirmed
- *   - subscription.updated       → renewal / plan change, refill 6 credits
- *   - subscription.canceled      → mark canceled (keep current credits)
- *   - subscription.revoked       → revoke all remaining credits
- *   - checkout.updated (status=succeeded) → backup grant
- *
- * Configure the webhook URL in Polar as:
- *   https://<your-domain>/api/polar/webhook
- * with secret taken from POLAR_WEBHOOK_SECRET.
+ * Configure in Polar: https://<domain>/api/polar/webhook
+ * Subscribe to: subscription.created, subscription.active,
+ *   subscription.updated, subscription.canceled, subscription.revoked,
+ *   checkout.updated.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { verifyPolarWebhook } from "@/lib/polar";
-import { credits } from "@/lib/credits";
+import { credits, WEEKLY_CREDITS } from "@/lib/credits";
 import { subscriptionMap } from "@/lib/subscriptions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** Try several common shapes for the user id attached to a Polar subscription. */
 function userIdFromSubscription(sub: any): string | null {
   return (
     sub?.metadata?.userId ||
@@ -40,7 +33,6 @@ function emailFromSubscription(sub: any): string | undefined {
 }
 
 function periodEndFromSubscription(sub: any): number | undefined {
-  // Polar exposes `current_period_end` on subscription payloads.
   const raw = sub?.current_period_end || sub?.currentPeriodEnd;
   if (!raw) return undefined;
   const ms = typeof raw === "number" ? raw * 1000 : Date.parse(raw);
@@ -70,12 +62,12 @@ export async function POST(req: NextRequest) {
 
   try {
     switch (type) {
-      // ── New subscription ───────────────────────────────────────
+      // ── Weekly subscription: grant 6 credits ──────────────────
       case "subscription.created":
       case "subscription.active": {
         const userId = userIdFromSubscription(data);
         if (!userId) {
-          console.warn(`${type}: no userId on subscription, skipping`);
+          console.warn(`${type}: no userId, skipping`);
           break;
         }
         const subId = data.id || data.subscription_id;
@@ -88,13 +80,12 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      // ── Renewal / plan change → refill credits ─────────────────
+      // ── Renewal: refill 6 credits ─────────────────────────────
       case "subscription.updated": {
         const userId = userIdFromSubscription(data);
         if (!userId) break;
         const subId = data.id || data.subscription_id;
         if (subId) subscriptionMap.remember(subId, userId);
-        // Only refill if status remains active.
         const status = data.status;
         if (!status || status === "active" || status === "trialing") {
           await credits.refill(userId, {
@@ -106,7 +97,7 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      // ── Canceled (still active until period end) ───────────────
+      // ── Canceled (keep credits until period end) ──────────────
       case "subscription.canceled": {
         const userId =
           userIdFromSubscription(data) ||
@@ -116,7 +107,7 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      // ── Revoked immediately ───────────────────────────────────
+      // ── Revoked (immediate, zero credits) ─────────────────────
       case "subscription.revoked": {
         const userId =
           userIdFromSubscription(data) ||
@@ -126,7 +117,7 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      // ── Backup: checkout completed ─────────────────────────────
+      // ── Checkout completed: grant single OR weekly credits ────
       case "checkout.updated": {
         if (data?.status !== "succeeded") break;
         const userId =
@@ -134,20 +125,33 @@ export async function POST(req: NextRequest) {
           data?.customer_external_id ||
           data?.customer?.external_id;
         if (!userId) break;
-        // Will be re-confirmed by subscription.created, but in case
-        // the user closes the success page before that fires, we
-        // ensure they have at least one credit.
-        const rec = await credits.get(userId);
-        if (!rec || rec.credits < 6) {
-          await credits.refill(userId, {
-            email: emailFromSubscription(data),
+
+        const plan: string =
+          data?.metadata?.plan || data?.metadata?.product || "";
+        const isSingle = plan === "single";
+
+        if (isSingle) {
+          // $1.99 one-time → grant 1 credit (non-renewing)
+          const rec = await credits.get(userId);
+          const newTotal = (rec?.credits ?? 0) + 1;
+          await credits.set(userId, {
+            credits: newTotal,
+            email: emailFromSubscription(data) || rec?.email,
+            subscriptionId: rec?.subscriptionId,
           });
+        } else {
+          // $4.99 weekly → backup grant (webhook subscription.created handles primary)
+          const rec = await credits.get(userId);
+          if (!rec || rec.credits < WEEKLY_CREDITS) {
+            await credits.refill(userId, {
+              email: emailFromSubscription(data),
+            });
+          }
         }
         break;
       }
 
       default:
-        // Ignore other events silently.
         break;
     }
   } catch (err: any) {

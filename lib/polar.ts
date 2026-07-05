@@ -1,7 +1,9 @@
 /**
  * Polar payments client for Pranko.
- * Handles checkout session creation, webhook signature verification, and
- * product/price lookups for the 6-credit weekly subscription.
+ * Handles checkout session creation, webhook verification, and
+ * product/price lookups for two products:
+ *   - Single: $1.99 / 1 credit (one-time)
+ *   - Weekly: $4.99 / 6 credits (recurring)
  */
 import { Polar } from "@polar-sh/sdk";
 
@@ -12,7 +14,11 @@ const POLAR_SERVER = (process.env.POLAR_SERVER || "sandbox") as
   | "sandbox"
   | "production";
 
-/** Weekly subscription product in Polar (one product, $4.99/week, 6 credits). */
+/** Single one-time product ($1.99, 1 credit). */
+export const PRANKO_SINGLE_PRODUCT_ID =
+  process.env.POLAR_SINGLE_PRODUCT_ID || "";
+
+/** Weekly subscription product ($4.99/week, 6 credits). */
 export const PRANKO_WEEKLY_PRODUCT_ID =
   process.env.POLAR_WEEKLY_PRODUCT_ID || "";
 
@@ -33,58 +39,70 @@ export function getPolarClient(): Polar {
   return _client;
 }
 
+export type CheckoutType = "single" | "weekly";
+
 export interface CheckoutInput {
-  /** Locale-aware success URL. Polar will append ?checkout_id=<id>. */
   successUrl: string;
-  /** Locale-aware cancel URL. */
   cancelUrl: string;
-  /** Optional pre-existing Polar customer id (e.g. returning subscriber). */
   customerId?: string;
-  /** Free-form metadata forwarded to the webhook. */
   metadata?: Record<string, string>;
-  /** External customer id (our own anonymous id) — Polar will reuse / create. */
   externalCustomerId?: string;
-  /** Customer email (optional convenience). */
   customerEmail?: string;
+  /** "single" = one-time $1.99, "weekly" = recurring $4.99 */
+  type: CheckoutType;
 }
 
 /**
- * Create a Polar checkout session for the weekly subscription.
- * Polar handles the hosted checkout page (card, Apple Pay, Google Pay, etc.)
- * and redirects back to `successUrl` on completion.
+ * Create a Polar checkout session for either a single video or weekly plan.
  */
-export async function createWeeklyCheckout(
+export async function createCheckout(
   input: CheckoutInput
 ): Promise<{ id: string; url: string }> {
-  if (!PRANKO_WEEKLY_PRODUCT_ID) {
+  const productId =
+    input.type === "single"
+      ? PRANKO_SINGLE_PRODUCT_ID
+      : PRANKO_WEEKLY_PRODUCT_ID;
+
+  if (!productId) {
+    const name = input.type === "single" ? "POLAR_SINGLE_PRODUCT_ID" : "POLAR_WEEKLY_PRODUCT_ID";
     throw new Error(
-      "POLAR_WEEKLY_PRODUCT_ID is not configured. Create the product in Polar and put its id in .env."
+      `${name} is not configured. Create the product in Polar and add its id to .env.`
     );
   }
+
   const polar = getPolarClient();
   const session = await polar.checkouts.create({
-    products: [PRANKO_WEEKLY_PRODUCT_ID],
+    products: [productId],
     successUrl: input.successUrl,
     customerEmail: input.customerEmail,
     externalCustomerId: input.externalCustomerId,
     metadata: {
       ...(input.metadata || {}),
-      plan: "weekly",
-      credits: "6",
+      plan: input.type,
+      credits: input.type === "single" ? "1" : "6",
     },
   });
   return { id: session.id, url: session.url };
 }
 
+/** Legacy wrapper for backward compatibility. */
+export async function createWeeklyCheckout(
+  input: Omit<CheckoutInput, "type">
+): Promise<{ id: string; url: string }> {
+  return createCheckout({ ...input, type: "weekly" });
+}
+
 /**
- * Verify a Polar webhook payload using the standard-webhooks library.
- * Returns the parsed event, or throws if verification fails.
- *
- * Polar webhook headers follow the Standard Webhooks spec:
- *   - `webhook-id`
- *   - `webhook-timestamp`
- *   - `webhook-signature`
+ * Create a checkout for a single video ($1.99 one-time).
  */
+export async function createSingleCheckout(
+  input: Omit<CheckoutInput, "type">
+): Promise<{ id: string; url: string }> {
+  return createCheckout({ ...input, type: "single" });
+}
+
+// ── Webhook verification ──────────────────────────────────────────
+
 import { validateEvent, WebhookVerificationError } from "@polar-sh/sdk/webhooks";
 
 export type PolarEvent = {
@@ -120,5 +138,6 @@ export function verifyPolarWebhook({
 export const POLAR_CONFIG = {
   organizationId: POLAR_ORGANIZATION_ID,
   server: POLAR_SERVER,
+  singleProductId: PRANKO_SINGLE_PRODUCT_ID,
   weeklyProductId: PRANKO_WEEKLY_PRODUCT_ID,
 };

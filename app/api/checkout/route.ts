@@ -15,19 +15,22 @@
  *   5. Polar also fires `subscription.created` → webhook grants 6 credits.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { createWeeklyCheckout, POLAR_CONFIG } from "@/lib/polar";
+import { createCheckout, type CheckoutType, POLAR_CONFIG } from "@/lib/polar";
 import { getOrCreateUserId } from "@/lib/credits";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json().catch(() => ({}))) as { locale?: string };
+    const body = (await req.json().catch(() => ({}))) as {
+      locale?: string;
+      type?: CheckoutType;
+    };
     const locale = ["en", "fr", "es"].includes(body.locale || "")
       ? (body.locale as string)
       : "en";
+    const checkoutType: CheckoutType = body.type === "single" ? "single" : "weekly";
 
-    // Identify the user (creates cookie if missing).
     const userId = getOrCreateUserId();
 
     const origin =
@@ -36,25 +39,31 @@ export async function POST(req: NextRequest) {
       req.nextUrl.origin;
     const prefix = locale === "en" ? "" : `/${locale}`;
 
-    const { url, id } = await createWeeklyCheckout({
+    const { url, id } = await createCheckout({
+      type: checkoutType,
       successUrl: `${origin}${prefix}/result/success?checkout_id={CHECKOUT_ID}`,
       cancelUrl: `${origin}${prefix}/pricing`,
       externalCustomerId: userId,
       metadata: {
         userId,
         locale,
-        product: "weekly",
+        product: checkoutType,
       },
     });
 
-    return NextResponse.json({ url, id, server: POLAR_CONFIG.server });
+    return NextResponse.json({
+      url,
+      id,
+      server: POLAR_CONFIG.server,
+      type: checkoutType,
+    });
   } catch (err: any) {
     console.error("checkout error:", err);
     return NextResponse.json(
       {
         error:
           err?.message ||
-          "Failed to create checkout. Make sure POLAR_ACCESS_TOKEN and POLAR_WEEKLY_PRODUCT_ID are set.",
+          "Failed to create checkout. Make sure POLAR_ACCESS_TOKEN and product IDs are set.",
       },
       { status: 500 }
     );
