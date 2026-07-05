@@ -59,7 +59,7 @@ function CreatePageInner() {
   const [prompt, setPrompt] = useState("");
   const [generating, setGenerating] = useState(false);
   const [credits, setCredits] = useState<number | null>(null);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Restore saved draft from localStorage (survives payment redirect).
@@ -116,13 +116,13 @@ function CreatePageInner() {
     window.location.href = url;
   }
 
-  async function startCheckout() {
-    setCheckoutLoading(true);
+  async function startCheckout(type: "single" | "weekly" = "weekly") {
+    setCheckoutLoading(type);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locale }),
+        body: JSON.stringify({ locale, type }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -137,7 +137,7 @@ function CreatePageInner() {
     } catch (e: any) {
       alert(e.message || "Checkout failed");
     } finally {
-      setCheckoutLoading(false);
+      setCheckoutLoading(null);
     }
   }
 
@@ -233,25 +233,32 @@ function CreatePageInner() {
                     Get credits to generate prank videos
                   </p>
                   <p className="text-pranko-muted text-sm mb-3">
-                    $1.99 for 1 video · $4.99/week for 6 videos · Your photo and
-                    prompt will be saved.
+                    Your photo and prompt will be saved while you pay.
                   </p>
-                  <button
-                    onClick={startCheckout}
-                    disabled={checkoutLoading}
-                    className="btn-pranko-pink !text-sm !py-2.5 !px-5 glow-pink inline-flex"
-                  >
-                    {checkoutLoading ? (
-                      <>
-                        <Loader2 className="animate-spin" size={16} /> Opening
-                        checkout…
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard size={16} /> Get credits
-                      </>
-                    )}
-                  </button>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <button
+                      onClick={() => startCheckout("single")}
+                      disabled={checkoutLoading !== null}
+                      className="btn-pranko !text-sm !py-2.5 !px-5 glow-lime inline-flex"
+                    >
+                      {checkoutLoading === "single" ? (
+                        <><Loader2 className="animate-spin" size={16} /> Opening…</>
+                      ) : (
+                        <><CreditCard size={16} /> 1 video — $1.99</>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => startCheckout("weekly")}
+                      disabled={checkoutLoading !== null}
+                      className="btn-pranko-pink !text-sm !py-2.5 !px-5 glow-pink inline-flex"
+                    >
+                      {checkoutLoading === "weekly" ? (
+                        <><Loader2 className="animate-spin" size={16} /> Opening…</>
+                      ) : (
+                        <><CreditCard size={16} /> 6 videos/week — $4.99</>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -365,8 +372,8 @@ function CreatePageInner() {
                 </button>
               ) : (
                 <button
-                  onClick={startCheckout}
-                  disabled={checkoutLoading}
+                  onClick={() => startCheckout("weekly")}
+                  disabled={checkoutLoading !== null}
                   className="btn-pranko-pink w-full !text-lg !py-5 mt-4 glow-pink"
                 >
                   {checkoutLoading ? (

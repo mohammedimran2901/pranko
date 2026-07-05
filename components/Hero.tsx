@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { CreditCard, Sparkles, ArrowRight, Loader2 } from "lucide-react";
+import { CreditCard, Sparkles, ArrowRight } from "lucide-react";
 import { CASE_STUDIES } from "@/lib/case-studies";
 
 /** 5 hero demos (cs1 – cs5) that auto-cycle every 4 s */
@@ -14,45 +13,15 @@ const CYCLE_MS = 4000;
 
 /**
  * Conversion-focused hero. Left: copy + CTA. Right: auto-cycling
- * 2‑up phone mockup showing original Unsplash photo vs AI video
- * side by side for cs1 → cs4.
+ * 2‑up phone mockup showing original Unsplash photo vs AI video.
  */
 export function Hero() {
   const t = useTranslations("hero");
   const locale = useLocale();
-  const router = useRouter();
   const prefix = locale === "en" ? "" : `/${locale}`;
-
-  const [loading, setLoading] = useState(false);
-
-  async function startCheckout() {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locale }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || "Checkout failed");
-      }
-      const { url } = await res.json();
-      if (url) {
-        window.location.href = url;
-        return;
-      }
-      throw new Error("No checkout URL");
-    } catch (e: any) {
-      alert(e.message || "Checkout failed");
-    } finally {
-      setLoading(false);
-    }
-  }
 
   return (
     <section className="relative overflow-hidden pt-10 pb-20 sm:pt-16 sm:pb-28">
-      {/* Backgrounds */}
       <div className="absolute inset-0 bg-grid opacity-50 pointer-events-none" />
       <div className="absolute top-20 -left-20 w-72 h-72 bg-pranko-lime/20 rounded-full blur-3xl animate-blob pointer-events-none" />
       <div className="absolute top-40 -right-20 w-96 h-96 bg-pranko-pink/20 rounded-full blur-3xl animate-blob pointer-events-none" style={{ animationDelay: "2s" }} />
@@ -66,7 +35,6 @@ export function Hero() {
             transition={{ duration: 0.6 }}
             className="text-center lg:text-left"
           >
-            {/* Live counter pill */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-pranko-bg/60 backdrop-blur border border-pranko-border text-xs font-semibold text-pranko-muted mb-5">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pranko-lime opacity-75" />
@@ -93,17 +61,12 @@ export function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start">
-              <button
-                onClick={startCheckout}
-                disabled={loading}
+              <Link
+                href={`${prefix}/create`}
                 className="btn-pranko-pink !text-lg !px-8 !py-5 glow-pink inline-flex w-full sm:w-auto justify-center"
               >
-                {loading ? (
-                  <><Loader2 className="animate-spin" size={20} /> {t("ctaLoading")}</>
-                ) : (
-                  <><Sparkles size={20} /> {t("cta")} <ArrowRight size={18} /></>
-                )}
-              </button>
+                <Sparkles size={20} /> {t("cta")} <ArrowRight size={18} />
+              </Link>
               <Link
                 href="#case-studies"
                 className="btn-pranko-ghost !text-base !px-6 !py-4 inline-flex w-full sm:w-auto justify-center"
@@ -112,7 +75,6 @@ export function Hero() {
               </Link>
             </div>
 
-            {/* Trust strip */}
             <div className="flex items-center gap-4 sm:gap-6 mt-7 justify-center lg:justify-start text-xs text-pranko-muted">
               <div className="flex items-center gap-1.5">
                 <CreditCard size={14} className="text-pranko-lime" />
@@ -144,10 +106,6 @@ export function Hero() {
   );
 }
 
-/**
- * Two phone "frames" side by side —  Before (Unsplash) | After (AI video).
- * Auto-cycles through cs1..cs4 every 4 s with a crossfade.
- */
 function HeroPhoneMockup() {
   const t = useTranslations("hero");
   const tCase = useTranslations("caseStudies");
@@ -165,9 +123,7 @@ function HeroPhoneMockup() {
 
   return (
     <div className="relative max-w-md mx-auto">
-      {/* Two phones */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
-        {/* BEFORE phone */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`before-${demo.id}`}
@@ -186,8 +142,6 @@ function HeroPhoneMockup() {
             </PhoneFrame>
           </motion.div>
         </AnimatePresence>
-
-        {/* AFTER phone */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`after-${demo.id}`}
@@ -215,7 +169,6 @@ function HeroPhoneMockup() {
         </AnimatePresence>
       </div>
 
-      {/* Animated arrow between */}
       <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
         <motion.div
           initial={{ scale: 0, rotate: -90 }}
@@ -227,7 +180,6 @@ function HeroPhoneMockup() {
         </motion.div>
       </div>
 
-      {/* Category / title under the phones */}
       <div className="mt-5 text-center">
         <p className="text-white font-display font-bold text-sm sm:text-base mb-1">
           {tCase(`${demo.id}.title`)}
@@ -237,7 +189,6 @@ function HeroPhoneMockup() {
         </p>
       </div>
 
-      {/* Dot indicators */}
       <div className="flex items-center justify-center gap-2 mt-4">
         {HERO_DEMOS.map((d, i) => (
           <button
@@ -253,7 +204,6 @@ function HeroPhoneMockup() {
         ))}
       </div>
 
-      {/* Floating tech-stack caption */}
       <div className="mt-4 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-pranko-bg/80 backdrop-blur border border-pranko-border text-xs font-semibold text-pranko-muted">
           <Sparkles size={12} className="text-pranko-lime" />
@@ -276,9 +226,7 @@ function PhoneFrame({
   return (
     <div className="relative aspect-[9/16] rounded-3xl overflow-hidden border-4 border-pranko-border bg-pranko-card shadow-2xl">
       {children}
-      {/* notch */}
       <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full bg-pranko-bg/60" />
-      {/* label badge */}
       <div
         className={`absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full text-[9px] font-display font-bold uppercase tracking-wider ${
           tone === "lime"
