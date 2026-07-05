@@ -6,6 +6,9 @@ import { useLocale } from "next-intl";
 import { Sparkles } from "lucide-react";
 import { Hero } from "@/components/Hero";
 import { CaseStudies } from "@/components/CaseStudies";
+import { Testimonials } from "@/components/Testimonials";
+import { Faq } from "@/components/Faq";
+import { ActivityToast } from "@/components/ActivityToast";
 
 export default function LandingPage() {
   const locale = useLocale();
@@ -14,15 +17,21 @@ export default function LandingPage() {
 
   return (
     <>
-      {/* ── Hero: phone mockup + dual CTA + $4.99 headline ────── */}
+      { /* ── Hero: phone mockup + dual CTA ────── */}
       <Hero />
 
-      {/* ── Case studies: 5 real pranks made with Pranko ──────── */}
+      { /* ── Case studies ──────── */}
       <div id="case-studies">
         <CaseStudies />
       </div>
 
-      {/* ── Final CTA ─────────────────────────────────────────── */}
+      { /* ── Testimonials ──────── */}
+      <Testimonials />
+
+      { /* ── FAQ ──────── */}
+      <Faq />
+
+      { /* ── Final CTA ──────── */}
       <section className="py-20 sm:py-28 px-4 sm:px-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-pranko opacity-10 pointer-events-none" />
         <div className="relative max-w-3xl mx-auto text-center">

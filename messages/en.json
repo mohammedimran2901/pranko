@@ -2,6 +2,7 @@
   "brand": { "name": "Pranko", "tagline": "AI prank videos in 30 seconds", "short": "AI prank videos in 30 seconds" },
   "nav": { "create": "Create", "pricing": "Pricing", "trending": "Trending", "login": "Log in", "start": "Start pranking" },
   "hero": {
+    "version": "v1.0 — Now live",
     "liveCounter": "2,347 pranks made this week",
     "headline1": "Turn any photo into a",
     "headline2": "5-second prank video.",
@@ -53,6 +54,37 @@
       "desc": "Unsplash: a smiling person outdoors. fal.ai: dancing in the rain like a musical.",
       "story": "Send to your crush the night before your date. 'Can't wait for tomorrow.'"
     }
+  },
+  "testimonials": {
+    "title": "Loved by pranksters worldwide",
+    "subtitle": "Don't take our word for it — hear from people using Pranko",
+    "items": [
+      { "name": "Marcus", "quote": "Sent a video of 'me' getting chased by a goose to my brother. He lost his mind for a solid 10 minutes.", "stars": 5 },
+      { "name": "Chloe", "quote": "Made a video for my best friend's birthday. She cried happy tears. Best $1.99 I ever spent.", "stars": 5 },
+      { "name": "Dev", "quote": "Used it to prank my co-founder. The group chat exploded. Still waiting for Series A though.", "stars": 5 },
+      { "name": "Sophia", "quote": "Showed my kids a video of 'me' riding a dolphin. Their jaws dropped. Pure magic.", "stars": 5 },
+      { "name": "Jamal", "quote": "My mom still asks about the video of 'me' with a full tattoo sleeve. I'm never telling her.", "stars": 5 },
+      { "name": "Aisha", "quote": "For $4.99 a week I deliver 6 high-quality pranks to my family WhatsApp. ROI is off the charts.", "stars": 5 },
+      { "name": "Ryan", "quote": "Told my roommate someone posted him 'wrestling an alligator' on TikTok. He searched for 45 minutes.", "stars": 5 },
+      { "name": "Lina", "quote": "I don't know how the AI makes these look so real. Genuinely unsettling in the best way possible.", "stars": 5 }
+    ]
+  },
+  "faq": {
+    "title": "Questions?",
+    "subtitle": "Everything you need to know about Pranko",
+    "q1": "Is this legal to use?",
+    "a1": "Yes — Pranko is designed for fun pranks between consenting friends. Only upload photos of yourself. We add a visible AI watermark to every video. Don't use it for fraud, impersonation, or anything illegal — our Terms prohibit that.",
+    "q2": "Are my photos stored?",
+    "a2": "Photos are uploaded to fal.ai for generation only. We don't keep your images — they're deleted after your video is created. Generated videos are kept for 48 hours so you can share, then automatically removed.",
+    "q3": "What devices and formats work?",
+    "a3": "Upload any JPEG, PNG, or WebP from phone or desktop (max 20MB). Videos are vertical 9:16 optimized for TikTok, Instagram Reels, and YouTube Shorts. Everything works in your browser — no app needed.",
+    "q4": "Can I cancel anytime?",
+    "a4": "Absolutely. Cancel with one click from your Account page. No long-term contracts, no cancellation fees. Unused credits reset each billing period."
+  },
+  "activity": {
+    "justNow": "Just now",
+    "subscribed": "subscribed to Weekly",
+    "created": "created a prank video"
   },
   "cta": { "title": "Ready to cause chaos?", "subtitle": "Your first prank video is free.", "button": "Create my prank video" },
   "create": {
