@@ -28,6 +28,9 @@ export function LanguageSwitcher({ currentLocale }: { currentLocale: string }) {
 
   function switchTo(target: string) {
     setOpen(false);
+    // Clear next-intl's locale cookie so the middleware doesn't
+    // redirect us back to the old locale on the next request.
+    document.cookie = "NEXT_LOCALE=; path=/; max-age=0";
     // Strip the current locale prefix and add the new one
     let path = pathname;
     for (const loc of locales) {
