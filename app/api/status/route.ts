@@ -28,6 +28,7 @@ function findVideoUrl(obj: any, depth = 0): string | null {
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get("id");
+  const falRequestId = req.nextUrl.searchParams.get("fal");
   if (!id) return NextResponse.json({ error: "Missing job id" }, { status: 400 });
 
   let job: any = undefined;
@@ -40,9 +41,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ id: job.id, status: "failed", error: job.error });
   }
 
-  // Use the URLs from fal.ai's submission response (shorter path) or fall back to constructing from model
-  const statusUrl = job?.falStatusUrl || `https://queue.fal.run/fal-ai/seedance-2/mini/reference-to-video/requests/${job?.falRequestId}/status`;
-  const resultUrl = job?.falResultUrl || `https://queue.fal.run/fal-ai/seedance-2/mini/reference-to-video/requests/${job?.falRequestId}`;
+  const falId = falRequestId || job?.falRequestId;
+  if (!falId) return NextResponse.json({ id, status: "generating" });
+
+  // Always use the SHORT path — fal.ai tracks individual jobs here regardless of model
+  const statusUrl = job?.falStatusUrl || `https://queue.fal.run/fal-ai/seedance-2/requests/${falId}/status`;
+  const resultUrl = job?.falResultUrl || `https://queue.fal.run/fal-ai/seedance-2/requests/${falId}`;
 
   if (!job?.falRequestId && !statusUrl.includes("requests/")) {
     return NextResponse.json({ id, status: "generating" });
