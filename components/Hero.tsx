@@ -8,8 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CreditCard, Sparkles, ArrowRight, Loader2 } from "lucide-react";
 import { CASE_STUDIES } from "@/lib/case-studies";
 
-/** 4 hero demos (cs1 – cs4) that auto-cycle every 4 s */
-const HERO_DEMOS = CASE_STUDIES.slice(0, 4);
+/** 5 hero demos (cs1 – cs5) that auto-cycle every 4 s */
+const HERO_DEMOS = CASE_STUDIES.slice(0, 5);
 const CYCLE_MS = 4000;
 
 /**
