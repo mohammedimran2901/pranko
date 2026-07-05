@@ -2,20 +2,23 @@
  * GET /api/status?id=<jobId>&fal=<falRequestId>
  * Polls fal.ai for video generation status and returns the video URL
  * when complete. Uses the URLs from fal.ai's submission response.
+ *
+ * IMPORTANT: fal.ai has two URL patterns:
+ *   - SHORT:   /fal-ai/seedance-2/requests/{id}        ← use GET (works!)
+ *   - LONG:    /fal-ai/seedance-2/mini/reference-to-video/requests/{id}  ← GET returns 405
+ *
+ * The submit endpoint returns SHORT path URLs in status_url and response_url.
+ * We use those if available, otherwise fall back to the SHORT path.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
 
 const FAL_KEY = process.env.FAL_KEY || "";
 
-function authHeaders(method: string = "GET"): Record<string, string> {
-  const headers: Record<string, string> = { Authorization: `Key ${FAL_KEY}` };
-  // Only set Content-Type for POST — fal.ai rejects GET requests that
-  // include a Content-Type header (returns 405).
-  if (method === "POST") {
-    headers["Content-Type"] = "application/json";
-  }
-  return headers;
+function authHeaders(): Record<string, string> {
+  // IMPORTANT: Do NOT include Content-Type for GET requests.
+  // fal.ai rejects GET requests that include Content-Type (returns 405).
+  return { Authorization: `Key ${FAL_KEY}` };
 }
 
 /** Recursively search an object for a video URL. */
@@ -68,13 +71,16 @@ export async function GET(req: NextRequest) {
   const falId = falRequestId || job?.falRequestId;
   if (!falId) return NextResponse.json({ id, status: "generating" });
 
-  // Model-specific fal.ai URLs
-  const modelPath = "fal-ai/seedance-2/mini/reference-to-video";
+  // Use the model-specific URL from the job (persisted in Supabase), or fall back
+  // to the SHORT fal.ai path. The SHORT path (fal-ai/seedance-2) works with GET.
+  // The LONG path (fal-ai/seedance-2/mini/reference-to-video) returns 405 on GET.
+  const modelPath = "fal-ai/seedance-2";
   const statusUrl =
     job?.falStatusUrl ||
     `https://queue.fal.run/${modelPath}/requests/${falId}/status`;
   const resultUrl =
-    job?.falResultUrl || `https://queue.fal.run/${modelPath}/requests/${falId}`;
+    job?.falResultUrl ||
+    `https://queue.fal.run/${modelPath}/requests/${falId}`;
 
   if (!job?.falRequestId && !statusUrl.includes("requests/")) {
     return NextResponse.json({ id, status: "generating" });
@@ -85,76 +91,76 @@ export async function GET(req: NextRequest) {
   );
 
   try {
-    // Step 1: Check status via POST to the status endpoint
-    // fal.ai status endpoint requires POST (GET returns 405 due to Content-Type check)
+    // Step 1: Check status via GET
     console.log(`[status] Checking status: ${statusUrl.substring(0, 100)}`);
     const statusRes = await fetch(statusUrl, {
-      method: "POST",
-      headers: authHeaders("POST"),
+      method: "GET",
+      headers: authHeaders(),
     });
 
-    if (statusRes.ok) {
-      const statusData = await statusRes.json();
-      console.log("[status] status:", statusData.status);
-
-      if (statusData.status === "COMPLETED") {
-        // Step 2: Fetch the result via GET (no Content-Type header)
-        console.log(`[status] Fetching result: ${resultUrl.substring(0, 100)}`);
-        const resultRes = await fetch(resultUrl, {
-          method: "GET",
-          headers: authHeaders("GET"),
-        });
-
-        if (resultRes.ok) {
-          const resultData = await resultRes.json();
-          console.log("[status] Result keys:", Object.keys(resultData));
-
-          // Seedance 2 output: { video: { url: "https://..." }, seed: 42 }
-          const videoUrl = resultData?.video?.url || findVideoUrl(resultData) || null;
-
-          if (videoUrl) {
-            console.log("[status] Found:", videoUrl.substring(0, 80));
-            if (job) {
-              try {
-                await store.updateJob(job.id, {
-                  status: "completed",
-                  resultVideoUrl: videoUrl,
-                  completedAt: Date.now(),
-                });
-              } catch {}
-            }
-            return NextResponse.json({
-              id,
-              status: "completed",
-              shareToken: job?.shareToken || "pending",
-              resultVideoUrl: videoUrl,
-            });
-          }
-
-          console.error(
-            "[status] COMPLETED but no URL. Keys:",
-            Object.keys(resultData),
-            "Snippet:",
-            JSON.stringify(resultData).substring(0, 500)
-          );
-          return NextResponse.json({ id, status: "generating", debug: "video_url_missing" });
-        } else {
-          console.warn(`[status] Result fetch failed: ${resultRes.status}`);
-        }
-      } else if (statusData.status === "FAILED" || statusData.status === "ERROR") {
-        try {
-          if (job) await store.updateJob(job.id, { status: "failed", error: "Fal generation failed" });
-        } catch {}
-        return NextResponse.json({ id, status: "failed", error: "Generation failed" });
-      } else {
-        // Still generating — return current status
-        return NextResponse.json({ id, status: "generating", falStatus: statusData.status });
-      }
-    } else {
+    if (!statusRes.ok) {
       console.warn(`[status] Status check failed: ${statusRes.status}`);
+      return NextResponse.json({ id, status: "generating" });
     }
 
-    return NextResponse.json({ id, status: "generating" });
+    const statusData = await statusRes.json();
+    console.log("[status] status:", statusData.status);
+
+    if (statusData.status === "COMPLETED") {
+      // Step 2: Fetch the result via GET
+      console.log(`[status] Fetching result: ${resultUrl.substring(0, 100)}`);
+      const resultRes = await fetch(resultUrl, {
+        method: "GET",
+        headers: authHeaders(),
+      });
+
+      if (!resultRes.ok) {
+        console.warn(`[status] Result fetch failed: ${resultRes.status}`);
+        return NextResponse.json({ id, status: "generating" });
+      }
+
+      const resultData = await resultRes.json();
+      console.log("[status] Result keys:", Object.keys(resultData));
+
+      // Seedance 2 output: { video: { url: "https://..." }, seed: 115060423 }
+      const videoUrl = resultData?.video?.url || findVideoUrl(resultData) || null;
+
+      if (videoUrl) {
+        console.log("[status] Found:", videoUrl.substring(0, 80));
+        if (job) {
+          try {
+            await store.updateJob(job.id, {
+              status: "completed",
+              resultVideoUrl: videoUrl,
+              completedAt: Date.now(),
+            });
+          } catch {}
+        }
+        return NextResponse.json({
+          id,
+          status: "completed",
+          shareToken: job?.shareToken || "pending",
+          resultVideoUrl: videoUrl,
+        });
+      }
+
+      console.error(
+        "[status] COMPLETED but no URL. Keys:",
+        Object.keys(resultData),
+        "Snippet:",
+        JSON.stringify(resultData).substring(0, 500)
+      );
+      return NextResponse.json({ id, status: "generating", debug: "video_url_missing" });
+    }
+
+    if (statusData.status === "FAILED" || statusData.status === "ERROR") {
+      try {
+        if (job) await store.updateJob(job.id, { status: "failed", error: "Fal generation failed" });
+      } catch {}
+      return NextResponse.json({ id, status: "failed", error: "Generation failed" });
+    }
+
+    return NextResponse.json({ id, status: "generating", falStatus: statusData.status });
   } catch (e: any) {
     console.error("[status] Exception:", e.message);
     return NextResponse.json({ id, status: "generating" });

@@ -6,6 +6,13 @@
  * Input: image + text prompt → output: video (no audio)
  *
  * Output: 480p, 9:16 aspect ratio, 5 second duration.
+ *
+ * IMPORTANT: fal.ai has two URL patterns:
+ *   - SHORT:   /fal-ai/seedance-2/requests/{id}        ← use GET (works!)
+ *   - LONG:    /fal-ai/seedance-2/mini/reference-to-video/requests/{id}  ← GET returns 405
+ *
+ * The submit endpoint returns SHORT path URLs in status_url and response_url.
+ * We use those for polling.
  */
 
 const FAL_BASE = "https://queue.fal.run";
@@ -13,13 +20,9 @@ const STORAGE_BASE = "https://rest.fal.ai/storage";
 const FAL_KEY = process.env.FAL_KEY || "";
 const FAL_MODEL = "fal-ai/seedance-2/mini/reference-to-video";
 
-function getHeaders(method: string = "GET"): Record<string, string> {
-  const headers: Record<string, string> = { Authorization: `Key ${FAL_KEY}` };
-  // Only send Content-Type with POST — fal.ai returns 405 on GET with Content-Type
-  if (method === "POST") {
-    headers["Content-Type"] = "application/json";
-  }
-  return headers;
+function authHeaders(): Record<string, string> {
+  // Do NOT add Content-Type for GET requests — fal.ai rejects them with 405
+  return { Authorization: `Key ${FAL_KEY}` };
 }
 
 function requireFalKey(): void {
@@ -50,7 +53,8 @@ export async function uploadImage(base64DataUri: string): Promise<string> {
   const ext = contentType.split("/")[1] || "png";
 
   const initRes = await fetch(`${STORAGE_BASE}/upload/initiate`, {
-    method: "POST", headers: getHeaders("POST"),
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Key ${FAL_KEY}` },
     body: JSON.stringify({ content_type: contentType, file_name: `selfie.${ext}` }),
   });
   if (!initRes.ok) {
@@ -72,22 +76,16 @@ export async function uploadImage(base64DataUri: string): Promise<string> {
 /**
  * Quick check for obviously sensitive words in a prompt.
  * Returns true if the prompt looks safe for audio generation (no slurs, violence, NSFW).
- * This is not an exhaustive filter — just a safety net before enabling audio.
  */
 function isPromptSafeForAudio(prompt: string): boolean {
   const lower = prompt.toLowerCase();
-  // Blocklist: slurs, explicit sexual/violent terms
   const blocked = [
-    // slurs / hate speech
     "nigger", "nigga", "faggot", "retard", "kike", "chink", "spic", "wetback",
     "tranny", "shemale",
-    // extreme violence
     "kill", "murder", "bomb", "terrorist", "shoot", "massacre", "genocide",
     "rape", "torture", "beheading", "decapitate",
-    // explicit sexual
     "porn", "xxx", "sex", "cum ", "cock", "pussy", "dick", "penis", "vagina",
     "blowjob", "handjob", "masturbat", "orgy", "incest", "pedo",
-    // self-harm
     "suicide", "self-harm", "cut myself",
   ];
   return !blocked.some(word => lower.includes(word));
@@ -96,7 +94,8 @@ function isPromptSafeForAudio(prompt: string): boolean {
 export async function submitVideoGeneration(prompt: string, imageUrl: string): Promise<{ requestId: string; statusUrl: string; resultUrl: string }> {
   requireFalKey();
   const response = await fetch(`${FAL_BASE}/${FAL_MODEL}`, {
-    method: "POST", headers: getHeaders("POST"),
+    method: "POST",
+    headers: { Authorization: `Key ${FAL_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({ prompt, image_urls: [imageUrl], duration: "5", resolution: "480p", aspect_ratio: "9:16" }),
   });
   const data = await safeJson(response, "generation submit");
@@ -105,28 +104,30 @@ export async function submitVideoGeneration(prompt: string, imageUrl: string): P
   }
   return {
     requestId: data.request_id,
-    statusUrl: data.status_url,   // use fal.ai's status URL (shorter path)
-    resultUrl: data.response_url, // use fal.ai's result URL (shorter path)
+    statusUrl: data.status_url,   // SHORT path: /fal-ai/seedance-2/requests/{id}/status
+    resultUrl: data.response_url, // SHORT path: /fal-ai/seedance-2/requests/{id}
   };
 }
 
 export async function pollForVideoResult(
   requestId: string, maxRetries = 60, intervalMs = 2000
 ): Promise<{ videoUrl: string }> {
-  const statusUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${requestId}/status`;
-  const resultUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${requestId}`;
+  // Use SHORT path (fal-ai/seedance-2) — the long path returns 405 on GET
+  const shortModel = "fal-ai/seedance-2";
+  const statusUrl = `${FAL_BASE}/${shortModel}/requests/${requestId}/status`;
+  const resultUrl = `${FAL_BASE}/${shortModel}/requests/${requestId}`;
 
   for (let i = 0; i < maxRetries; i++) {
-    const statusRes = await fetch(statusUrl, { method: "POST", headers: getHeaders("POST") });
+    const statusRes = await fetch(statusUrl, { method: "GET", headers: authHeaders() });
     if (!statusRes.ok) { await new Promise(r => setTimeout(r, intervalMs)); continue; }
     const statusData = await safeJson(statusRes, "status poll");
 
     if (statusData.status === "COMPLETED") {
       for (let r = 0; r < 10; r++) {
-        const resultRes = await fetch(resultUrl, { method: "GET", headers: getHeaders("GET") });
+        const resultRes = await fetch(resultUrl, { method: "GET", headers: authHeaders() });
         if (resultRes.ok) {
           const resultData = await safeJson(resultRes, "result fetch");
-          const videoUrl = resultData.video?.url || resultData.output?.video?.url || resultData.output?.url || resultData.result?.video?.url || resultData.result?.url || "";
+          const videoUrl = resultData?.video?.url || "";
           if (videoUrl) return { videoUrl };
         }
         await new Promise(r => setTimeout(r, 2000));
