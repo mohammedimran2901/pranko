@@ -210,10 +210,6 @@ function HeroPhoneMockup() {
                   (e.currentTarget as HTMLVideoElement).style.display = "none";
                 }}
               />
-              {/* Emoji fallback (shown behind video, hidden when video plays) */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="text-7xl opacity-90 drop-shadow-lg select-none">{demo.emoji}</span>
-              </div>
             </PhoneFrame>
           </motion.div>
         </AnimatePresence>
