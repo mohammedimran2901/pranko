@@ -1,7 +1,8 @@
 /**
  * GET /api/status?id=<jobId>&fal=<falRequestId>
  * Polls fal.ai directly for video generation status.
- * Persists the video URL to Supabase when done.
+ * Returns the video URL to the client as soon as it's found —
+ * Supabase persistence failures are logged but never block delivery.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
@@ -14,42 +15,38 @@ function getHeaders(): Record<string, string> {
   return { Authorization: `Key ${FAL_KEY}`, "Content-Type": "application/json" };
 }
 
+/** Try to persist a job update; log and continue if it fails. */
+async function safeUpdateJob(id: string, updates: any) {
+  try { await store.updateJob(id, updates); } catch (e: any) { console.error("[status] DB update failed (non-fatal):", e.message); }
+}
+
 /**
- * Recursively search an object for any video URL.
- * Looks for:
- *  - Any string value that ends with .mp4, .webm, .mov
- *  - Any key named 'url' whose value is a string containing http
- *  - Any URL from known fal.ai delivery domains
- *  - Any string containing /v1/files/ or /files/
+ * Recursively search for a video URL.
+ * Last resort: any string key named "url", or any HTTPS string that looks media-ish.
  */
 function findVideoUrl(obj: any, depth = 0): string | null {
   if (!obj || depth > 15 || typeof obj !== "object") return null;
   if (Array.isArray(obj)) {
-    for (const item of obj) {
-      const found = findVideoUrl(item, depth + 1);
-      if (found) return found;
-    }
+    for (const item of obj) { const f = findVideoUrl(item, depth + 1); if (f) return f; }
     return null;
   }
-
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === "string" && value.length > 10) {
-      const isUrl = value.startsWith("https://") || value.startsWith("http://");
-      if (!isUrl) continue;
-      // video file extensions
+      if (!value.startsWith("http")) continue;
+      // 1. video extensions
       if (/\.(mp4|webm|mov|avi|mkv)(\?|$)/i.test(value)) return value;
-      // key named 'url', 'video_url', 'file_url', 'output_url' etc.
-      if (/^(url|video_url|file_url|output_url|result_url|download_url|src|href|playback_url|media_url)$/i.test(key)) return value;
-      // known fal / CDN domains (including v3.fal.media, fal.ai, etc.)
-      if (/fal\.|falcdn|v\d+\.fal\.|storage\.googleapis|delivery\.fal|\.cloudfront\.net/i.test(value)) return value;
-      // /v1/files/ or /files/ or /outputs/ patterns
-      if (/\/v\d\/files\/|\/files\//i.test(value)) return value;
-      // Catch-all: any URL that looks like it might be media (has /output/, /result/, /media/)
-      if (/\/(output|result|media|video|generated)\//i.test(value)) return value;
+      // 2. key named 'url' (catches { video: { url: "..." } })
+      if (key.toLowerCase() === "url") return value;
+      // 3. fal / CDN domains
+      if (/fal\.|falcdn|v\d+\.fal\.|storage\.googleapis|delivery\.fal|cloudfront/i.test(value)) return value;
+      // 4. media path patterns
+      if (/\/(output|result|media|video|generated|files)\//i.test(value)) return value;
+      // 5. LAST RESORT: any URL with ? or & params that could be a signed media URL
+      if (value.includes("?") && value.length > 100) return value;
     }
     if (typeof value === "object" && value !== null) {
-      const found = findVideoUrl(value, depth + 1);
-      if (found) return found;
+      const f = findVideoUrl(value, depth + 1);
+      if (f) return f;
     }
   }
   return null;
@@ -61,7 +58,10 @@ export async function GET(req: NextRequest) {
 
   if (!id) return NextResponse.json({ error: "Missing job id" }, { status: 400 });
 
-  const job = await store.getJob(id);
+  // Try to load job from Supabase (may fail gracefully)
+  let job: any = undefined;
+  try { job = await store.getJob(id); } catch (e: any) { console.warn("[status] DB read failed:", e.message); }
+
   if (job?.status === "completed") {
     return NextResponse.json({ id: job.id, status: "completed", shareToken: job.shareToken, resultVideoUrl: job.resultVideoUrl });
   }
@@ -73,16 +73,17 @@ export async function GET(req: NextRequest) {
   if (!falId) return NextResponse.json({ id, status: "generating" });
 
   try {
+    // STATUS CHECK
     const statusRes = await fetch(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}/status`, { headers: getHeaders() });
     if (!statusRes.ok) return NextResponse.json({ id, status: "generating" });
 
-    const statusText = await statusRes.text();
     let statusData: any = {};
-    try { statusData = JSON.parse(statusText); } catch { return NextResponse.json({ id, status: "generating" }); }
+    try { statusData = JSON.parse(await statusRes.text()); } catch { return NextResponse.json({ id, status: "generating" }); }
 
     const status = statusData.status;
 
     if (status === "COMPLETED") {
+      // FETCH RESULT
       const resultRes = await fetch(`${FAL_BASE}/${FAL_MODEL}/requests/${falId}`, { headers: getHeaders() });
       if (!resultRes.ok) return NextResponse.json({ id, status: "generating" });
 
@@ -95,36 +96,38 @@ export async function GET(req: NextRequest) {
       const videoUrl = findVideoUrl(resultData);
 
       if (videoUrl) {
-        console.log("[status] Found video URL:", videoUrl);
+        console.log("[status] Found video URL:", videoUrl.substring(0, 120));
+
+        // Persist to Supabase — best-effort, never block delivery
         if (job) {
-          await store.updateJob(job.id, { status: "completed", resultVideoUrl: videoUrl, completedAt: Date.now() });
-          return NextResponse.json({ id, status: "completed", shareToken: job.shareToken, resultVideoUrl: videoUrl });
+          safeUpdateJob(job.id, { status: "completed", resultVideoUrl: videoUrl, completedAt: Date.now() });
+        } else {
+          // Try to create + update job; if it fails, just deliver the URL
+          try {
+            const newJob = await store.createJob({ prompt: "", locale: "en", falRequestId: falId });
+            safeUpdateJob(newJob.id, { status: "completed", resultVideoUrl: videoUrl, completedAt: Date.now() });
+          } catch (e: any) {
+            console.warn("[status] Could not persist job:", e.message);
+          }
         }
-        // Fallback: create a job if somehow we lost it
-        const newJob = await store.createJob({ prompt: "", locale: "en", falRequestId: falId });
-        await store.updateJob(newJob.id, { status: "completed", resultVideoUrl: videoUrl, completedAt: Date.now() });
-        return NextResponse.json({ id: newJob.id, status: "completed", shareToken: newJob.shareToken, resultVideoUrl: videoUrl });
+
+        // ALWAYS return the video URL to the client
+        return NextResponse.json({
+          id,
+          status: "completed",
+          shareToken: job?.shareToken || "pending",
+          resultVideoUrl: videoUrl,
+        });
       }
 
-      // Dump the full response structure for debugging
-      console.error("[status] COMPLETED but no video URL found.");
-      console.error("[status] Full response (first 2000 chars):", resultText.substring(0, 2000));
-      // Also log JSON structure recursively
-      const dumpKeys = (o: any, d = 0): string => {
-        if (!o || typeof o !== "object" || d > 4) return "";
-        if (Array.isArray(o)) return `[${o.length} items]`;
-        return "{ " + Object.entries(o).map(([k, v]) => {
-          const val = typeof v === "string" ? `"${v.substring(0, 80)}"` :
-            typeof v === "object" && v !== null ? dumpKeys(v, d + 1) : String(v);
-          return `${k}: ${val}`;
-        }).join(", ") + " }";
-      };
-      console.error("[status] Response structure:", dumpKeys(resultData));
-      return NextResponse.json({ id, status: "generating", pollAttempt: "video_url_missing", debug: Object.keys(resultData).join(",") });
+      // DUMP for debugging
+      console.error("[status] COMPLETED but no video URL. Keys:", Object.keys(resultData));
+      console.error("[status] Response (first 2000 chars):", resultText.substring(0, 2000));
+      return NextResponse.json({ id, status: "generating", pollAttempt: "video_url_missing" });
     }
 
     if (status === "FAILED" || status === "ERROR") {
-      if (job) await store.updateJob(job.id, { status: "failed", error: "Fal generation failed" });
+      safeUpdateJob(id, { status: "failed", error: "Fal generation failed" });
       return NextResponse.json({ id, status: "failed", error: "Generation failed" });
     }
 
