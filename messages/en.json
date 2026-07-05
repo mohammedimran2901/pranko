@@ -5,14 +5,14 @@
     "liveCounter": "2,347 pranks made this week",
     "headline1": "Turn any photo into a",
     "headline2": "5-second prank video.",
-    "headline3": "6 credits for $4.99/week.",
-    "subhead": "Upload a selfie, pick a scenario, and our AI does the rest. In 30 seconds you'll have a video realistic enough to make your friends double-take.",
-    "cta": "Subscribe — $4.99/week",
+    "headline3": "From $1.99 per video.",
+    "subhead": "Upload a selfie, pick a scenario, and our AI does the rest. In ~90 seconds you'll have a video realistic enough to make your friends double-take.",
+    "cta": "Create my prank ↓",
     "ctaLoading": "Opening checkout…",
     "ctaSecondary": "See it in action",
-    "mockupCaption": "Real demo: real Unsplash photo + fal.ai · 30 seconds",
+    "mockupCaption": "Real demo: Unsplash photo + fal.ai · ~90 seconds",
     "trustPay": "Card, Apple Pay, Google Pay",
-    "trustTime": "30 seconds per video",
+    "trustTime": "~90 secs per video",
     "trustCancel": "Cancel anytime"
   },
   "howItWorks": {
@@ -25,7 +25,7 @@
   },
   "caseStudies": {
     "title": "5 real pranks made with Pranko",
-    "subtitle": "Each card is a real Unsplash photo pushed through fal.ai. Hover to play the AI result.",
+    "subtitle": "Each card is a real Unsplash photo pushed through fal.ai. Click to play the AI result.",
     "cta": "Make my own prank",
     "ctaSub": "6 credits for $4.99/week. Cancel anytime.",
     "cs1": {
@@ -66,7 +66,7 @@
   },
   "generating": {
     "title": "Pranko is cooking...",
-    "subtitle": "This takes about 30 seconds",
+    "subtitle": "This can take up to 90 seconds",
     "steps": { "1": "Uploading your photo...", "2": "AI processing your prank...", "3": "Rendering video..." },
     "error": "Pranko tripped"
   },

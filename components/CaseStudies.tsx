@@ -215,7 +215,7 @@ function CaseStudyCard({
         {/* Play hint */}
         {!isActive && (
           <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full bg-pranko-bg/80 backdrop-blur-sm text-[10px] font-semibold text-white">
-            <Play size={10} /> Hover
+            <Play size={10} /> Click to play
           </div>
         )}
       </div>
