@@ -61,15 +61,14 @@ export function CaseStudies() {
           </p>
         </motion.div>
 
-        {/* Grid: 1 card on top (cs1 - the hero demo), then 2-col grid for the rest */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+        {/* TikTok-style vertical feed — scrollable row of phone cards */}
+        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide px-2">
           {CASE_STUDIES.map((cs, idx) => (
             <CaseStudyCard
               key={cs.id}
               study={cs}
               index={idx}
               isActive={activeId === cs.id}
-              isHeroCard={cs.id === "cs1"}
               onActivate={() => setActiveId(cs.id)}
               onDeactivate={() => setActiveId(null)}
               registerVideo={(el) => {
@@ -99,11 +98,19 @@ export function CaseStudies() {
   );
 }
 
+/** Deterministic pseudo-random from a string seed (simple hash) */
+function seedFrom(id: string, offset: number): number {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) {
+    h = ((h << 5) - h + id.charCodeAt(i) + offset) | 0;
+  }
+  return Math.abs(h);
+}
+
 function CaseStudyCard({
   study,
   index,
   isActive,
-  isHeroCard,
   onActivate,
   onDeactivate,
   registerVideo,
@@ -111,33 +118,29 @@ function CaseStudyCard({
   study: CaseStudy;
   index: number;
   isActive: boolean;
-  isHeroCard: boolean;
   onActivate: () => void;
   onDeactivate: () => void;
   registerVideo: (el: HTMLVideoElement | null) => void;
 }) {
   const t = useTranslations(`caseStudies.${study.id}`);
+  // Deterministic counts — same on server & client, avoids hydration errors
+  const likes = 100 + (seedFrom(study.id, 1) % 900);
+  const comments = 5 + (seedFrom(study.id, 2) % 45);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ delay: index * 0.05 }}
+      transition={{ delay: index * 0.08 }}
       onMouseEnter={onActivate}
       onMouseLeave={onDeactivate}
       onClick={isActive ? onDeactivate : onActivate}
-      className={`card-pranko overflow-hidden cursor-pointer group relative ${
-        isHeroCard ? "md:col-span-2" : ""
-      }`}
+      className="snap-start flex-shrink-0 w-[280px] sm:w-[320px] card-pranko overflow-hidden cursor-pointer group relative"
     >
-      {/* BEFORE / AFTER stage */}
-      <div
-        className={`relative ${
-          isHeroCard ? "aspect-[21/9]" : "aspect-[16/10]"
-        } bg-pranko-bg overflow-hidden`}
-      >
-        {/* BEFORE — real Unsplash photo */}
+      {/* Phone-shaped video container */}
+      <div className="relative aspect-[9/16] bg-pranko-bg overflow-hidden rounded-2xl border-2 border-pranko-border/40">
+        {/* BEFORE — real Unsplash photo (shown when not hovering) */}
         <div
           className={`absolute inset-0 transition-opacity duration-500 ${
             isActive ? "opacity-0" : "opacity-100"
@@ -150,12 +153,16 @@ function CaseStudyCard({
             loading={index < 2 ? "eager" : "lazy"}
             referrerPolicy="no-referrer"
           />
-          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-pranko-bg/80 backdrop-blur-sm text-[10px] font-display font-bold uppercase tracking-wider text-white">
-            Before
+          {/* Gradient overlay + title at bottom of "before" frame */}
+          <div className="absolute inset-0 bg-gradient-to-t from-pranko-bg/90 via-pranko-bg/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <h3 className="font-display font-bold text-white text-lg leading-tight drop-shadow-lg">
+              {t("title")}
+            </h3>
           </div>
         </div>
 
-        {/* AFTER — video, with gradient poster fallback */}
+        {/* AFTER — video (plays on hover) */}
         <div
           className={`absolute inset-0 transition-opacity duration-500 ${
             isActive ? "opacity-100" : "opacity-0"
@@ -171,38 +178,52 @@ function CaseStudyCard({
             preload="metadata"
             className="relative w-full h-full object-cover"
             onError={(e) => {
-              // Hide the video element if the file doesn't exist yet —
-              // the gradient poster behind it stays visible.
               (e.currentTarget as HTMLVideoElement).style.display = "none";
             }}
           />
-          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-pranko-lime text-pranko-bg text-[10px] font-display font-bold uppercase tracking-wider">
-            After · AI
+          {/* TikTok-style UI overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-pranko-bg/60 via-transparent to-transparent pointer-events-none" />
+          {/* Right-side interaction icons (TikTok style) */}
+          <div className="absolute right-3 bottom-20 flex flex-col items-center gap-5 pointer-events-none">
+            <div className="flex flex-col items-center gap-0.5">
+              <span className="text-2xl drop-shadow-lg">❤️</span>
+              <span className="text-white text-[10px] font-semibold drop-shadow-lg">{likes}K</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5">
+              <span className="text-2xl drop-shadow-lg">💬</span>
+              <span className="text-white text-[10px] font-semibold drop-shadow-lg">{comments}K</span>
+            </div>
+            <div className="flex flex-col items-center gap-0.5">
+              <span className="text-2xl drop-shadow-lg">🔗</span>
+              <span className="text-white text-[10px] font-semibold drop-shadow-lg">Share</span>
+            </div>
           </div>
-        </div>
-
-        {/* Category badge — always visible */}
-        <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-pranko-bg/70 backdrop-blur-sm text-xs font-semibold text-white">
-          <span>{study.emoji}</span>
-          <span className="uppercase tracking-wider">{study.categoryLabel}</span>
+          {/* Bottom caption (TikTok style) */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
+            <p className="text-white text-sm font-semibold leading-snug drop-shadow-lg">
+              {t("title")}
+            </p>
+            <p className="text-white/80 text-xs leading-snug mt-1 drop-shadow-lg">
+              {t("story")}
+            </p>
+            <div className="flex items-center gap-1.5 mt-2">
+              <span className="text-pranko-lime text-[10px] font-display font-bold">🎵 AI prank video</span>
+            </div>
+          </div>
         </div>
 
         {/* Play hint */}
         {!isActive && (
-          <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-pranko-bg/80 backdrop-blur-sm text-[10px] font-semibold text-white">
-            <Play size={10} /> Hover to play
+          <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full bg-pranko-bg/80 backdrop-blur-sm text-[10px] font-semibold text-white">
+            <Play size={10} /> Hover
           </div>
         )}
       </div>
 
-      {/* Caption */}
-      <div className="p-5">
-        <h3 className="font-display font-bold text-white text-lg sm:text-xl mb-1">
-          {t("title")}
-        </h3>
-        <p className="text-pranko-muted text-sm mb-2">{t("desc")}</p>
-        <p className="text-pranko-lime/80 text-xs italic border-l-2 border-pranko-lime/30 pl-3">
-          {t("story")}
+      {/* Caption below phone */}
+      <div className="px-1 pt-3 pb-1">
+        <p className="text-pranko-muted text-xs leading-snug">
+          {t("desc")}
         </p>
       </div>
     </motion.div>
