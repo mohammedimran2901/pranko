@@ -166,8 +166,13 @@ function CreatePageInner() {
       }
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || "Failed to create job");
+        const text = await res.text();
+        let msg = `Server error (${res.status})`;
+        try {
+          const err = JSON.parse(text);
+          msg = err.error || msg;
+        } catch {}
+        throw new Error(msg);
       }
 
       // Clear the draft now that generation has started successfully.
