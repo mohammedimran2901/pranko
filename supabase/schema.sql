@@ -1,8 +1,8 @@
--- Pranko: persistent user credits table
+-- Pranko: persistent user credits table + prank jobs table
 -- Run this in the Supabase SQL Editor (or via `supabase db push`) before deploying.
 --
 -- Supabase gives every project a "public" schema by default.
--- This table stores credit balances so they survive server restarts / cold starts.
+-- These tables store credit balances and job results so they survive server restarts / cold starts.
 
 create table if not exists public.user_credits (
   user_id          text primary key,                -- anonymous cookie id (pranko_uid)
@@ -15,6 +15,24 @@ create table if not exists public.user_credits (
   created_at       timestamptz not null default now(),
   updated_at       timestamptz not null default now()
 );
+
+-- Persist prank jobs so they survive Vercel cold starts.
+create table if not exists public.prank_jobs (
+  id                text primary key,                 -- nanoid, created by the app
+  share_token       text not null unique,             -- nanoid for public shareable links
+  status            text not null default 'generating', -- queued|uploading|generating|completed|failed
+  prompt            text not null,
+  fal_request_id    text not null,
+  uploaded_image_url text,
+  result_video_url  text,
+  error             text,
+  locale            text not null default 'en',
+  created_at        timestamptz not null default now(),
+  completed_at      timestamptz
+);
+
+create index if not exists idx_prank_jobs_share_token on public.prank_jobs(share_token);
+create index if not exists idx_prank_jobs_fal_request on public.prank_jobs(fal_request_id);
 
 -- Trigger to auto-update updated_at on row change
 create or replace function public.set_updated_at()

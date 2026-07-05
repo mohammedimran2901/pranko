@@ -12,7 +12,7 @@ export async function GET(
   const { id } = params;
   if (!id) return NextResponse.json({ error: "Missing job id" }, { status: 400 });
 
-  const job = store.getJob(id);
+  const job = await store.getJob(id);
   if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 });
 
   return NextResponse.json({
@@ -34,7 +34,7 @@ export async function DELETE(
   const { id } = params;
   if (!id) return NextResponse.json({ error: "Missing job id" }, { status: 400 });
 
-  const deleted = store.deleteJob(id);
+  const deleted = await store.deleteJob(id);
   if (!deleted) return NextResponse.json({ error: "Job not found" }, { status: 404 });
 
   return NextResponse.json({ success: true });

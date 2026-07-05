@@ -1,6 +1,7 @@
 /**
  * GET /api/share/[token]
  * Returns job data for a given share token.
+ * Reads from Supabase so share links survive Vercel cold starts.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
@@ -15,7 +16,7 @@ export async function GET(
     return NextResponse.json({ error: "Missing share token" }, { status: 400 });
   }
 
-  const job = store.getJobByShareToken(token);
+  const job = await store.getJobByShareToken(token);
 
   if (!job) {
     return NextResponse.json({ error: "Prank not found" }, { status: 404 });

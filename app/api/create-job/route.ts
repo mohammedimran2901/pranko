@@ -95,8 +95,8 @@ export async function POST(req: NextRequest) {
       // ── 4. Submit video generation ─────────────────────────────
       const requestId = await submitVideoGeneration(prompt, uploadedImageUrl);
 
-      // ── 5. Create our job record ────────────────────────────────
-      const job = store.createJob({
+      // ── 5. Create our job record (persisted to Supabase) ────────
+      const job = await store.createJob({
         prompt,
         locale: locale || "en",
         falRequestId: requestId,
@@ -107,6 +107,7 @@ export async function POST(req: NextRequest) {
         {
           jobId: job.id,
           falRequestId: requestId,
+          shareToken: job.shareToken,
           creditsRemaining: remaining,
         },
         { status: 201 }

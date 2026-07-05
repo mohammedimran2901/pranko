@@ -9,24 +9,42 @@ const FAL_KEY = "a923b799-93e9-4821-bffd-f2d060148c60:c6383e0a9117462997c63fa43e
 const FAL_BASE = "https://queue.fal.run";
 const FAL_MODEL = "fal-ai/seedance-2/mini/reference-to-video";
 
-/** Recursive search for video URL in an object. */
+/**
+ * Recursively search an object for any video URL.
+ * Same logic as the server-side version in /api/status/route.ts.
+ */
 function findVideoUrl(obj: any, depth = 0): string | null {
   if (!obj || depth > 15 || typeof obj !== "object") return null;
   if (Array.isArray(obj)) {
-    for (const item of obj) { const f = findVideoUrl(item, depth + 1); if (f) return f; }
+    for (const item of obj) {
+      const found = findVideoUrl(item, depth + 1);
+      if (found) return found;
+    }
     return null;
   }
-  for (const [k, v] of Object.entries(obj)) {
-    if (typeof v === "string" && v.length > 20 && (v.startsWith("http://") || v.startsWith("https://")) &&
-        (/\.(mp4|webm|mov|avi)(\?|$)/i.test(v) || /video|file|output/i.test(k) || /fal\.(ai|run)|falcdn|storage\.googleapis|delivery\.fal/i.test(v))) {
-      return v;
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === "string" && value.length > 10) {
+      const isUrl = value.startsWith("https://") || value.startsWith("http://");
+      if (!isUrl) continue;
+      // video file extensions
+      if (/\.(mp4|webm|mov|avi|mkv)(\?|$)/i.test(value)) return value;
+      // key named 'url' — most common fal.ai response shape: { video: { url: "..." } }
+      if (key.toLowerCase() === "url") return value;
+      // known fal.ai delivery domains
+      if (/fal\.(ai|run)|falcdn\.com|storage\.googleapis\.com|delivery\.fal/i.test(value)) return value;
+      // /v1/files/ or /files/ patterns
+      if (/\/v\d\/files\/|\/files\//i.test(value)) return value;
     }
-    if (typeof v === "object") { const f = findVideoUrl(v, depth + 1); if (f) return f; }
+    if (typeof value === "object" && value !== null) {
+      const found = findVideoUrl(value, depth + 1);
+      if (found) return found;
+    }
   }
   return null;
 }
 
-/** Fetch text safely, handle errors. */
+/** Fetch text safely. */
 async function fetchText(url: string): Promise<string> {
   const res = await fetch(url, { headers: { Authorization: `Key ${FAL_KEY}` } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -99,21 +117,33 @@ function GeneratingPageInner() {
           let resultData: any;
           try { resultData = JSON.parse(resultText); } catch { schedule(); return; }
 
-          // Log full response for debugging
-          console.log("[generating] fal result:", resultData);
-          console.log("[generating] root keys:", Object.keys(resultData));
+          console.log("[generating] fal result keys:", Object.keys(resultData));
 
-          // Search for video URL
+          // Search for video URL using the FIXED findVideoUrl
           const videoUrl = findVideoUrl(resultData);
 
           if (videoUrl) {
             resolvedRef.current = true;
+
+            // Persist the result to Supabase via our new API
+            if (jobId) {
+              try {
+                await fetch("/api/job-complete", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ jobId, videoUrl }),
+                });
+              } catch (e) {
+                console.warn("[generating] Failed to persist job result:", e);
+              }
+            }
+
             router.push(`${prefix}/result/view?video=${encodeURIComponent(videoUrl)}`);
             return;
           }
 
           // If we got COMPLETED but no video URL, dump the full response
-          console.error("[generating] COMPLETED but no video URL. Full response:", JSON.stringify(resultData));
+          console.error("[generating] COMPLETED but no video URL. Full response:", JSON.stringify(resultData).substring(0, 2000));
           setError("Video generated but URL could not be found. Check browser console (F12 → Console) and send us the output.");
           return;
         }
@@ -141,7 +171,7 @@ function GeneratingPageInner() {
       cancelled = true;
       clearTimeout(initialDelay);
     };
-  }, [falId, router, prefix]);
+  }, [falId, jobId, router, prefix]);
 
   if (error) {
     return (
