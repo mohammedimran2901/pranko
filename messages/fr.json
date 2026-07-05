@@ -1,114 +1,99 @@
 {
   "brand": {
     "name": "Pranko",
-    "tagline": "Des blagues tellement bonnes que tu oublies que c'est faux",
-    "short": "Photos de blagues IA en 10 secondes"
+    "tagline": "Des vidéos blague IA en 30 secondes",
+    "short": "Vidéos blague IA en 30 secondes"
   },
   "nav": {
     "create": "Créer",
     "pricing": "Tarifs",
     "trending": "Tendances",
     "login": "Connexion",
-    "start": "Commencer"
+    "start": "Commencer à blaguer"
   },
   "hero": {
-    "liveCounter": "2 347 blagues créées aujourd'hui",
-    "headline1": "Fais douter tes potes",
-    "headline2": "de la réalité",
-    "subhead": "Upload une selfie. Choisis une blague. Reçois une vidéo ultra-réaliste en 30 secondes. Ils ne s'en remettront JAMAIS.",
-    "cta": "Ma première blague",
-    "ctaSub": "Première blague offerte — sans carte",
-    "trustPhoto": "📸 Photo jamais stockée",
-    "trustTime": "⚡ 30 secondes",
-    "trustFree": "🆓 Première offerte"
-  },
-  "beforeAfter": {
-    "title": "Vraies blagues. Vraies réactions.",
-    "subtitle": "Une partie du chaos causé par Pranko cette semaine",
-    "examples": {
-      "crash": { "title": "J'ai crashé ma Lambo 😱", "desc": "Envoyé à mon ex. Elle a appelé en pleurant." },
-      "rolex": { "title": "Je flex une Rolex 💍", "desc": "Mon pote fauché est devenu le problème de tout le monde." },
-      "grammy": { "title": "J'ai rencontré Beyoncé aux Grammys 🎤", "desc": "Maman l'a posté sur Facebook. 47 partages." },
-      "mansion": { "title": "J'ai acheté un manoir à 5M$ 🏡", "desc": "Papa a proposé de me prêter 50k€. Il y a cru." },
-      "promotion": { "title": "Promu PDG 👔", "desc": "Mon boss m'a félicité. Lundi gênant." },
-      "fish": { "title": "J'ai pêché un poisson record 🐟", "desc": "Mes potes pêcheurs sont furieux." },
-      "merge": { "title": "Mets-moi dans le manoir 🪄", "desc": "Fusion sujet + scène — SDF à propriétaire." }
-    }
-  },
-  "modes": {
-    "title": "Choisis ton chaos",
-    "subtitle": "Packs de blagues pour chaque victime. Un tap. Dégâts max.",
-    "ex": { "name": "Mode Ex", "emoji": "💔", "tagline": "Fais-les regretter", "desc": "Montre à ton ex que t'es au max. Nouvelle voiture, nouveau partenaire, nouvelle vie." },
-    "boss": { "name": "Mode Boss", "emoji": "💼", "tagline": "Démissionne en style", "desc": "Faux arrêts maladie, fausses promotions, faux LinkedIn." },
-    "mom": { "name": "Mode Maman", "emoji": "👩‍👧", "tagline": "Fais-la tout raconter", "desc": "Des exploits qu'elle va screenshot dans le groupe famille." },
-    "roommate": { "name": "Mode Coloc", "emoji": "🏠", "tagline": "La mesquinerie en service", "desc": "Sois plus mesquin que ton coloc mesquin. Guerre gagnée." },
-    "crush": { "name": "Mode Crush", "emoji": "😍", "tagline": "Bonnes vibes", "desc": "Flex subtilement. Subtilement. (Pas du tout subtil.)" },
-    "merge": { "name": "Mode Fusion", "emoji": "🪄", "tagline": "Deux photos. Une blague.", "desc": "Upload un sujet + une scène. L'IA fusionne — SDF dans un manoir, ton chien sur un yacht." },
-    "custom": { "name": "Custom", "emoji": "✨", "tagline": "Tout ce que t'imagines", "desc": "Décris la blague et laisse notre gobelin gérer." }
+    "liveCounter": "2 347 blagues créées cette semaine",
+    "headline1": "Transforme n'importe quelle photo en",
+    "headline2": "vidéo blague de 5 secondes.",
+    "headline3": "6 crédits pour 4,99€/semaine.",
+    "subhead": "Upload une selfie, choisis un scénario, et notre IA fait le reste. En 30 secondes tu as une vidéo assez réaliste pour faire douter tes potes.",
+    "cta": "S'abonner — 4,99€/semaine",
+    "ctaLoading": "Ouverture du paiement…",
+    "ctaSecondary": "Voir en action",
+    "mockupCaption": "Vraie démo : photo Unsplash + fal.ai · 30 secondes",
+    "trustPay": "Carte, Apple Pay, Google Pay",
+    "trustTime": "30 secondes par vidéo",
+    "trustCancel": "Annule à tout moment"
   },
   "howItWorks": {
     "title": "Comment ça marche",
-    "subtitle": "3 étapes. Zéro prise de tête. Chaos pur.",
     "steps": {
-      "1": { "title": "Upload ta photo", "desc": "Une selfie fonctionne. Plus c'est net, plus c'est dévastateur" },
-      "2": { "title": "Décris la blague", "desc": "Dis à l'IA ce qu'elle doit faire" },
-      "3": { "title": "Reçois ta vidéo", "desc": "Partage la vidéo blague avec tes potes" }
+      "1": { "title": "Upload une photo", "desc": "Une selfie ou n'importe quelle photo fonctionne" },
+      "2": { "title": "Décris la blague", "desc": "Dis à l'IA ce que tu veux qu'il se passe dans la vidéo" },
+      "3": { "title": "Reçois ta vidéo", "desc": "Partage la vidéo blague avec tes amis" }
     }
   },
-  "templates": {
-    "title": "Blagues populaires maintenant",
-    "subtitle": "Tape pour commencer",
-    "trending": "🔥 Tendance",
-    "new": "✨ Nouveau"
-  },
-  "social": {
-    "title": "Le chaos qu'on a causé",
-    "pranksCreated": "Blagues créées",
-    "reactions": "Screenshots de réactions",
-    "tiktoks": "TikToks postés",
-    "happy": "Potes confus"
+  "caseStudies": {
+    "title": "5 vraies blagues faites avec Pranko",
+    "subtitle": "Chaque carte est une vraie photo Unsplash passée dans fal.ai. Survol pour voir le résultat IA.",
+    "cta": "Créer ma propre blague",
+    "ctaSub": "6 crédits pour 4,99€/semaine. Annule à tout moment.",
+    "cs1": {
+      "title": "Rolex détruite",
+      "desc": "Unsplash : une belle montre de luxe. fal.ai : la même montre, détruite.",
+      "story": "Envoie-la à ton boss juste avant la réunion client. « Ma voiture a été vandalisée, je fais quoi ? »"
+    },
+    "cs2": {
+      "title": "PDG à SDF",
+      "desc": "Unsplash : un homme d'affaires bien habillé. fal.ai : le même homme, à la rue.",
+      "story": "Débarque au mariage de ton ex en tant qu'« invité spécial ». Regarde la salle perdre la tête."
+    },
+    "cs3": {
+      "title": "Mamie breakdance",
+      "desc": "Unsplash : une mamie de 80 ans fragile. fal.ai : elle danse sur du MJ.",
+      "story": "Envoie sur le groupe WhatsApp familial à 7h du mat. Maman fera une capture d'écran avant le petit-déj."
+    },
+    "cs4": {
+      "title": "Compteur à 180",
+      "desc": "Unsplash : un tableau de bord de voiture. fal.ai : vue subjective de conduite déjantée.",
+      "story": "SMS à ton coloc : « frérot je crois qu'on me poursuit » avec la vidéo. Il te prêtera sa caisse sans hésiter."
+    },
+    "cs5": {
+      "title": "Salon propre → après-soirée",
+      "desc": "Unsplash : un salon impeccable. fal.ai : la même pièce, chaos post-soirée.",
+      "story": "Envoie à ton crush la veille de sa visite. « Du coup… pour demain. »"
+    }
   },
   "pricing": {
     "title": "Tarifs",
-    "subtitle": "Un seul plan. 6 blagues par semaine.",
+    "subtitle": "Un seul plan. 6 vidéos blague par semaine.",
     "weekly": {
-      "name": "Hebdo",
+      "name": "Hebdomadaire",
       "tagline": "6 vidéos blague par semaine",
-      "price": "4,99$",
+      "price": "4,99€",
       "per": "/semaine",
-      "cta": "S'abonner — 4,99$/semaine",
+      "cta": "S'abonner — 4,99€/semaine",
       "ctaActive": "Tu as un abonnement actif",
-      "feature1": "6 crédits par semaine (1 crédit = 1 blague)",
-      "feature2": "Tous les modes (ex, boss, maman, coloc, crush, fusion)",
+      "feature1": "6 crédits par semaine (1 crédit = 1 vidéo blague)",
+      "feature2": "Tous les modes de blague (ex, boss, maman, coloc, crush, fusion)",
       "feature3": "Vidéos IA de 5 secondes en ~30 secondes",
       "feature4": "Crédits rechargés automatiquement chaque semaine",
       "feature5": "Annule quand tu veux, sans questions"
     },
     "poweredBy": "Paiement sécurisé par Polar · Carte, Apple Pay, Google Pay"
   },
-  "faq": {
-    "title": "Des questions avant de semer le chaos ?",
-    "items": {
-      "legal": { "q": "C'est légal ?", "a": "Oui — pour des blagues personnelles entre potes consentants. Utilise pas ça pour de la fraude, du harcèlement, ou pour arnaquer quelqu'un. Sois cool." },
-      "stored": { "q": "Vous stockez mes photos ?", "a": "Non. Ta photo est traitée en mémoire puis supprimée. La blague générée reste accessible mais tu peux la supprimer quand tu veux." },
-      "real": { "q": "C'est réaliste à quel point ?", "a": "Trop réaliste. La plupart des gens captent pas la différence. C'est le but. Abuse pas de ce pouvoir." },
-      "cancel": { "q": "Je peux annuler quand ?", "a": "Quand tu veux — un clic depuis ton email de facturation Polar. Pas de questions, pas de culpabilisation." },
-      "refund": { "q": "Remboursement ?", "a": "Si ta blague a raté (visage flou, artefacts bizarres), écris-nous sous 7 jours et on te rembourse. Sans questions." },
-      "languages": { "q": "Quelles langues ?", "a": "Français, anglais, espagnol. Notre gobelin parle les trois." }
-    }
-  },
   "cta": {
     "title": "Prêt à semer le chaos ?",
-    "subtitle": "Rejoins des milliers de pranksters déjantés. La première est pour nous.",
-    "button": "Ma première blague"
+    "subtitle": "Ta première vidéo blague est gratuite.",
+    "button": "Créer ma vidéo blague"
   },
   "create": {
     "title": "Créer une vidéo blague",
-    "subtitle": "Upload une photo et décris ce que tu veux",
+    "subtitle": "Upload une photo et décris ce que tu veux qu'il se passe",
     "uploadButton": "Choisir une photo",
     "uploadTip": "JPG, PNG. Max 10 Mo.",
     "promptLabel": "Que doit-il se passer dans la vidéo ?",
-    "promptPlaceholder": "ex: je gagne au loto en direct TV, je danse comme si personne regardait à un mariage, je me fais poursuivre par un pingouin géant",
+    "promptPlaceholder": "ex : je gagne au loto en direct TV, je danse comme si personne regardait à un mariage, je me fais poursuivre par un pingouin géant",
     "generateButton": "Générer la vidéo blague"
   },
   "generating": {
@@ -119,8 +104,8 @@
   },
   "result": {
     "title": "Ta vidéo blague est prête",
-    "subtitle": "Tes potes ne s'en remettront pas",
-    "download": "Télécharger",
+    "subtitle": "Tes potes ne s'en remettront jamais",
+    "download": "Télécharger la vidéo",
     "copyLink": "Copier le lien",
     "newPrank": "Faire une autre blague",
     "subscriptionActive": "C'est dans la poche !",
@@ -135,11 +120,5 @@
     "privacy": "Confidentialité",
     "terms": "Conditions",
     "contact": "Contact"
-  },
-  "common": {
-    "loading": "Chargement...",
-    "error": "Oups, ça a planté. Réessaye ?",
-    "free": "Gratuit",
-    "new": "Nouveau"
   }
 }

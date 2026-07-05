@@ -32,8 +32,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     id: "cs1",
     emoji: "💼",
     categoryLabel: "Boss",
-    beforeImage:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&q=80&auto=format&fit=crop",
+    beforeImage: "/showcase/cs1-before.jpg",
     beforeAlt: "A close-up of an expensive watch on someone's wrist",
     beforeGradient: "from-amber-400 via-yellow-500 to-orange-500",
     beforeInitials: "⌚",
@@ -47,8 +46,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     id: "cs2",
     emoji: "💔",
     categoryLabel: "Ex",
-    beforeImage:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80&auto=format&fit=crop",
+    beforeImage: "/showcase/cs2-before.jpg",
     beforeAlt: "A well-dressed man in a suit, confident portrait",
     beforeGradient: "from-slate-500 via-zinc-600 to-stone-700",
     beforeInitials: "🕴️",
@@ -62,8 +60,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     id: "cs3",
     emoji: "👩‍👧",
     categoryLabel: "Mom",
-    beforeImage:
-      "https://images.unsplash.com/photo-1559963110-71b394e7494d?w=1200&q=80&auto=format&fit=crop",
+    beforeImage: "/showcase/cs3-before.jpg",
     beforeAlt: "A fragile elderly grandmother looking at the camera",
     beforeGradient: "from-rose-300 via-pink-400 to-fuchsia-500",
     beforeInitials: "👵",
@@ -77,8 +74,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     id: "cs4",
     emoji: "🏠",
     categoryLabel: "Roommate",
-    beforeImage:
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=80&auto=format&fit=crop",
+    beforeImage: "/showcase/cs4-before.jpg",
     beforeAlt: "A car speedometer dashboard",
     beforeGradient: "from-cyan-500 via-blue-500 to-indigo-600",
     beforeInitials: "🏎️",
@@ -92,8 +88,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     id: "cs5",
     emoji: "😍",
     categoryLabel: "Crush",
-    beforeImage:
-      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&q=80&auto=format&fit=crop",
+    beforeImage: "/showcase/cs5-before.jpg",
     beforeAlt: "A clean, neatly arranged living room",
     beforeGradient: "from-teal-300 via-emerald-400 to-green-500",
     beforeInitials: "🛋️",

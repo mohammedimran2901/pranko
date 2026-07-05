@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Globe, Check } from "lucide-react";
 import { locales, type Locale } from "@/i18n";
 
@@ -12,7 +12,6 @@ const LOCALE_INFO: Record<Locale, { label: string; flag: string; native: string 
 };
 
 export function LanguageSwitcher({ currentLocale }: { currentLocale: string }) {
-  const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -41,8 +40,11 @@ export function LanguageSwitcher({ currentLocale }: { currentLocale: string }) {
         break;
       }
     }
-    const newPath = target === "en" ? path : `/${target}${path === "/" ? "" : path}`;
-    router.push(newPath);
+    const newPath = target === "en" ? (path || "/") : `/${target}${path === "/" ? "" : path}`;
+    // Use window.location.href for a full page navigation — router.push
+    // can silently fail when the resolved URL matches the current page
+    // (e.g. switching back from /fr to /).
+    window.location.href = newPath;
   }
 
   const current = LOCALE_INFO[currentLocale as Locale] || LOCALE_INFO.en;
