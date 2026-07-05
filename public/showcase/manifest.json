@@ -1,38 +1,47 @@
 [
   {
     "id": "cs1",
-    "prompt": null,
-    "beforeUrl": null,
-    "videoUrl": null,
-    "localBefore": null,
-    "localVideo": null,
-    "error": "Failed to fetch request 019f2de3-48a4-7a41-a04d-1132e8542dea: 405 "
+    "prompt": "Show this on my hand but damaged quite badly with a cracked glass, deep scratches all over the bezel, and scuffed metal — looking beat up and neglected, like it just survived a car crash.",
+    "beforeUrl": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&q=80&auto=format&fit=crop",
+    "videoUrl": "/showcase/cs1.mp4",
+    "localBefore": "cs1-before.jpg",
+    "localVideo": "cs1.mp4",
+    "error": null
   },
   {
     "id": "cs2",
-    "prompt": null,
-    "beforeUrl": null,
-    "videoUrl": null,
-    "localBefore": null,
-    "localVideo": null,
-    "error": "Failed to fetch request 019f2de0-c1fb-7de1-a7c2-31a5e0529315: 405 "
+    "prompt": "Same person in the same setting, but now as a drunken homeless man — disheveled hair, torn stained clothes, holding a bottle in a paper bag, swaying, mumbling, looking exhausted and broke.",
+    "beforeUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80&auto=format&fit=crop",
+    "videoUrl": "/showcase/cs2.mp4",
+    "localBefore": "cs2-before.jpg",
+    "localVideo": "cs2.mp4",
+    "error": null
   },
   {
     "id": "cs3",
-    "prompt": null,
-    "beforeUrl": null,
-    "videoUrl": null,
-    "localBefore": null,
-    "localVideo": null,
-    "error": "Failed to fetch request 019f2dde-3aba-7020-b631-4aa36e061a39: 405 "
+    "prompt": "Her dancing to an upbeat funky track — breakdancing, doing the moonwalk, spinning on her back, full energy, sweaty but unstoppable, her grandma clothes flying with the moves, crowd cheering.",
+    "beforeUrl": "https://images.unsplash.com/photo-1559963110-71b394e7494d?w=1200&q=80&auto=format&fit=crop",
+    "videoUrl": "/showcase/cs3.mp4",
+    "localBefore": "cs3-before.jpg",
+    "localVideo": "cs3.mp4",
+    "error": null
   },
   {
     "id": "cs4",
-    "prompt": null,
-    "beforeUrl": null,
-    "videoUrl": null,
-    "localBefore": null,
-    "localVideo": null,
-    "error": "Failed to fetch request 019f2ddb-aa55-7832-9059-692e244dab3a: 405 "
+    "prompt": "First-person view of driving like a maniac — well over the speed limit, the speedometer pinned, weaving between cars, hands gripping the wheel, blurry roadside, completely unhinged.",
+    "beforeUrl": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=80&auto=format&fit=crop",
+    "videoUrl": "/showcase/cs4.mp4",
+    "localBefore": "cs4-before.jpg",
+    "localVideo": "cs4.mp4",
+    "error": null
+  },
+  {
+    "id": "cs5",
+    "prompt": "The same living room, but after a wild house party — bottles and red cups everywhere, confetti and balloons, tipped furniture, someone passed out on the couch, total chaos, TV cracked.",
+    "beforeUrl": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&q=80&auto=format&fit=crop",
+    "videoUrl": "/showcase/cs5.mp4",
+    "localBefore": "cs5-before.jpg",
+    "localVideo": "cs5.mp4",
+    "error": null
   }
 ]

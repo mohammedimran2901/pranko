@@ -45,39 +45,49 @@ const FAL_KEY = process.env.FAL_KEY || "";
 // ─── Case study definitions (mirror lib/case-studies.ts) ────────────
 const CASE_STUDIES = [
   {
+    // cs1 — BOSS: "Got arrested" prank
     id: "cs1",
     beforeImage:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=1200&q=80&auto=format&fit=crop",
     prompt:
-      "Show this on my hand but damaged quite badly with a cracked glass, deep scratches all over the bezel, and scuffed metal — looking beat up and neglected, like it just survived a car crash.",
+      "This person being arrested by two police officers, hands cuffed behind their back, being led away toward a patrol car with flashing blue and red lights, looking down in shame, chaotic street scene.",
+    sfxPrompt: "police siren wailing, urgent radio chatter, handcuffs clicking, crowd murmuring",
   },
   {
+    // cs2 — EX: "CEO to homeless" (classic)
     id: "cs2",
     beforeImage:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80&auto=format&fit=crop",
     prompt:
       "Same person in the same setting, but now as a drunken homeless man — disheveled hair, torn stained clothes, holding a bottle in a paper bag, swaying, mumbling, looking exhausted and broke.",
+    sfxPrompt: "wind blowing, distant traffic, bottle clinking, muffled mumbling, street atmosphere",
   },
   {
+    // cs3 — MOM: "Grandma breakdancing" (iconic crowd-pleaser)
     id: "cs3",
     beforeImage:
       "https://images.unsplash.com/photo-1559963110-71b394e7494d?w=1200&q=80&auto=format&fit=crop",
     prompt:
-      "Her dancing to Michael Jackson — breakdancing, doing the moonwalk, spins, full energy, sweaty but unstoppable, her grandma clothes flying with the moves.",
+      "Her dancing to an upbeat funky track — breakdancing, doing the moonwalk, spinning on her back, full energy, sweaty but unstoppable, her grandma clothes flying with the moves, crowd cheering in the background.",
+    sfxPrompt: "upbeat funky breakdance music, crowd cheering and clapping, energetic 80s beat",
   },
   {
+    // cs4 — ROOMMATE: "Living room destroyed" (classic)
     id: "cs4",
-    beforeImage:
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1200&q=80&auto=format&fit=crop",
-    prompt:
-      "First-person view of driving like a maniac — well over the speed limit, the speedometer pinned, weaving between cars, hands gripping the wheel, blurry roadside, completely unhinged.",
-  },
-  {
-    id: "cs5",
     beforeImage:
       "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&q=80&auto=format&fit=crop",
     prompt:
-      "The same living room, but after a wild house party — bottles and red cups everywhere, confetti and balloons, tipped furniture, someone passed out on the couch, total chaos.",
+      "The same living room, but after a wild house party — bottles and red cups everywhere, confetti and balloons, tipped furniture, someone passed out on the couch, total chaos, TV screen cracked.",
+    sfxPrompt: "thumping party music, bottles clinking, people laughing and shouting, distant police siren",
+  },
+  {
+    // cs5 — CRUSH: "Singing in the rain" (happy/funny)
+    id: "cs5",
+    beforeImage:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200&q=80&auto=format&fit=crop",
+    prompt:
+      "This person dancing and singing ecstatically in heavy pouring rain on a city street, spinning around a lamppost with one arm outstretched, classic musical-film style, huge joyful smile, water splashing everywhere, dramatic lighting.",
+    sfxPrompt: "romantic orchestral music swelling, heavy rain pouring, splashing in puddles, joyful humming",
   },
 ];
 

@@ -29,9 +29,9 @@
     "cta": "Make my own prank",
     "ctaSub": "6 credits for $4.99/week. Cancel anytime.",
     "cs1": {
-      "title": "Beat-up Rolex",
-      "desc": "Unsplash: a beautiful expensive watch. fal.ai: same watch, destroyed.",
-      "story": "Send it to your boss right before the client meeting. 'My car's been broken into, what should I do?'"
+      "title": "Got arrested! 🚔",
+      "desc": "Unsplash: business person in a hallway. fal.ai: getting arrested in the street.",
+      "story": "Send to your boss 10 minutes before the big meeting. 'Sorry, can't make it in today.'"
     },
     "cs2": {
       "title": "CEO to homeless",
@@ -40,18 +40,18 @@
     },
     "cs3": {
       "title": "Grandma breakdancing",
-      "desc": "Unsplash: a fragile 80-year-old grandma. fal.ai: her dancing to MJ.",
+      "desc": "Unsplash: a fragile 80-year-old grandma. fal.ai: her dancing to a funky beat.",
       "story": "Send it on the family WhatsApp group at 7am. Mom will screenshot it before breakfast."
     },
     "cs4": {
-      "title": "Speedometer to 180",
-      "desc": "Unsplash: a car dashboard. fal.ai: POV of driving like a maniac.",
-      "story": "Text your roommate: 'bro I think I'm being chased' with the video. They will absolutely lend you their car."
+      "title": "House party aftermath",
+      "desc": "Unsplash: a clean, tidy living room. fal.ai: same room, post-party chaos.",
+      "story": "Send to your roommate: 'We need to talk when you get home.'"
     },
     "cs5": {
-      "title": "Tidy → house-party aftermath",
-      "desc": "Unsplash: a clean living room. fal.ai: same room, post-party chaos.",
-      "story": "Send to your crush the night before they were going to visit. 'So… about tomorrow.'"
+      "title": "Singing in the rain 🌧️",
+      "desc": "Unsplash: a smiling person outdoors. fal.ai: dancing in the rain like a musical.",
+      "story": "Send to your crush the night before your date. 'Can't wait for tomorrow.'"
     }
   },
   "cta": { "title": "Ready to cause chaos?", "subtitle": "Your first prank video is free.", "button": "Create my prank video" },
