@@ -166,14 +166,14 @@ function CreatePageInner() {
       }
 
       if (!res.ok) {
-        const err = await res.json();
+        const err = await res.json().catch(() => ({}));
         throw new Error(err.error || "Failed to create job");
       }
 
       // Clear the draft now that generation has started successfully.
       clearDraft();
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({})) as any;
       if (typeof data.creditsRemaining === "number") {
         setCredits(data.creditsRemaining);
       }
