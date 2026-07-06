@@ -116,7 +116,7 @@ function GeneratingPageInner() {
         <div className="text-8xl sm:text-9xl mb-6 animate-float-slow">🧌</div>
 
         <h1 className="text-display text-3xl sm:text-4xl text-white mb-2">{t("title")}</h1>
-        <p className="text-pranko-muted mb-8">{t("subtitle")}</p>
+        <p className="text-pranko-muted mb-8">This can take 2–3 minutes</p>
 
         <div className="card-pranko p-6 text-left space-y-3">
           {steps.map((s, i) => (

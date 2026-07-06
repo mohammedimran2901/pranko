@@ -1,27 +1,21 @@
 /**
- * Fal.ai HTTP client for prank video generation using Seedance 2.0 Fast.
+ * Fal.ai HTTP client for prank video generation using Seedance 2.0 Mini.
  * Uses FAL_KEY from env to call Fal.ai REST API directly.
  *
- * Model: bytedance/seedance-2.0/fast/reference-to-video
+ * Model: bytedance/seedance-2.0/mini/reference-to-video
  * Input: image + text prompt → output: video
  *
- * Output: 720p max, 9:16 aspect ratio, 4-15 second duration.
- * Lower latency and cost than the standard Seedance 2.0 tier.
- *
- * IMPORTANT: The model id IS the correct path segment for fal.ai URL patterns.
- *   status: /bytedance/seedance-2.0/fast/reference-to-video/requests/{id}/status
- *   result: /bytedance/seedance-2.0/fast/reference-to-video/requests/{id}
- *
- * These all work with GET (no 405 issues unlike the old fal-ai/seedance-2/mini model).
+ * Cheapest active model on fal.ai. Output: 480p, 9:16, 5 seconds.
+ * Token-based pricing (~$0.007/1000 tokens) — much lower cost than
+ * the Fast tier ($0.0112/video) at 480p.
  */
 
 const FAL_BASE = "https://queue.fal.run";
 const STORAGE_BASE = "https://rest.fal.ai/storage";
 const FAL_KEY = process.env.FAL_KEY || "";
-const FAL_MODEL = "bytedance/seedance-2.0/fast/reference-to-video";
+const FAL_MODEL = "bytedance/seedance-2.0/mini/reference-to-video";
 
 function authHeaders(): Record<string, string> {
-  // Do NOT add Content-Type for GET requests — fal.ai rejects them with 405
   return { Authorization: `Key ${FAL_KEY}` };
 }
 
@@ -82,9 +76,8 @@ export async function submitVideoGeneration(prompt: string, imageUrl: string): P
       prompt,
       image_urls: [imageUrl],
       duration: "5",
-      resolution: "720p",
+      resolution: "480p",
       aspect_ratio: "9:16",
-      generate_audio: false,
     }),
   });
   const data = await safeJson(response, "generation submit");

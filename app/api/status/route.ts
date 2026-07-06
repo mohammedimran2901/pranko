@@ -2,18 +2,14 @@
  * GET /api/status?id=<jobId>&fal=<falRequestId>
  * Polls fal.ai for video generation status and returns the video URL
  * when complete. Uses the URLs from fal.ai's submission response.
- *
- * IMPORTANT: The old fal-ai/seedance-2/mini model had 405 issues on GET.
- * The new bytedance/seedance-2.0/fast model's path works correctly with GET.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
 
 const FAL_KEY = process.env.FAL_KEY || "";
-const FAL_MODEL = "bytedance/seedance-2.0/fast/reference-to-video";
+const FAL_MODEL = "bytedance/seedance-2.0/mini/reference-to-video";
 
 function authHeaders(): Record<string, string> {
-  // IMPORTANT: Do NOT include Content-Type for GET requests.
   return { Authorization: `Key ${FAL_KEY}` };
 }
 
@@ -75,47 +71,36 @@ export async function GET(req: NextRequest) {
     job?.falResultUrl ||
     `https://queue.fal.run/${FAL_MODEL}/requests/${falId}`;
 
-  console.log(
-    `[status] Polling: job=${id} fal=${falId} statusUrl=${statusUrl.substring(0, 100)} resultUrl=${resultUrl.substring(0, 100)}`
-  );
-
   try {
     // Step 1: Check status via GET
-    console.log(`[status] Checking status: ${statusUrl.substring(0, 100)}`);
     const statusRes = await fetch(statusUrl, {
       method: "GET",
       headers: authHeaders(),
     });
 
     if (!statusRes.ok) {
-      console.warn(`[status] Status check failed: ${statusRes.status}`);
       return NextResponse.json({ id, status: "generating" });
     }
 
     const statusData = await statusRes.json();
-    console.log("[status] status:", statusData.status);
 
     if (statusData.status === "COMPLETED") {
       // Step 2: Fetch the result via GET
-      console.log(`[status] Fetching result: ${resultUrl.substring(0, 100)}`);
       const resultRes = await fetch(resultUrl, {
         method: "GET",
         headers: authHeaders(),
       });
 
       if (!resultRes.ok) {
-        console.warn(`[status] Result fetch failed: ${resultRes.status}`);
         return NextResponse.json({ id, status: "generating" });
       }
 
       const resultData = await resultRes.json();
-      console.log("[status] Result keys:", Object.keys(resultData));
 
-      // Seedance 2.0 Fast output: { video: { url: "https://..." }, seed: 115060423 }
+      // Seedance 2.0 Mini output: { video: { url: "https://..." }, seed: 42 }
       const videoUrl = resultData?.video?.url || findVideoUrl(resultData) || null;
 
       if (videoUrl) {
-        console.log("[status] Found:", videoUrl.substring(0, 80));
         if (job) {
           try {
             await store.updateJob(job.id, {
@@ -133,12 +118,6 @@ export async function GET(req: NextRequest) {
         });
       }
 
-      console.error(
-        "[status] COMPLETED but no URL. Keys:",
-        Object.keys(resultData),
-        "Snippet:",
-        JSON.stringify(resultData).substring(0, 500)
-      );
       return NextResponse.json({ id, status: "generating", debug: "video_url_missing" });
     }
 
