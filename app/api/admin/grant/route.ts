@@ -57,6 +57,6 @@ export async function GET(req: NextRequest) {
     credits: rec?.credits ?? WEEKLY_CREDITS,
     subscriptionActive: Boolean(rec?.subscriptionId && !rec?.canceled),
     note:
-      "6 credits granted. Now visit /create to make a prank video.",
+      "10 credits granted. Now visit /create to make a prank video.",
   });
 }
