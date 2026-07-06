@@ -10,9 +10,7 @@ import {
   CreditCard,
   Coins,
   Sparkles,
-  Shield,
   Cookie,
-  AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -255,13 +253,6 @@ function PricingPageInner() {
                 • Use the <strong>same device and browser</strong> for this site
                 <br />
                 • Don't clear your cookies or use private/incognito mode
-                <br />
-                •{" "}
-                <Link href={`${prefix}/login`} className="text-pranko-lime underline">
-                  Sign in
-                </Link>{" "}
-                to save your credits across devices (takes 10 seconds, no
-                password)
               </p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 {
   "brand": { "name": "Pranko", "tagline": "Videos de broma con IA en 30 segundos", "short": "Videos de broma con IA en 30 segundos" },
-  "nav": { "create": "Crear", "pricing": "Precios", "trending": "Tendencias", "login": "Iniciar sesión", "start": "Empezar a bromear" },
+  "nav": { "create": "Crear", "pricing": "Precios", "start": "Empezar a bromear" },
   "hero": {
     "version": "v1.0 — En vivo",
     "liveCounter": "2 347 bromas creadas esta semana",
@@ -62,7 +62,7 @@
     "a4": "Por supuesto. Cancela con un clic desde tu página de Cuenta. Sin contratos a largo plazo, sin cargos por cancelación. Los créditos no usados se reinician en cada período de facturación."
   },
   "activity": { "justNow": "Justo ahora", "subscribed": "se suscribió a Semanal", "created": "creó un video de broma" },
-  "cta": { "title": "¿Listo para causar caos?", "subtitle": "Tu primer video de broma es gratis.", "button": "Crear mi video de broma" },
+  "cta": { "title": "¿Listo para causar caos?", "subtitle": "Tu primer video de broma es gratis.", "button": "Crear mi video de broma ↓" },
   "create": {
     "title": "Crear un video de broma",
     "subtitle": "Sube una foto y describe lo que quieres que pase",

@@ -22,8 +22,6 @@ export function Footer({ locale }: { locale: string }) {
           <a href="https://instagram.com/pranko.app" target="_blank" rel="noopener" className="hover:text-pranko-lime transition-colors">
             {t("instagram")}
           </a>
-          <Link href={`${prefix}/legal/privacy`} className="hover:text-pranko-lime transition-colors">{t("privacy")}</Link>
-          <Link href={`${prefix}/legal/terms`} className="hover:text-pranko-lime transition-colors">{t("terms")}</Link>
           <a href="mailto:hello@pranko.app" className="hover:text-pranko-lime transition-colors">{t("contact")}</a>
         </nav>
         <p className="text-pranko-muted text-xs">© {year} Pranko</p>

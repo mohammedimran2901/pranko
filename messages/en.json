@@ -1,6 +1,6 @@
 {
   "brand": { "name": "Pranko", "tagline": "AI prank videos in 30 seconds", "short": "AI prank videos in 30 seconds" },
-  "nav": { "create": "Create", "pricing": "Pricing", "trending": "Trending", "login": "Log in", "start": "Start pranking" },
+  "nav": { "create": "Create", "pricing": "Pricing", "start": "Start pranking" },
   "hero": {
     "version": "v1.0 — Now live",
     "liveCounter": "2,347 pranks made this week",
@@ -86,7 +86,7 @@
     "subscribed": "subscribed to Weekly",
     "created": "created a prank video"
   },
-  "cta": { "title": "Ready to cause chaos?", "subtitle": "Your first prank video is free.", "button": "Create my prank video" },
+  "cta": { "title": "Ready to cause chaos?", "subtitle": "Your first prank video is free.", "button": "Create my prank video ↓" },
   "create": {
     "title": "Create a prank video",
     "subtitle": "Upload a photo and describe what you want to happen",

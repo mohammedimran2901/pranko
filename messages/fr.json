@@ -1,6 +1,6 @@
 {
   "brand": { "name": "Pranko", "tagline": "Des vidéos blague IA en 30 secondes", "short": "Vidéos blague IA en 30 secondes" },
-  "nav": { "create": "Créer", "pricing": "Tarifs", "trending": "Tendances", "login": "Connexion", "start": "Commencer à blaguer" },
+  "nav": { "create": "Créer", "pricing": "Tarifs", "start": "Commencer à blaguer" },
   "hero": {
     "version": "v1.0 — En ligne",
     "liveCounter": "2 347 blagues créées cette semaine",
@@ -62,7 +62,7 @@
     "a4": "Absolument. Annulez en un clic depuis votre page Compte. Pas d'engagement à long terme, pas de frais d'annulation. Les crédits non utilisés sont réinitialisés à chaque période de facturation."
   },
   "activity": { "justNow": "À l'instant", "subscribed": "s'est abonné à Hebdo", "created": "a créé une vidéo blague" },
-  "cta": { "title": "Prêt à semer le chaos ?", "subtitle": "Votre première vidéo blague est gratuite.", "button": "Créer ma vidéo blague" },
+  "cta": { "title": "Prêt à semer le chaos ?", "subtitle": "Votre première vidéo blague est gratuite.", "button": "Créer ma vidéo blague ↓" },
   "create": {
     "title": "Créer une vidéo blague",
     "subtitle": "Téléchargez une photo et décrivez ce que vous voulez qu'il se passe",
