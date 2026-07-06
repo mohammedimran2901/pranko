@@ -1,19 +1,18 @@
 /**
- * Fal.ai HTTP client for prank video generation using Seedance 2.0 Mini.
+ * Fal.ai HTTP client for prank video generation using xAI Grok Imagine.
  * Uses FAL_KEY from env to call Fal.ai REST API directly.
  *
- * Model: bytedance/seedance-2.0/mini/reference-to-video
+ * Model: fal-ai/xai/reference-to-video (Grok Imagine)
  * Input: image + text prompt → output: video
  *
- * Cheapest active model on fal.ai. Output: 480p, 9:16, 5 seconds.
- * Token-based pricing (~$0.007/1000 tokens) — much lower cost than
- * the Fast tier ($0.0112/video) at 480p.
+ * Reliable xAI infrastructure. $0.25 per 5-second video at 480p.
+ * 9:16 aspect ratio for TikTok/Reels/Shorts.
  */
 
 const FAL_BASE = "https://queue.fal.run";
 const STORAGE_BASE = "https://rest.fal.ai/storage";
 const FAL_KEY = process.env.FAL_KEY || "";
-const FAL_MODEL = "bytedance/seedance-2.0/mini/reference-to-video";
+const FAL_MODEL = "fal-ai/xai/reference-to-video";
 
 function authHeaders(): Record<string, string> {
   return { Authorization: `Key ${FAL_KEY}` };
@@ -74,8 +73,8 @@ export async function submitVideoGeneration(prompt: string, imageUrl: string): P
     headers: { Authorization: `Key ${FAL_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       prompt,
-      image_urls: [imageUrl],
-      duration: "5",
+      reference_image_urls: [imageUrl],
+      duration: 5,
       resolution: "480p",
       aspect_ratio: "9:16",
     }),
