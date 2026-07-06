@@ -28,7 +28,7 @@
     "title": "5 real pranks made with Pranko",
     "subtitle": "Upload a photo, describe the prank, and watch the AI work its magic.",
     "cta": "Make my own prank",
-    "ctaSub": "6 credits for $4.99/week. Cancel anytime.",
+    "ctaSub": "10 credits for $4.99/week. Cancel anytime.",
     "cs1": {
       "title": "Got arrested! 🚔",
       "desc": "A professional portrait transformed into an arrest scene.",
@@ -110,20 +110,20 @@
     "newPrank": "Make another prank",
     "subscriptionActive": "You're in!",
     "subscriptionDesc": "Your weekly plan is active. 1 credit = 1 five-second prank video.",
-    "subscriptionRenew": "Your 6 credits refresh every week. Cancel anytime.",
+    "subscriptionRenew": "Your 10 credits refresh every week. Cancel anytime.",
     "makeFirstPrank": "Make my first prank"
   },
   "pricing": {
     "title": "Pricing",
-    "subtitle": "One simple plan. 6 prank videos per week.",
+    "subtitle": "One simple plan. 10 prank videos per week.",
     "weekly": {
       "name": "Weekly",
-      "tagline": "6 prank videos every week",
+      "tagline": "10 prank videos every week",
       "price": "$4.99",
       "per": "/week",
       "cta": "Subscribe — $4.99/week",
       "ctaActive": "You have an active subscription",
-      "feature1": "6 credits per week (1 credit = 1 prank video)",
+      "feature1": "10 credits per week (1 credit = 1 prank video)",
       "feature2": "All prank modes (ex, boss, mom, roommate, crush, merge)",
       "feature3": "5-second AI videos in ~30 seconds",
       "feature4": "Credits refresh every week automatically",

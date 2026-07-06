@@ -13,7 +13,7 @@ import { nanoid } from "nanoid";
 import { getSupabase, CREDITS_TABLE } from "@/lib/supabase/server";
 
 export const USER_COOKIE = "pranko_uid";
-export const WEEKLY_CREDITS = 6;
+export const WEEKLY_CREDITS = 10;
 
 /** Per-user subscription state. */
 export interface UserCredits {

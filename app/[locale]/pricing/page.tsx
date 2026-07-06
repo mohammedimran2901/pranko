@@ -135,7 +135,7 @@ function PricingPageInner() {
                 <span className="text-pranko-muted text-lg">/video</span>
               </div>
               <p className="text-pranko-muted text-xs mt-1">
-                One credit = one prank video
+                1 credit = 1 prank video
               </p>
             </div>
             <ul className="space-y-3 mb-8">
@@ -186,12 +186,12 @@ function PricingPageInner() {
                 <span className="text-pranko-muted text-lg">/week</span>
               </div>
               <p className="text-pranko-muted text-xs mt-1">
-                6 credits per week — that's just $0.83/video
+                10 credits per week — that's just $0.50/video
               </p>
             </div>
             <ul className="space-y-3 mb-8">
               {[
-                "6 prank video credits per week",
+                "10 prank video credits per week",
                 "1 credit = 1 five-second AI video",
                 "All prank modes included",
                 "Credits refresh automatically weekly",
