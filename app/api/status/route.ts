@@ -3,21 +3,17 @@
  * Polls fal.ai for video generation status and returns the video URL
  * when complete. Uses the URLs from fal.ai's submission response.
  *
- * IMPORTANT: fal.ai has two URL patterns:
- *   - SHORT:   /fal-ai/seedance-2/requests/{id}        ← use GET (works!)
- *   - LONG:    /fal-ai/seedance-2/mini/reference-to-video/requests/{id}  ← GET returns 405
- *
- * The submit endpoint returns SHORT path URLs in status_url and response_url.
- * We use those if available, otherwise fall back to the SHORT path.
+ * IMPORTANT: The old fal-ai/seedance-2/mini model had 405 issues on GET.
+ * The new bytedance/seedance-2.0/fast model's path works correctly with GET.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { store } from "@/lib/store";
 
 const FAL_KEY = process.env.FAL_KEY || "";
+const FAL_MODEL = "bytedance/seedance-2.0/fast/reference-to-video";
 
 function authHeaders(): Record<string, string> {
   // IMPORTANT: Do NOT include Content-Type for GET requests.
-  // fal.ai rejects GET requests that include Content-Type (returns 405).
   return { Authorization: `Key ${FAL_KEY}` };
 }
 
@@ -71,20 +67,13 @@ export async function GET(req: NextRequest) {
   const falId = falRequestId || job?.falRequestId;
   if (!falId) return NextResponse.json({ id, status: "generating" });
 
-  // Use the model-specific URL from the job (persisted in Supabase), or fall back
-  // to the SHORT fal.ai path. The SHORT path (fal-ai/seedance-2) works with GET.
-  // The LONG path (fal-ai/seedance-2/mini/reference-to-video) returns 405 on GET.
-  const modelPath = "fal-ai/seedance-2";
+  // Use the URLs from the job (persisted in Supabase), or construct from model path
   const statusUrl =
     job?.falStatusUrl ||
-    `https://queue.fal.run/${modelPath}/requests/${falId}/status`;
+    `https://queue.fal.run/${FAL_MODEL}/requests/${falId}/status`;
   const resultUrl =
     job?.falResultUrl ||
-    `https://queue.fal.run/${modelPath}/requests/${falId}`;
-
-  if (!job?.falRequestId && !statusUrl.includes("requests/")) {
-    return NextResponse.json({ id, status: "generating" });
-  }
+    `https://queue.fal.run/${FAL_MODEL}/requests/${falId}`;
 
   console.log(
     `[status] Polling: job=${id} fal=${falId} statusUrl=${statusUrl.substring(0, 100)} resultUrl=${resultUrl.substring(0, 100)}`
@@ -122,7 +111,7 @@ export async function GET(req: NextRequest) {
       const resultData = await resultRes.json();
       console.log("[status] Result keys:", Object.keys(resultData));
 
-      // Seedance 2 output: { video: { url: "https://..." }, seed: 115060423 }
+      // Seedance 2.0 Fast output: { video: { url: "https://..." }, seed: 115060423 }
       const videoUrl = resultData?.video?.url || findVideoUrl(resultData) || null;
 
       if (videoUrl) {

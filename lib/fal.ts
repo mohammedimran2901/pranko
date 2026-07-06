@@ -1,24 +1,24 @@
 /**
- * Fal.ai HTTP client for prank video generation using Seedance 2.0 Mini.
+ * Fal.ai HTTP client for prank video generation using Seedance 2.0 Fast.
  * Uses FAL_KEY from env to call Fal.ai REST API directly.
  *
- * Model: fal-ai/seedance-2/mini/reference-to-video
- * Input: image + text prompt → output: video (no audio)
+ * Model: bytedance/seedance-2.0/fast/reference-to-video
+ * Input: image + text prompt → output: video
  *
- * Output: 480p, 9:16 aspect ratio, 5 second duration.
+ * Output: 720p max, 9:16 aspect ratio, 4-15 second duration.
+ * Lower latency and cost than the standard Seedance 2.0 tier.
  *
- * IMPORTANT: fal.ai has two URL patterns:
- *   - SHORT:   /fal-ai/seedance-2/requests/{id}        ← use GET (works!)
- *   - LONG:    /fal-ai/seedance-2/mini/reference-to-video/requests/{id}  ← GET returns 405
+ * IMPORTANT: The model id IS the correct path segment for fal.ai URL patterns.
+ *   status: /bytedance/seedance-2.0/fast/reference-to-video/requests/{id}/status
+ *   result: /bytedance/seedance-2.0/fast/reference-to-video/requests/{id}
  *
- * The submit endpoint returns SHORT path URLs in status_url and response_url.
- * We use those for polling.
+ * These all work with GET (no 405 issues unlike the old fal-ai/seedance-2/mini model).
  */
 
 const FAL_BASE = "https://queue.fal.run";
 const STORAGE_BASE = "https://rest.fal.ai/storage";
 const FAL_KEY = process.env.FAL_KEY || "";
-const FAL_MODEL = "fal-ai/seedance-2/mini/reference-to-video";
+const FAL_MODEL = "bytedance/seedance-2.0/fast/reference-to-video";
 
 function authHeaders(): Record<string, string> {
   // Do NOT add Content-Type for GET requests — fal.ai rejects them with 405
@@ -73,30 +73,19 @@ export async function uploadImage(base64DataUri: string): Promise<string> {
   return file_url;
 }
 
-/**
- * Quick check for obviously sensitive words in a prompt.
- * Returns true if the prompt looks safe for audio generation (no slurs, violence, NSFW).
- */
-function isPromptSafeForAudio(prompt: string): boolean {
-  const lower = prompt.toLowerCase();
-  const blocked = [
-    "nigger", "nigga", "faggot", "retard", "kike", "chink", "spic", "wetback",
-    "tranny", "shemale",
-    "kill", "murder", "bomb", "terrorist", "shoot", "massacre", "genocide",
-    "rape", "torture", "beheading", "decapitate",
-    "porn", "xxx", "sex", "cum ", "cock", "pussy", "dick", "penis", "vagina",
-    "blowjob", "handjob", "masturbat", "orgy", "incest", "pedo",
-    "suicide", "self-harm", "cut myself",
-  ];
-  return !blocked.some(word => lower.includes(word));
-}
-
 export async function submitVideoGeneration(prompt: string, imageUrl: string): Promise<{ requestId: string; statusUrl: string; resultUrl: string }> {
   requireFalKey();
   const response = await fetch(`${FAL_BASE}/${FAL_MODEL}`, {
     method: "POST",
     headers: { Authorization: `Key ${FAL_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt, image_urls: [imageUrl], duration: "5", resolution: "480p", aspect_ratio: "9:16" }),
+    body: JSON.stringify({
+      prompt,
+      image_urls: [imageUrl],
+      duration: "5",
+      resolution: "720p",
+      aspect_ratio: "9:16",
+      generate_audio: false,
+    }),
   });
   const data = await safeJson(response, "generation submit");
   if (!response.ok) {
@@ -104,18 +93,16 @@ export async function submitVideoGeneration(prompt: string, imageUrl: string): P
   }
   return {
     requestId: data.request_id,
-    statusUrl: data.status_url,   // SHORT path: /fal-ai/seedance-2/requests/{id}/status
-    resultUrl: data.response_url, // SHORT path: /fal-ai/seedance-2/requests/{id}
+    statusUrl: data.status_url,
+    resultUrl: data.response_url,
   };
 }
 
 export async function pollForVideoResult(
   requestId: string, maxRetries = 60, intervalMs = 2000
 ): Promise<{ videoUrl: string }> {
-  // Use SHORT path (fal-ai/seedance-2) — the long path returns 405 on GET
-  const shortModel = "fal-ai/seedance-2";
-  const statusUrl = `${FAL_BASE}/${shortModel}/requests/${requestId}/status`;
-  const resultUrl = `${FAL_BASE}/${shortModel}/requests/${requestId}`;
+  const statusUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${requestId}/status`;
+  const resultUrl = `${FAL_BASE}/${FAL_MODEL}/requests/${requestId}`;
 
   for (let i = 0; i < maxRetries; i++) {
     const statusRes = await fetch(statusUrl, { method: "GET", headers: authHeaders() });
