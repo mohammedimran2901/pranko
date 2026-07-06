@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useRef, Suspense, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { Sparkles, X, Loader2, CreditCard, Coins } from "lucide-react";
+import { Sparkles, X, Loader2, CreditCard, Coins, Bug } from "lucide-react";
 
-const STORAGE_KEY = "pranko_draft_v2"; // v2 key to invalidate old large drafts
+const STORAGE_KEY = "pranko_draft_v2";
+const TEST_CREDITS_KEY = "pranko_test_credits";
 
 interface DraftData { image: string; prompt: string; }
 
@@ -21,6 +22,7 @@ export default function CreatePage() {
 function CreatePageInner() {
   const locale = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("create");
   const prefix = locale === "en" ? "" : `/${locale}`;
 
@@ -31,21 +33,39 @@ function CreatePageInner() {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // Restore draft — skip if image is too large (>200KB = old unresized)
+  const isTestMode = searchParams.get("test") === "1";
+
+  // Restore draft
   useEffect(() => {
     const draft = loadDraft();
     if (draft?.image) {
       if (draft.image.length < 200_000) setImage(draft.image);
-      else clearDraft(); // old large image, discard
+      else clearDraft();
     }
     if (draft?.prompt) setPrompt(draft.prompt);
   }, []);
 
+  // Load credits - supports test mode via localStorage
   useEffect(() => {
+    if (isTestMode) {
+      const stored = localStorage.getItem(TEST_CREDITS_KEY);
+      const testCredits = stored ? parseInt(stored, 10) : 10;
+      setCredits(testCredits);
+      return;
+    }
     fetch("/api/credits").then(r => r.json()).then(d => setCredits(d.credits ?? 0)).catch(() => setCredits(0));
-  }, []);
+  }, [isTestMode]);
 
-  /** Resize to 320px wide, JPEG 0.5 quality — final size ~30-60KB */
+  function useTestCredit() {
+    if (!isTestMode) return false;
+    if (!credits || credits <= 0) return false;
+    const next = credits - 1;
+    setCredits(next);
+    localStorage.setItem(TEST_CREDITS_KEY, String(next));
+    return true;
+  }
+
+  /** Resize to 320px wide, JPEG 0.5 quality */
   async function resizeImage(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const img = new window.Image();
@@ -100,6 +120,20 @@ function CreatePageInner() {
 
   async function generateVideo() {
     if (!image || !prompt.trim()) return;
+
+    // Test mode: simulate the generation flow without server APIs
+    if (isTestMode) {
+      if (!useTestCredit()) {
+        alert("No test credits remaining. Refresh to get more.");
+        return;
+      }
+      clearDraft();
+      const fakeJobId = "test_" + Date.now();
+      const fakeFalId = "test_" + Math.random().toString(36).slice(2);
+      router.push(`${prefix}/generating?job=${fakeJobId}&fal=${fakeFalId}`);
+      return;
+    }
+
     setGenerating(true);
     try {
       const res = await fetch("/api/create-job", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image, prompt: prompt.trim(), locale }) });
@@ -133,11 +167,21 @@ function CreatePageInner() {
             <h1 className="text-display text-3xl sm:text-4xl text-white">🎬 {t("title")}</h1>
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${hasCredits ? "bg-pranko-lime/20 text-pranko-lime" : "bg-pranko-pink/20 text-pranko-pink"}`} title="Credits remaining">
               <Coins size={14} />{credits === null ? "…" : credits}
+              {isTestMode && <span className="text-[10px] ml-1 opacity-60">TEST</span>}
             </div>
           </div>
           <p className="text-pranko-muted text-center mb-8">{t("subtitle")}</p>
 
-          {credits !== null && credits <= 0 && (
+          {isTestMode && (
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="card-pranko p-3 mb-4 border border-pranko-lime/40 text-center">
+              <p className="text-pranko-lime text-sm font-semibold flex items-center justify-center gap-1">
+                <Bug size={14} /> Test mode — 10 free credits
+              </p>
+              <p className="text-pranko-muted text-[10px] mt-1">Visit <strong>/?test=1</strong> to reset credits</p>
+            </motion.div>
+          )}
+
+          {!isTestMode && credits !== null && credits <= 0 && (
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="card-pranko p-5 mb-6 border-2 border-pranko-lime/40">
               <div className="flex items-start gap-3"><div className="text-3xl">💳</div><div className="flex-1">
                 <p className="font-display font-bold text-white text-lg mb-1">Get credits to generate prank videos</p>
@@ -147,7 +191,7 @@ function CreatePageInner() {
                     {checkoutLoading === "single" ? <><Loader2 className="animate-spin" size={16} /> Opening…</> : <><CreditCard size={16} /> 1 video — $1.99</>}
                   </button>
                   <button onClick={() => startCheckout("weekly")} disabled={checkoutLoading !== null} className="btn-pranko-pink !text-sm !py-2.5 !px-5 glow-pink inline-flex">
-                    {checkoutLoading === "weekly" ? <><Loader2 className="animate-spin" size={16} /> Opening…</> : <><CreditCard size={16} /> 6 videos/week — $4.99</>}
+                    {checkoutLoading === "weekly" ? <><Loader2 className="animate-spin" size={16} /> Opening…</> : <><CreditCard size={16} /> 10 videos/week — $4.99</>}
                   </button>
                 </div>
               </div></div>
@@ -192,7 +236,7 @@ function CreatePageInner() {
                     {checkoutLoading === "single" ? <><Loader2 className="animate-spin" size={16} /> Opening…</> : <><CreditCard size={16} /> 1 video — $1.99</>}
                   </button>
                   <button onClick={() => startCheckout("weekly")} disabled={checkoutLoading !== null} className="btn-pranko-pink flex-1 !text-base !py-4 glow-pink">
-                    {checkoutLoading === "weekly" ? <><Loader2 className="animate-spin" size={16} /> Opening…</> : <><CreditCard size={16} /> 6 videos/week — $4.99</>}
+                    {checkoutLoading === "weekly" ? <><Loader2 className="animate-spin" size={16} /> Opening…</> : <><CreditCard size={16} /> 10 videos/week — $4.99</>}
                   </button>
                 </div>
               )}
